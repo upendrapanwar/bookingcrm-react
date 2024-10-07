@@ -3,11 +3,14 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 //import './index.css';
 import './output.css';
+import 'react-toastify/dist/ReactToastify.css';
 
+const Home = lazy(() => import('./containers/Home'));
 const Register = lazy(() => import('./containers/user/register'));
 const Login = lazy(() => import('./containers/user/login'));
 
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
+const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
 
 function App() {
     
@@ -22,9 +25,7 @@ function App() {
       />
 
       <Route path="/admin/*" element={
-        
           <AdminRoutes />
-        
         } 
       />
     </Routes>
@@ -40,7 +41,7 @@ export const PublicRoutes = () => {
       <Routes>
         <Route path='login' element={<Login />} /> 
         <Route path='register' element={<Register />} />
-        <Route index element={<Register />} />
+        <Route index element={<Home />} />
       </Routes>
     </>
   )
@@ -60,6 +61,7 @@ export const AdminRoutes = () => {
     <>
       <Routes>
         <Route path='login' element={<AdminLogin />} />
+        <Route path='admin-dashboard' element={<AdminDashboard />} />
       </Routes>
     </>
 
