@@ -9,7 +9,7 @@ import axios from "axios";
 const AdminLogin = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         
         console.log('test');
@@ -23,7 +23,7 @@ const AdminLogin = () => {
      * 
      */
     const handleSubmit = (values, { resetForm }) => {
-        axios.post('common/signin', values).then(response => {
+        axios.post('user/signin', values).then(response => {
             toast.dismiss();
             if (response.data.status) {
                 toast.success(response.data.message, { position: "top-center",autoClose: 3000 });
