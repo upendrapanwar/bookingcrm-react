@@ -5,10 +5,16 @@ import './App.css';
 import './output.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import 'bootstrap/dist/css/bootstrap.css';
+import '../src/assets/css/default.css';
+import '../src/assets/css/style.css';
+import '../src/assets/css/responsive.css';
+import '../src/assets/css/slick.css';
+import 'font-awesome/css/font-awesome.min.css';
 
 const Home = lazy(() => import('./containers/Home'));
-const Register = lazy(() => import('./containers/user/register'));
-const Login = lazy(() => import('./containers/user/login'));
+const Register = lazy(() => import('./containers/Register'));
+const Login = lazy(() => import('./containers/Login'));
 
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));

@@ -9,8 +9,8 @@ import userLoginSchema from './../../validation-schemas/userLoginSchema'
 // import FBLogin from './FBLogin';
 // import { setLoading } from './actions'; // Adjust this import according to your file structure
 // import logo from './logo.png'; // Adjust this import according to your file structure
-import visibleIcon from './../../assets/icons/Visible-icon.png'; // Adjust this import according to your file structure
-import invisibleIcon from './../../assets/icons/Invisible-icon.png'; // Adjust this import according to your file structure
+import visibleIcon from '../assets/icons/Visible-icon.png'; // Adjust this import according to your file structure
+import invisibleIcon from '../assets/icons/Invisible-icon.png'; // Adjust this import according to your file structure
 
 const Login = () => {
     // const dispatch = useDispatch();
