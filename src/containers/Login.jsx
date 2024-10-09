@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik } from 'formik';
-import { toast } from 'react-toastify';
+import userLoginSchema from '../validation-schemas/userLoginSchema'
 import axios from "axios";
-import userLoginSchema from './../../validation-schemas/userLoginSchema'
+import { toast } from "react-toastify";
 // import { SpinnerLoader } from './SpinnerLoader';
 // import GLogin from './GLogin';
 // import FBLogin from './FBLogin';
@@ -17,27 +17,18 @@ const Login = () => {
     // const loading = useSelector((state) => state.global.loading);
     const [seePassword, setSeePassword] = useState(false);
     const navigate = useNavigate();
-    const recaptchaRef = useRef(null);
     //const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
 
-    // const handleSubmit = (values, { resetForm }) => {
-    //     // Handle form submission logic here
-    //     console.log(values);
-    //     resetForm();
-    // };
-
     const handleSubmit = (values, { resetForm }) => {
-        //setLoading(true);
-        console.log("handlesubmit");
-        //this.dispatch(setLoading({loading: true}));
         axios
             .post("user/signin", values)
             .then((response) => {
                 toast.dismiss();
                 if (response.data.status) {
-                    toast.success(response.data.message, {
-                       autoClose: 3000,
-                     });
+                    // toast.success(response.data.message, {
+                    //   position: "top-center",
+                    //   autoClose: 3000,
+                    // });
                     let authInfo = {
                         expTime: response.data.data.expTime,
                         id: response.data.data["_id"],
@@ -60,26 +51,26 @@ const Login = () => {
                     ) {
                         navigate("/");
                     }
-                    //   if (
+                    // if (
                     //     response.data.data.role === "registered_learner"
-                    //   ) {
+                    // ) {
                     //     navigate("/cart");
-                    //   }
-                    //   if (
+                    // }
+                    // if (
                     //     response.data.data.role === "subscriber"
-                    //   ) {
+                    // ) {
                     //     navigate("/learner/dashboard");
-                    //   }
-                    //   if (response.data.data.role === "ambassador") {
+                    // }
+                    // if (response.data.data.role === "ambassador") {
                     //     navigate("/ambessador/dashboard");
-                    //   }
-                    //   if (response.data.data.role === "owner") {
+                    // }
+                    // if (response.data.data.role === "owner") {
                     //     navigate("/owner/dashboard");
-                    //   }
+                    // }
                 } else {
                     resetForm();
                     toast.error(response.data.message, { autoClose: 3000 });
-                    recaptchaRef.current.reset(); // Reset the ReCAPTCHA
+                    // recaptchaRef.current.reset(); // Reset the ReCAPTCHA
                 }
             })
             .catch((error) => {
@@ -92,7 +83,7 @@ const Login = () => {
             })
             .finally(() => {
                 setTimeout(() => {
-                    // setLoading(false);
+                   // setLoading(false);
                 }, 300);
             });
     };
@@ -112,165 +103,206 @@ const Login = () => {
     return (
         <React.Fragment>
             {/* {loading && <SpinnerLoader />} */}
-            {/* <div className="flex justify-center items-center h-screen">
-                <div className="bg-white shadow-md rounded px-8 py-6 w-full max-w-lg">
-                    <Link to="/" className="flex justify-center mb-6"> */}
-                        {/* <img src={logo} alt="logo" className="h-12" /> */}
-                    {/* </Link> */}
-                    {/* <button onClick={handleClose} type="button" className="absolute top-4 right-4 text-gray-500 hover:text-gray-700" aria-label="Close"> */}
-                    {/* &times;
-                    </button> */}
-                    {/* <h4 className="text-xl font-semibold mb-4 text-center">Login Now</h4> */}
-                    {/* <Formik
-                        initialValues={{
-                            email: '',
-                            password: '',
-                            // password_confirmation: '',
-                        }}
-                        onSubmit={handleSubmit}
-                        validationSchema={userLoginSchema}
-                    >
-                        {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid }) => (
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email ID <span className="text-red-500">*</span></label>
-                                    <input
-                                        type="email"
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
-                                        id="email"
-                                        name="email"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.email}
-                                    />
-                                    {touched.email && errors.email && <small className="text-red-500">{errors.email}</small>}
-                                </div>
-
-                                <div className="relative">
-                                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password <span className="text-red-500">*</span></label>
-                                    <input
-                                        type={seePassword ? "text" : "password"}
-                                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500 pr-10"
-                                        id="password"
-                                        name="password"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.password}
-                                    />
-                                    <img
-                                        src={seePassword ? visibleIcon : invisibleIcon}
-                                        alt="toggle visibility"
-                                        onClick={handlePasswordVisibility}
-                                        className="cursor-pointer absolute right-4 top-7 h-5 w-5"
-                                    />
-                                    {touched.password && errors.password && <small className="text-red-500">{errors.password}</small>}
-
-                                </div>
-                                <button
-                                    type="submit"
-                                    className={`w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 focus:outline-none ${!isValid && 'opacity-50 cursor-not-allowed'}`}
-                                    disabled={!isValid}
-                                >
-                                    Submit
-                                </button>
-                                <div className="text-sm text-center">
-                                    Create an Account ? <Link to="#" className="text-blue-600 hover:underline">Signup here</Link>
-                                </div>
-                                <div className="flex justify-center space-x-4 mt-4">
-                                    {/* <GLogin />
-                                    <FBLogin /> */}
-                                {/* </div>
-                            </form>
-                        )}
-
-                    </Formik> */}
-
-
-                {/* </div>
-            </div> */}
-
-
-<section className="main_container pt-70 pb-25">
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-12">
-                        <div id="logreg-forms" className="logreg-forms-panel">
+            <section className="main_container pt-70 pb-25">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-12">
+                            <div id="logreg-forms" className="logreg-forms-panel">
+                                {/* Sign In Form */}
                                 <Formik
                                     initialValues={{
                                         email: '',
                                         password: '',
+                                        // fullName: '',
+                                        // repeatPassword: '',
                                     }}
                                     onSubmit={handleSubmit}
-                                    validationSchema={userLoginSchema}
+                                    validationSchema={userLoginSchema} // Define the validation schema using Yup or any preferred validation library
                                 >
                                     {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid }) => (
                                         <form onSubmit={handleSubmit} className="space-y-4">
-                                            <h1 className="h3 mb-3 font-weight-normal text-center">Sign in</h1>
-                                            <div className="social-login">
-                                                <button className="btn facebook-btn social-btn" type="button"><span><i className="fab fa-facebook-f"></i> Sign in with Facebook</span> </button>
-                                                <button className="btn google-btn social-btn" type="button"><span><i className="fab fa-google-plus-g"></i> Sign in with Google+</span> </button>
+                                            <h1 className="h3 mb-3 font-weight-normal text-center">Sign In</h1>
+
+                                            {/* Social Login Buttons */}
+                                            <div className="social-login flex justify-center space-x-4">
+                                                <button className="btn facebook-btn social-btn" type="button">
+                                                    <i className="fab fa-facebook-f"></i> Sign in with Facebook
+                                                </button>
+                                                <button className="btn google-btn social-btn" type="button">
+                                                    <i className="fab fa-google-plus-g"></i> Sign in with Google+
+                                                </button>
                                             </div>
-                                            <p className="text-center"> OR </p>
+
+                                            <p className="text-center">OR</p>
+
+                                            {/* Email Field */}
                                             <div className="form-group">
-                                                <label htmlFor="email">Email ID <span className="text-red-500">*</span></label>
+                                                <label htmlFor="email" className="block text-sm font-medium">
+                                                    Email <span className="text-red-500">*</span>
+                                                </label>
                                                 <input
                                                     type="email"
-                                                    className="form-control"
+                                                    className="form-control mt-1 block w-full"
                                                     id="email"
                                                     name="email"
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     value={values.email}
+                                                    placeholder="Enter email"
                                                 />
                                                 {touched.email && errors.email && <small className="text-red-500">{errors.email}</small>}
+                                                <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
                                             </div>
+
+                                            {/* Password Field */}
                                             <div className="form-group">
-                                                <label htmlFor="password">Password <span className="text-red-500">*</span></label>
+                                                <label htmlFor="password" className="block text-sm font-medium">
+                                                    Password <span className="text-red-500">*</span>
+                                                </label>
                                                 <input
                                                     type={seePassword ? "text" : "password"}
-                                                    className="form-control"
+                                                    className="form-control mt-1 block w-full"
                                                     id="password"
                                                     name="password"
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     value={values.password}
+                                                    placeholder="Password"
                                                 />
-                                                {/* <img
-                                                    src={seePassword ? visibleIcon : invisibleIcon} // Change to your icon paths
-                                                    alt="toggle visibility"
-                                                    onClick={handlePasswordVisibility}
-                                                    className="cursor-pointer"
-                                                /> */}
                                                 {touched.password && errors.password && <small className="text-red-500">{errors.password}</small>}
                                             </div>
+
+                                            {/* Checkbox */}
+                                            <div className="form-group form-check">
+                                                <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                                                <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
+                                            </div>
+
+                                            {/* Submit Button */}
                                             <button
                                                 type="submit"
                                                 className={`btn btn-main btn-block ${!isValid ? 'opacity-50 cursor-not-allowed' : ''}`}
                                                 disabled={!isValid}
                                             >
-                                                <i className="fas fa-sign-in-alt"></i> Sign in
+                                                <i className="fas fa-sign-in-alt"></i> Sign In
                                             </button>
-                                            <a href="#" id="forgot_pswd">Forgot password?</a>
+
+                                            <div className="text-center mt-2">
+                                                <a href="#" id="forgot_pswd">Forgot password?</a>
+                                            </div>
+
                                             <hr />
-                                            <button
-                                                className="btn btn-orange btn-block"
-                                                type="button"
-                                                onClick={() => navigate('/register')}
-                                            >
+
+                                            <button className="btn btn-orange btn-block" type="button" id="btn-signup " onClick={'///'}>
                                                 <i className="fas fa-user-plus"></i> Sign up New Account
                                             </button>
+
+                                            {/* Reset Password Form */}
+                                            {/* <form action="/reset/password/" className="form-reset hidden">
+                                                <h1 className="h3 mb-3 font-weight-normal text-center">Reset Password</h1>
+                                                <input
+                                                    type="email"
+                                                    id="resetEmail"
+                                                    className="form-control"
+                                                    placeholder="Email address"
+                                                    required
+                                                />
+                                                <button className="btn btn-orange btn-block" type="submit">Reset Password</button>
+                                                <a href="#" id="cancel_reset"><i className="fas fa-angle-left"></i> Back</a>
+                                            </form> */}
+
+                                            {/* Signup Form */}
+                                            {/* <form action="/signup/" className="form-signup hidden">
+                                                <h1 className="h3 mb-3 font-weight-normal text-center">Create Account</h1>
+
+                                                <div className="social-login flex justify-center space-x-4">
+                                                    <button className="btn facebook-btn social-btn" type="button">
+                                                        <i className="fab fa-facebook-f"></i> Sign up with Facebook
+                                                    </button>
+                                                    <button className="btn google-btn social-btn" type="button">
+                                                        <i className="fab fa-google-plus-g"></i> Sign up with Google+
+                                                    </button>
+                                                </div>
+
+                                                <p className="text-center">OR</p>
+
+                                                <div className="form-group">
+                                                    <input
+                                                        type="text"
+                                                        id="fullName"
+                                                        name="fullName"
+                                                        className="form-control"
+                                                        placeholder="Full name"
+                                                        required
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                        value={values.fullName}
+                                                    />
+                                                    {touched.fullName && errors.fullName && <small className="text-red-500">{errors.fullName}</small>}
+                                                </div>
+
+                                                <div className="form-group">
+                                                    <input
+                                                        type="email"
+                                                        id="userEmail"
+                                                        name="email"
+                                                        className="form-control"
+                                                        placeholder="Email address"
+                                                        required
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                        value={values.email}
+                                                    />
+                                                    {touched.email && errors.email && <small className="text-red-500">{errors.email}</small>}
+                                                </div>
+
+                                                <div className="form-group">
+                                                    <input
+                                                        type="password"
+                                                        id="password"
+                                                        name="password"
+                                                        className="form-control"
+                                                        placeholder="Password"
+                                                        required
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                        value={values.password}
+                                                    />
+                                                    {touched.password && errors.password && <small className="text-red-500">{errors.password}</small>}
+                                                </div>
+
+                                                <div className="form-group">
+                                                    <input
+                                                        type="password"
+                                                        id="repeatPassword"
+                                                        name="repeatPassword"
+                                                        className="form-control"
+                                                        placeholder="Repeat Password"
+                                                        required
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                        value={values.repeatPassword}
+                                                    />
+                                                    {touched.repeatPassword && errors.repeatPassword && <small className="text-red-500">{errors.repeatPassword}</small>}
+                                                </div>
+
+                                                <button className="btn btn-orange btn-block" type="submit">
+                                                    <i className="fas fa-user-plus"></i> Sign Up
+                                                </button>
+                                                <a href="#" id="cancel_signup"><i className="fas fa-angle-left"></i> Back</a>
+                                            </form> */}
                                         </form>
                                     )}
                                 </Formik>
-                            {/* )} */}
+
+                                <br />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
         </React.Fragment>
     );
-
 };
 
 export default Login;
