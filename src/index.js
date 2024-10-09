@@ -3,11 +3,18 @@ import { BrowserRouter } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 //import ReactDOM from 'react-dom';
 //import './index.css';
-import './output.css';
+//import './output.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 import config from './config.json';
+import "./assets/css/style.css";
+import "./assets/css/responsive.css";
+import "./assets/css/default.css";
+import "./assets/css/slick.css";
+import "./assets/css/font-awesome.min.css";
+import "./assets/css/bootstrap.min.css";
+
 
 
 

@@ -1,0 +1,719 @@
+/* CSS Index 
+-----------------------------------
+01. Theme default css
+02. HEADER
+03. SLIDER
+04. VIDEO
+05. PRODUCTS
+06. TRUSTED CLIENT
+07. SERVICES
+08. CLIENT
+09. BLOG
+10. DELIVERY
+11. FOOTER
+12. BRAND
+13. BUY PRODUCTS
+14. PRICING
+15. PAGE BANNER
+16. ABOUT PAGE
+17. FAQ PAGE
+18. TEAM PAGE
+19. LOGIN & REGISTER PAGE
+20. BLOG DETAILS PAGE
+21. PRODUTCT PAGE
+22. PRODUCTS DETAILS PAGE
+23. CART PAGE
+24. CHECKOUT
+25. CONTACT
+
+*/
+
+
+/*===========================
+    01. Theme default css 
+===========================*/
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+    font-family: "Poppins", sans-serif;
+}
+
+img {
+    max-width: 100%;
+}
+
+a:focus,
+input:focus,
+textarea:focus,
+button:focus {
+    text-decoration: none;
+    outline: none;
+}
+
+a:focus,
+a:hover {
+    text-decoration: none;
+}
+
+i,
+span,
+a {
+    display: inline-block;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: #00457a;
+    margin: 0px;
+}
+
+h1 {
+    font-size: 48px;
+}
+
+h2 {
+    font-size: 38px;
+}
+
+h3 {
+    font-size: 32px;
+}
+
+h4 {
+    font-size: 28px;
+}
+
+h5 {
+    font-size: 22px;
+}
+
+h6 {
+    font-size: 18px;
+}
+
+ul,
+ol {
+    margin: 0px;
+    padding: 0px;
+    list-style-type: none;
+}
+
+p {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 27px;
+    color: #2c2d3e;
+    margin: 0px;
+}
+
+.bg_cover {
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+}
+
+.home-4 {
+    margin: 80px;
+    /* background-image: url(../images/bg-4.jpg); */
+}
+
+/*===== All Section title Style =====*/
+
+.section-title {}
+
+.section-title h2 {
+    margin-bottom: -8px;
+}
+
+.section-title ul li {
+    display: inline-block;
+    background-color: #00457a;
+
+}
+
+.section-title ul li:nth-of-type(1),
+.section-title ul li:nth-of-type(5) {
+    width: 10px;
+    height: 2px;
+}
+
+.section-title ul li:nth-of-type(2),
+.section-title ul li:nth-of-type(4) {
+    width: 20px;
+    height: 3px;
+}
+
+.section-title ul li:nth-of-type(3) {
+    width: 30px;
+    height: 4px;
+}
+
+.section-title p {
+    padding-top: 17px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/*===========================
+        02.HEADER css 
+===========================*/
+
+#header-part {}
+
+.header-2 {}
+
+/*===== HEADER TOP =====*/
+
+.header-top {
+    background-color: #f2f3f7;
+}
+
+.header-top p {
+    font-size: 14px;
+}
+
+.header-top p i {
+    color: #2e4db9;
+    margin-right: 8px;
+}
+
+/*===== NAVBAR =====*/
+
+.navigation {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+    background-color: #00457a;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.navigation .navbar-brand img {
+    max-width: 220px;
+}
+
+.navigation.sticky {
+    position: fixed;
+    top: 0%;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background: #fff;
+    -webkit-box-shadow: 0px 5px 30px 0px rgba(46, 76, 185, 0.2);
+    box-shadow: 0px 5px 30px 0px rgba(46, 76, 185, 0.2);
+    -webkit-animation: sticky 0.5s;
+    animation: sticky 0.5s;
+}
+
+.navigation.sticky {}
+
+.navigation.sticky .navbar .navbar-nav .nav-item a {
+    color: #000;
+}
+
+@-webkit-keyframes sticky {
+    0% {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%)
+    }
+
+    100% {
+        -webkit-transform: translateY(0%);
+        transform: translateY(0%)
+    }
+}
+
+@keyframes sticky {
+    0% {
+        -webkit-transform: translateY(-100%);
+        transform: translateY(-100%)
+    }
+
+    100% {
+        -webkit-transform: translateY(0%);
+        transform: translateY(0%)
+    }
+}
+
+.navbar {
+    padding: 0;
+}
+
+.navbar .navbar-nav {}
+
+.navbar .navbar-nav .nav-item {
+    margin: 0 15px;
+    position: relative;
+}
+
+.navbar .navbar-nav .nav-item a {
+    font-size: 14px;
+    color: #FFF;
+    font-weight: 600;
+    -webkit-transition: all 0.4s linear;
+    transition: all 0.4s linear;
+    padding: 19px 0;
+}
+
+.navbar .navbar-nav .nav-item a.active,
+.navbar .navbar-nav .nav-item:hover>a {
+    color: #aab4d8;
+}
+
+.navbar .navbar-nav .nav-item ul.sub-menu {
+    position: absolute;
+    top: 130%;
+    left: 50%;
+    white-space: nowrap;
+    text-align: center;
+    background-color: #fff;
+    -webkit-box-shadow: 0px 5px 30px 0px rgba(46, 76, 185, 0.2);
+    box-shadow: 0px 5px 30px 0px rgba(46, 76, 185, 0.2);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    z-index: 9;
+    -webkit-transition: all 0.4s linear;
+    transition: all 0.4s linear;
+    opacity: 0;
+    visibility: hidden;
+
+}
+
+.navbar .navbar-nav .nav-item ul.sub-menu::before {
+    position: absolute;
+    content: '';
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    -webkit-box-shadow: 0px 5px 30px 0px rgba(46, 76, 185, 0.2);
+    box-shadow: 0px -30px 30px 0px rgba(46, 76, 185, 0.2);
+    top: -10px;
+    left: 50%;
+    -webkit-transform: translateX(-50%) rotate(45deg);
+    transform: translateX(-50%) rotate(45deg);
+    z-index: -2;
+}
+
+.navbar .navbar-nav .nav-item:hover ul.sub-menu {
+    top: 120%;
+    opacity: 1;
+    visibility: visible;
+}
+
+.navbar .navbar-nav .nav-item ul.sub-menu li {
+    margin: 0;
+}
+
+.navbar .navbar-nav .nav-item ul.sub-menu li a {
+    padding: 10px 30px;
+    -webkit-transition: all 0.4s linear;
+    transition: all 0.4s linear;
+    display: block;
+    color: #000;
+
+}
+
+.navbar .navbar-nav .nav-item ul.sub-menu li:hover>a {
+    background-color: #bdbdbd;
+    color: #fff;
+}
+
+.navbar .navbar-toggler .icon-bar {
+    width: 30px;
+    height: 2px;
+    margin: 5px 0;
+    background-color: #2c2d3e;
+    display: block;
+    position: relative;
+    -webkit-transition: all 0.4s linear;
+    transition: all 0.4s linear;
+}
+
+.navbar .navbar-toggler.active .icon-bar:nth-of-type(1) {
+    -webkit-transform: rotate(46deg);
+    transform: rotate(46deg);
+    top: 7px;
+}
+
+.navbar .navbar-toggler.active .icon-bar:nth-of-type(2) {
+    opacity: 0;
+}
+
+.navbar .navbar-toggler.active .icon-bar:nth-of-type(3) {
+    -webkit-transform: rotate(134deg);
+    transform: rotate(134deg);
+    top: -7px;
+}
+
+.sub-nav-toggler {
+    display: none;
+}
+
+
+/*===========================
+       05.PRODUCTS css 
+===========================*/
+
+.front_product_section {
+    padding-top: 80px;
+}
+
+.product_wrapper div.products div.product {
+    float: left;
+    margin: 0 3.8% 2.992em 0;
+    padding: 0;
+    position: relative;
+    width: 100%;
+    margin-left: 0;
+}
+
+.product_wrapper div.products div.product .product_list_rows {
+    display: flex;
+    justify-content: space-between;
+
+    background-color: rgba(0, 0, 0, 0.04);
+    border: 2px solid rgba(29, 37, 96, 0.8);
+    border-radius: 10px;
+    -webkit-box-shadow: 6px 6px 0px 0px rgba(29, 37, 96, 1);
+    -moz-box-shadow: 6px 6px 0px 0px rgba(29, 37, 96, 1);
+    box-shadow: 6px 6px 0px 0px rgba(29, 37, 96, 1);
+}
+
+.product_wrapper div.products div.product .product_list_rows .pr_col {
+    flex: 0 0 20%;
+    padding: 35px 30px;
+}
+
+.product_wrapper div.products div.product .product_list_rows .pr_col {
+    flex: 0 0 20%;
+    padding: 35px 30px;
+}
+
+.product_wrapper div.products div.product .product_list_rows .product-info {
+    flex: 0 0 40%;
+    width: 40%;
+}
+
+.product_wrapper div.products div.product .product_list_rows .product-info h2 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: #000;
+}
+
+.product_wrapper div.products div.product .product_list_rows .product-info h3 {
+    font-size: 22px;
+    padding-top: 5px;
+    margin-bottom: 10px;
+}
+
+.product_wrapper div.products div.product .product_list_rows a.btns {
+    color: #FFF;
+    background-color: #ff8f00;
+    text-align: center;
+    padding: 0.6em 1em;
+    font-weight: 600;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    line-height: normal;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    height: 44px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+/*===========================
+       06.LOGIN / REGISTER css 
+===========================*/
+
+
+
+/* sign in FORM */
+.logreg-forms-panel {
+    width: 412px;
+    margin: 10vh auto;
+    background-color: #f3f3f3;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+}
+
+.logreg-forms-panel form {
+    width: 100%;
+    max-width: 410px;
+    padding: 15px;
+    margin: auto;
+}
+
+.logreg-forms-panel .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.logreg-forms-panel .form-control:focus {
+    z-index: 2;
+}
+
+.logreg-forms-panel .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.logreg-forms-panel .form-signin input[type="password"] {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.logreg-forms-panel .social-login {
+    width: auto;
+    margin: 0 auto;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.logreg-forms-panel .social-btn {
+    font-weight: 400;
+    color: white;
+    width: 190px;
+    font-size: 0.8rem;
+}
+
+.logreg-forms-panel .social-btn i {
+    margin-right: 6px;
+}
+
+.logreg-forms-panel a {
+    display: block;
+    padding-top: 10px;
+    color: #2e4db9;
+}
+
+.logreg-forms-panel a i {
+    margin-right: 6px;
+}
+
+.logreg-forms-panel .lines {
+    width: 200px;
+    border: 1px solid red;
+}
+
+
+.logreg-forms-panel button[type="submit"] {
+    margin-top: 10px;
+}
+
+.logreg-forms-panel .facebook-btn {
+    background-color: #3C589C;
+}
+
+.logreg-forms-panel .google-btn {
+    background-color: #DF4B3B;
+}
+
+.logreg-forms-panel .form-reset,
+.logreg-forms-panel .form-signup {
+    display: none;
+}
+
+.logreg-forms-panel .form-signup .social-btn {
+    width: 210px;
+}
+
+.logreg-forms-panel .form-signup input {
+    margin-bottom: 2px;
+}
+
+.logreg-forms-panel .btn {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.logreg-forms-panel .btn-main {
+    color: #fff;
+    background-color: #00457a;
+    border-color: #00457a;
+}
+
+.logreg-forms-panel .btn-orange {
+    background-color: #ff8f00;
+    color: #FFF;
+}
+
+.logreg-forms-panel .btn i {
+    margin-right: 6px;
+}
+
+
+
+
+
+
+
+/*===========================
+       06.FOOTER css 
+===========================*/
+.footer-wrapper {
+    background-color: #00457a;
+    color: #FFF;
+}
+
+.footer-wrapper p {
+    color: #FFF;
+}
+
+.footer-about span {
+    padding-top: 20px;
+    color: #FFF;
+    font-size: 14px;
+}
+
+.footer-about span i {
+    margin-right: 10px;
+}
+
+.footer-title h5 {
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    color: #FFF;
+}
+
+.footer-title h5::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 30px;
+    border-bottom: 1px dashed #FFF;
+}
+
+.footer-info {
+    padding-top: 6px;
+}
+
+.footer-info ul li a {
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 36px;
+    color: #FFF;
+}
+
+.footer-address {
+    padding-top: 15px;
+}
+
+.footer-address h5 {
+    font-size: 18px;
+}
+
+.footer-address ul {}
+
+.footer-address ul li {
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin-bottom: 14px;
+}
+
+.footer-address ul li:last-child {
+    margin-bottom: 0;
+}
+
+.footer-address ul li .icon {
+    margin-right: 10px;
+}
+
+.footer-address ul li .icon.map-i i {
+    font-size: 18px;
+}
+
+.footer-address ul li .icon i {
+    font-size: 15px;
+    color: #FFF;
+}
+
+.footer-address ul li .address {}
+
+.footer-address ul li .address h5 {
+    color: #FFF;
+}
+
+.footer-address ul li .address p {}
+
+.copyright {
+    background-color: #00457a;
+    border-top: 1px solid #58778f;
+
+}
+
+.copyright p {
+    font-size: 14px;
+}
+
+.copyright p span {
+    color: #FFF;
+}
+
+/*===========================
+    7.PAGE BANNER css 
+===========================*/
+
+#page-banner {
+    position: relative;
+}
+
+#page-banner::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    /* background-image: url(../images/shape.png); */
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: contain;
+}
+
+.page-banner-content h3 {
+    position: relative;
+    font-size: 30px;
+    text-transform: uppercase;
+    padding-left: 25px;
+}
+
+.page-banner-content h3::before {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 100%;
+    background-color: #2e4db9;
+    top: 0;
+    left: 0;
+}

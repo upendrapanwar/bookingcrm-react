@@ -4,6 +4,7 @@ import './App.css';
 //import './index.css';
 import './output.css';
 import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 const Home = lazy(() => import('./containers/Home'));
 const Register = lazy(() => import('./containers/user/register'));
@@ -15,6 +16,9 @@ const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
 function App() {
     
   return (
+    <>
+    <ToastContainer position="top-right" autoClose={3000} />
+
     <Routes>
       <Route path="/*" element={
         <Suspense>
@@ -29,6 +33,8 @@ function App() {
         } 
       />
     </Routes>
+
+  </>
   );
 
 }

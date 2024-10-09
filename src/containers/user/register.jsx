@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate} from "react-router-dom";
 import { Formik } from 'formik';
+import { toast } from 'react-toastify';
+import axios from "axios";
 import userRegistrationSchema from './../../validation-schemas/userRegistrationSchema'
 // import { SpinnerLoader } from './SpinnerLoader';
 // import GLogin from './GLogin';
@@ -15,32 +17,83 @@ const Register = () => {
     // const loading = useSelector((state) => state.global.loading);
     const [seePassword, setSeePassword] = useState(false);
     const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
+    const [emailCheckStatus, setEmailCheckStatus] = useState(null);
+    const navigate = useNavigate();
+    const recaptchaRef = useRef(null);
+    
 
-     const handleSubmit = (values, { resetForm }) => {
-    //     // Handle form submission logic here
-    //     axios.post('user/signup', values).then(response => {
-    //         console.log("response", response)
-    //         toast.dismiss();
-    //         if (response.data.status) {
-    //             toast.success(response.data.message, { autoClose: 3000 });
-    //             resetForm();
-    //             this.props.history.push('/seller/login');
-    //         }
-    //     }).catch(error => {
-    //         console.log("error", error)
-    //         toast.dismiss();
-    //         if (error.response) {
-    //             console.log("error response", error.response.data.message)
-    //             toast.error(error.response.data.message, { autoClose: 3000 });
-    //         }
-    //     }).finally(() => {
-    //         setTimeout(() => {
-    //             //this.dispatch(setLoading({ loading: false }));
-    //         }, 300);
-    //     });
+    const handleSubmit = (values, { resetForm }) => { 
+        // if (emailCheckStatus) {
+        //     console.log("Email already exists");
+        //     return;
+        // }
 
-        console.log(values);
-        resetForm();
+       // setLoading(true);
+
+
+        //this.dispatch(setLoading({loading: true}));
+        axios.post('user/signup', values).then(response => {
+            toast.dismiss();
+            console.log('response',response);
+            if (response.data.status) {
+                toast.success(response.data.message, { autoClose: 3000 });
+                resetForm();
+                // let authInfo = {
+                //     id: response.data.data['_id'],
+                //     isSubscriberRegister: ''
+                // };
+                // localStorage.setItem('authInfo', JSON.stringify(authInfo));
+                let authInfo = {
+                    expTime: response.data.data.authData.expTime,
+                    id: response.data.data.data["_id"],
+                    token: response.data.data.authData.token,
+                };
+                let userInfo = {
+                    id: response.data.data.data["_id"],
+                    name:
+                        response.data.data.data.firstname + " " + response.data.data.data.surname,
+                    email: response.data.data.data.email,
+                    role: response.data.data.data.role,
+                };
+                localStorage.setItem("userInfo", JSON.stringify(userInfo));
+                localStorage.setItem("authInfo", JSON.stringify(authInfo));
+                localStorage.setItem("isLoggedIn", 1);
+                //toast.success(response.data.message, { autoClose: 3000 });
+                navigate('/');
+            }
+        }).catch(error => {
+            toast.dismiss();
+            console.log('catch run--',error.response)
+            if (error.response) {
+                const message = "User already Exists!<br>Please login or complete the Subscription Registration Form if not already completed.";
+                // toast.error(
+                //     <div dangerouslySetInnerHTML={{ __html: message }} />,
+                //     { position: "top-center", autoClose: 3000 }
+                // );
+                toast.error(error.response.data.message);
+               // recaptchaRef.current.reset(); // Reset the ReCAPTCHA
+            }
+        }).finally(() => {
+            setTimeout(() => {
+                //setLoading(false);
+            }, 300);
+
+        // if (error.response) {
+        //     const message = (
+        //         <div>
+        //             User already Exists!<br />
+        //             Please login or complete the Subscription Registration Form if not already completed.
+        //         </div>
+        //     );
+    
+        //     // Toast with JSX content
+        //     toast.error(message, {
+        //         position: "top-center",
+        //         autoClose: 3000, // Change to your preference
+        //     });
+        // }
+
+        });
     };
 
     const handlePasswordVisibility = () => {
