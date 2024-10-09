@@ -10,10 +10,14 @@ import '../src/assets/css/style.css';
 import '../src/assets/css/responsive.css';
 import '../src/assets/css/slick.css';
 import 'font-awesome/css/font-awesome.min.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const Home = lazy(() => import('./containers/Home'));
 const Register = lazy(() => import('./containers/Register'));
 const Login = lazy(() => import('./containers/Login'));
+const StudentDashboard = lazy(() => import('./containers/student/StudentDashboard'));
+const InstructorDashboard = lazy(() => import('./containers/instructor/InstructorDashboard'));
+const ManagerDashboard = lazy(() => import('./containers/manager/ManagerDashboard'));
 
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
@@ -47,6 +51,9 @@ export const PublicRoutes = () => {
       <Routes>
         <Route path='login' element={<Login />} /> 
         <Route path='register' element={<Register />} />
+        <Route path='/student/student-dashboard' element={<StudentDashboard />} />
+        <Route path='/instructor/instructor-dashboard' element={<InstructorDashboard />} />
+        <Route path='/manager/manager-dashboard' element={<ManagerDashboard />} />
         <Route index element={<Home />} />
       </Routes>
     </>

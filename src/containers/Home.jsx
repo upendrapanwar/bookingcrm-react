@@ -5,6 +5,7 @@ import Footer from '../components/common/Footer';
 import citbConstructionLogo from '../assets/images/citb-SSSTS-construction-logo-300x300.png'; 
 
 const Home = () => {
+    
     return (
         <>
             <Header/>

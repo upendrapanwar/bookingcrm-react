@@ -533,9 +533,11 @@ p {
 
 .logreg-forms-panel .form-reset,
 .logreg-forms-panel .form-signup {
-    display: none;
+    display: block;
 }
-
+.form-group {
+    margin-bottom: 1rem;
+}
 .logreg-forms-panel .form-signup .social-btn {
     width: 210px;
 }

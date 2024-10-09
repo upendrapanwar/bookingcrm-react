@@ -24,7 +24,7 @@ const HeaderNavigation = () => {
                                 <div className="navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                                     <ul className="navbar-nav ml-auto">
                                         <li className="nav-item">
-                                            <Link to={"#"} className="active">Home</Link>
+                                            <Link to={"/"} className="active">Home</Link>
                                         </li>
                                         <li className="nav-item">
                                             <Link to={"#"}>Course Schedules</Link>
@@ -55,7 +55,7 @@ const HeaderNavigation = () => {
                                                 
                                             </li>
                                             <li className="nav-item">
-                                                <Link to={"#"}>Login</Link>
+                                                <Link to={"/login"}>Login</Link>
                                             </li>
                                         </ul>
                                     </div>

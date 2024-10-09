@@ -23,7 +23,8 @@ const AdminLogin = () => {
      * 
      */
     const handleSubmit = (values, { resetForm }) => {
-        axios.post('user/signin', values).then(response => {
+        //navigate('student/student-dashboard');
+        /*axios.post('user/signin', values).then(response => {
             toast.dismiss();
             if (response.data.status) {
                 toast.success(response.data.message, { position: "top-center",autoClose: 3000 });
@@ -60,7 +61,7 @@ const AdminLogin = () => {
             setTimeout(() => {
                 
             }, 300);
-        });
+        });*/
     }
     return (
         <>
