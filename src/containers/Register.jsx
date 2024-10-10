@@ -28,7 +28,7 @@ const Register = () => {
             if (response.data.status) {
                 toast.success(response.data.message, { autoClose: 3000 });
                 resetForm();
-                let authInfo = {
+                /*let authInfo = {
                     expTime: response.data.data.authData.expTime,
                     id: response.data.data.data["_id"],
                     token: response.data.data.authData.token,
@@ -42,25 +42,14 @@ const Register = () => {
                 };
                 localStorage.setItem("userInfo", JSON.stringify(userInfo));
                 localStorage.setItem("authInfo", JSON.stringify(authInfo));
-                localStorage.setItem("isLoggedIn", 1);
-
-                if (
-                    response.data.data.data.role === "student"
-                ) {
-                    navigate("/student/student-dashboard");
-                }
-                if (response.data.data.data.role === "instructor") {
-                    navigate("/instructor/instructor-dashboard");
-                }
-                if (response.data.data.data.role === "manager") {
-                    navigate("/manager/manager-dashboard");
-                }
+                localStorage.setItem("isLoggedIn", 1);*/
+                navigate("/login");
 
             }
         }).catch(error => {
             toast.dismiss();
             if (error.response) {
-                const message = "User already Exists!<br>Please login or complete the Subscription Registration Form if not already completed.";
+                const message = "User already Exists!";
                 toast.error(
                     <div dangerouslySetInnerHTML={{ __html: message }} />,
                     { position: "top-center", autoClose: 3000 }
@@ -89,10 +78,9 @@ const Register = () => {
                                             password:'',
                                             confirmPassword:'',
                                             role:''
-                                            
                                         }}
                             onSubmit={(values, { resetForm }) => {
-                                        handleSubmit(values, { resetForm });
+                                handleSubmit(values, { resetForm });
                             }}
                             validationSchema={CommonRegistrationSchema}
                         >

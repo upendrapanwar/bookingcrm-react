@@ -10,7 +10,6 @@ import Footer from '../components/common/Footer';
 const Login = () => {
     const navigate = useNavigate();
     useEffect(() => {
-
         console.log('test');
     }, []);
     /***********************************************************************/
@@ -20,45 +19,42 @@ const Login = () => {
      * 
      */
     const handleSubmit = (values, { resetForm }) => {
-        // navigate('/student/student-dashboard');
 
         axios
             .post("user/signin", values)
             .then((response) => {
                 toast.dismiss();
                 if (response.data.status) {
-                    // toast.success(response.data.message, {
-                    //   position: "top-center",
-                    //   autoClose: 3000,
-                    // });
+                     toast.success(response.data.message, {
+                       position: "top-center",
+                       autoClose: 3000,
+                    });
                     let authInfo = {
                         expTime: response.data.data.expTime,
                         id: response.data.data["_id"],
                         token: response.data.data.token,
-                    };
-                    let userInfo = {
-                        id: response.data.data["_id"],
-                        name:
-                            response.data.data.firstname + " " + response.data.data.surname,
-                        email: response.data.data.email,
+                        name: response.data.data.first_name + " " + response.data.data.last_name,
                         role: response.data.data.role,
+                        email: response.data.data.email,
                     };
-                    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+                    
                     localStorage.setItem("authInfo", JSON.stringify(authInfo));
-                    localStorage.setItem("isLoggedIn", 1);
                     resetForm();
-
-                    if (
-                        response.data.data.role === "student"
-                    ) {
-                        navigate("/student/student-dashboard");
+                    switch(response.data.data.role) {
+                        case 'student':
+                            navigate("/student/student-dashboard");
+                        break;
+                        case 'ambassador':    
+                            navigate("/ambessador/dashboard");
+                        break;
+                        case 'manager':    
+                        navigate("/manager/dashboard");
+                        break;
+                        default:
+                            navigate("/");
+                        break;    
                     }
-                    if (response.data.data.role === "ambassador") {
-                        navigate("/ambessador/dashboard");
-                    }
-                    if (response.data.data.role === "owner") {
-                        navigate("/owner/dashboard");
-                    }
+                   
                 } else {
                     resetForm();
                     toast.error(response.data.message, { autoClose: 3000 });

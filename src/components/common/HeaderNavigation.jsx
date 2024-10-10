@@ -1,8 +1,16 @@
 import React from 'react';
-import { Link} from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import corpelLogoMain from '../../assets/images/corpel-logo-main.png'; 
 
 const HeaderNavigation = () => {
+    const authInfo = JSON.parse(localStorage.getItem("authInfo"));
+    const navigate = useNavigate();
+    const logout = (e) => {
+        localStorage.clear();
+        navigate("/login");
+        window.location.href = "/login";
+    }
+
     return(
         <>
             <div className="navigation">
@@ -55,7 +63,16 @@ const HeaderNavigation = () => {
                                                 
                                             </li>
                                             <li className="nav-item">
+                                            {authInfo && authInfo.name ? (
+                                                
+                                                <Link to={"#"}  onClick={(e) => logout()}>Logout</Link>
+                                                
+                                            ):(
+                                                
                                                 <Link to={"/login"}>Login</Link>
+                                                
+                                            
+                                            )}
                                             </li>
                                         </ul>
                                     </div>
