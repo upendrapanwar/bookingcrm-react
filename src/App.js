@@ -22,6 +22,7 @@ const ManagerDashboard = lazy(() => import('./containers/manager/ManagerDashboar
 
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
+const CreateCourse = lazy(() => import('./containers/admin/courses/AddCourses'));
 
 function App() {
     
@@ -81,6 +82,7 @@ export const AdminRoutes = () => {
       <Routes>
         <Route path='login' element={<AdminLogin />} />
         <Route path='admin-dashboard' element={<AdminDashboard />} />
+        <Route path='admin-CreateCourse' element={<CreateCourse />} />
       </Routes>
     </>
 
