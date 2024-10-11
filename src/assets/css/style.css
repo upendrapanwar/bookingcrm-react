@@ -1442,3 +1442,29 @@ p {
     top: 0;
     left: 0;
 }
+
+@media (min-width: 640px) {
+    .sm\:text-sm {
+        font-size: .875rem;
+        line-height: 1.25rem;
+    }
+}
+.pt-16 {
+    padding-top: 4rem;
+}
+@media (min-width: 1024px) {
+    .lg\:flex {
+        display: flex;
+    }
+}
+
+@media (min-width: 1280px) {
+    .xl\:p-8 {
+        padding: 2rem;
+    }
+}
+@media (min-width: 1024px) {
+    .lg\:ml-64 {
+        margin-left: 16rem;
+    }
+}

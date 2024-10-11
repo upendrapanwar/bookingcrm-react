@@ -62,18 +62,18 @@ const HeaderNavigation = () => {
                                                 <Link to={"#"}>Contact Us</Link>
                                                 
                                             </li>
-                                            <li className="nav-item">
+                                            
                                             {authInfo && authInfo.name ? (
-                                                
-                                                <Link to={"#"}  onClick={(e) => logout()}>Logout</Link>
-                                                
+                                                <li className="nav-item">
+                                                    <Link to={"#"}  onClick={(e) => logout()}>Logout</Link>
+                                                </li>
                                             ):(
-                                                
-                                                <Link to={"/login"}>Login</Link>
-                                                
+                                                <li className="nav-item">
+                                                    <Link to={"/login"}>Login</Link>
+                                                </li>
                                             
                                             )}
-                                            </li>
+                                            
                                         </ul>
                                     </div>
                                 </nav>
