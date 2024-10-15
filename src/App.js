@@ -12,6 +12,7 @@ import '../src/assets/css/responsive.css';
 import '../src/assets/css/slick.css';
 import 'font-awesome/css/font-awesome.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
+import './assets/fonts/font';
 
 const Home = lazy(() => import('./containers/Home'));
 const Register = lazy(() => import('./containers/Register'));
@@ -23,6 +24,7 @@ const ManagerDashboard = lazy(() => import('./containers/manager/ManagerDashboar
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
 const CreateCourse = lazy(() => import('./containers/admin/courses/AddCourses'));
+const UserList = lazy(()=> import('./containers/admin/users/UserList'));
 
 function App() {
     
@@ -40,7 +42,9 @@ function App() {
       />
 
       <Route path="/admin/*" element={
-          <AdminRoutes />
+          <Suspense>
+            <AdminRoutes />
+          </Suspense>
         } 
       />
     </Routes>
@@ -83,6 +87,7 @@ export const AdminRoutes = () => {
         <Route path='login' element={<AdminLogin />} />
         <Route path='admin-dashboard' element={<AdminDashboard />} />
         <Route path='admin-CreateCourse' element={<CreateCourse />} />
+        <Route path='users/user-list' element={<UserList />} />
       </Routes>
     </>
 
