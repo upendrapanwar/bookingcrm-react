@@ -36,3 +36,80 @@
     transform: rotate(360deg);
   }
 }
+
+/* Styling for the Previous button */
+button[aria-label="Previous Page"] {
+  background-color: #4caf50; /* Green background */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-right: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Styling for the Next button */
+button[aria-label="Next Page"] {
+  background-color: #008cba; /* Blue background */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-left: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effects */
+button[aria-label="Previous Page"]:hover,
+button[aria-label="Next Page"]:hover {
+  background-color: #45a049; /* Change background on hover */
+}
+
+/* Disabled button styles */
+button[aria-label="Previous Page"]:disabled,
+button[aria-label="Next Page"]:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Styling for the search textbox */
+input[type="text"] {
+  padding: 10px;
+  border: 2px solid #4caf50;
+  border-radius: 5px;
+  outline: none;
+  width: 200px;
+  transition: border-color 0.3s ease;
+}
+
+/* Focused search textbox styling */
+input[type="text"]:focus {
+  border-color: #008cba;
+}
+
+.bg-red-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 82 82 / var(--tw-bg-opacity));
+}
+
+.w-2\.5 {
+  width: .625rem;
+}
+.editBtn {
+  width:70px;
+  margin:0px 0px 0px 10px;
+  position: relative;
+  top:-5px;
+}
+.deleteBtn {
+  width:70px;
+  margin:0px 0px 0px 10px;
+  position: relative;
+  top:-5px;
+}
+.svgclass {
+  position: relative;
+  top: 10px;
+}
