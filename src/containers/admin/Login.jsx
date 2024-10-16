@@ -24,7 +24,7 @@ const AdminLogin = () => {
      */
     const handleSubmit = (values, { resetForm }) => {
         //navigate('student/student-dashboard');
-        axios.post('user/signin', values).then(response => {
+        axios.post('admin/signin', values).then(response => {
             toast.dismiss();
             if (response.data.status) {
                 toast.success(response.data.message, { position: "top-center",autoClose: 3000 });

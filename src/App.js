@@ -23,6 +23,7 @@ const ManagerDashboard = lazy(() => import('./containers/manager/ManagerDashboar
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
 const CreateCourse = lazy(() => import('./containers/admin/courses/AddCourses'));
+const CourseListing = lazy(() => import('./containers/student'));
 
 function App() {
     
@@ -61,6 +62,7 @@ export const PublicRoutes = () => {
         <Route path='/student/student-dashboard' element={<StudentDashboard />} />
         <Route path='/instructor/instructor-dashboard' element={<InstructorDashboard />} />
         <Route path='/manager/manager-dashboard' element={<ManagerDashboard />} />
+        <Route path='/CourseListing' element={<CourseListing />} />
         <Route index element={<Home />} />
       </Routes>
     </>
