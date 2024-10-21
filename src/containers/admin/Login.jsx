@@ -119,7 +119,7 @@ const AdminLogin = () => {
                                         </div>
                                         
                                         <div className="ml-3 text-sm">
-                                        <label for="remember" className="font-medium text-gray-900 dark:text-white">Remember me</label>
+                                        <label htmlFor="remember" className="font-medium text-gray-900 dark:text-white">Remember me</label>
                                         </div>
                                         
                                         <Link to={"#"} className="ml-auto text-sm text-primary-700 hover:underline dark:text-primary-500">Lost Password?</Link>
