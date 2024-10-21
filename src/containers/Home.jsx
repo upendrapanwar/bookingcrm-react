@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
+import ListingCourse from '../components/common/courses/ListingCourses'
 import citbConstructionLogo from '../assets/images/citb-SSSTS-construction-logo-300x300.png'; 
 
 const Home = () => {
@@ -9,7 +10,8 @@ const Home = () => {
     return (
         <>
             <Header/>
-            <section className="product_wrapper front_product_section columns-1 pb-25">
+            <ListingCourse/>
+            {/* <section className="product_wrapper front_product_section columns-1 pb-25">
                 <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-8  pt-40">
@@ -215,7 +217,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
             <Footer/>
         </>
     );

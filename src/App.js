@@ -12,6 +12,8 @@ import '../src/assets/css/responsive.css';
 import '../src/assets/css/slick.css';
 import 'font-awesome/css/font-awesome.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
+import './assets/fonts/font';
+import Loader from './components/common/Loader';
 
 const Home = lazy(() => import('./containers/Home'));
 const Register = lazy(() => import('./containers/Register'));
@@ -23,7 +25,10 @@ const ManagerDashboard = lazy(() => import('./containers/manager/ManagerDashboar
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
 const CreateCourse = lazy(() => import('./containers/admin/courses/AddCourses'));
-const CourseListing = lazy(() => import('./containers/student'));
+const UserList = lazy(()=> import('./containers/admin/users/UserList'));
+const CourseListing = lazy(() => import('./components/common/courses/ListingCourses'));
+const EditCourse = lazy(()=> import('./containers/admin/courses/EditCourses'));
+const CourseDetails = lazy(()=> import('./components/common/courses/CourseDetails'))
 
 function App() {
     
@@ -33,7 +38,7 @@ function App() {
 
     <Routes>
       <Route path="/*" element={
-        <Suspense>
+        <Suspense fallback={<Loader/>}>
           <PublicRoutes />
           
         </Suspense>
@@ -41,7 +46,9 @@ function App() {
       />
 
       <Route path="/admin/*" element={
-          <AdminRoutes />
+          <Suspense fallback={<Loader/>}>
+            <AdminRoutes />
+          </Suspense>
         } 
       />
     </Routes>
@@ -62,7 +69,8 @@ export const PublicRoutes = () => {
         <Route path='/student/student-dashboard' element={<StudentDashboard />} />
         <Route path='/instructor/instructor-dashboard' element={<InstructorDashboard />} />
         <Route path='/manager/manager-dashboard' element={<ManagerDashboard />} />
-        <Route path='/CourseListing' element={<CourseListing />} />
+        <Route path='course-listing' element={<CourseListing />} />
+        <Route path='course-details' element={<CourseDetails />} />
         <Route index element={<Home />} />
       </Routes>
     </>
@@ -85,6 +93,8 @@ export const AdminRoutes = () => {
         <Route path='login' element={<AdminLogin />} />
         <Route path='admin-dashboard' element={<AdminDashboard />} />
         <Route path='admin-CreateCourse' element={<CreateCourse />} />
+        <Route path='users/user-list' element={<UserList />} />
+        <Route path='admin-EditCourse' element={<EditCourse />} />
       </Routes>
     </>
 

@@ -6,16 +6,18 @@ import axios from "axios";
 import Header from '../../../components/admin/Header';
 import Footer from '../../../components/admin/Footer';
 import EmptyImage from '../../../assets/images/EmptyImage.png';
-//import citbConstructionLogo from '../assets/images/citb-SSSTS-construction-logo-300x300.png'; 
-import citbConstructionLogo from '../../../assets/images/citb-SSSTS-construction-logo-300x300.png';
 import CreateCourseSchema from '../../../validation-schemas/CreateCourseSchema';
+import Loader from "../../../components/common/Loader";
+
 const CreateCourse = () => {
 
     const navigate = useNavigate();
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
-    const cloudName ='';
-    // console.log('authInfo---',authInfo);
+    const cloudName = process.env.REACT_APP_CLOUD_NAME;
+    // console.log('cloudName---', cloudName);
+    const [loading, setLoading] = useState([false]);
     const [previewImage, setPreviewImage] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
 
     /***********************************************************************/
 
@@ -26,22 +28,44 @@ const CreateCourse = () => {
     /***********************************************************************/
 
     /**
+     * Handle image size
+     * 
+     */
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+
+        if (file && file.size <= 5242880) {
+            setImageFile(file);
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewImage(reader.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setImageFile(null);
+            setPreviewImage(null);
+            toast.error("Image size must be less than 5 MB", { autoClose: 3000 });
+        }
+    };
+
+
+    /***********************************************************************/
+
+    /**
      * Handle after form submission
      * 
      */
     const handleImageUpload = async (file) => {
-        // setUploading(true);
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('upload_preset', 'pay-earth-images'); // Replace with your Cloudinary upload preset
-        formData.append("cloud_name",cloudName);
-        
+        formData.append('upload_preset', 'booking-crm-image');
+        formData.append("cloud_name", cloudName);
+
         try {
-            const response = await axios.post('https://api.cloudinary.com/v1_1/${cloudName}/image/upload', formData);
-            // setUploading(false);
-            return response.data.secure_url; // Return the uploaded image URL
+            const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData);
+            return response.data.secure_url;
         } catch (error) {
-            // setUploading(false);
             console.error('Image upload failed:', error);
             throw new Error('Image upload failed');
         }
@@ -52,15 +76,19 @@ const CreateCourse = () => {
      * Handle after form submission
      * 
      */
-    const handleSubmit = (values, { resetForm }) => {
-        console.log('values---', values)
-        const imageUrl = handleImageUpload(values.course_image);
-
+    const handleSubmit = async (values, { resetForm }) => {
+        setLoading(true);
+        // console.log('values---', values)
+        let imageUrl;
+        if (imageFile) {
+            imageUrl = await handleImageUpload(imageFile);
+        }
         const requestData = {
             ...values,
-            instructorId: authInfo.id,
+            // instructorId: authInfo.id,
             course_image: imageUrl,
         };
+
         axios
             .post("admin/add_course", requestData)
             .then((response) => {
@@ -86,7 +114,7 @@ const CreateCourse = () => {
             })
             .finally(() => {
                 setTimeout(() => {
-                    // setLoading(false);
+                    setLoading(false);
                 }, 300);
             });
     }
@@ -94,6 +122,7 @@ const CreateCourse = () => {
 
     return (
         <>
+            {loading === true ? <Loader /> : ''}
             <Header />
             <section className="product_wrapper front_product_section columns-1 pb-25">
                 <div className="container">
@@ -110,6 +139,7 @@ const CreateCourse = () => {
                                         vat: '',
                                         availability: '',
                                         enrollment_capacity: '',
+                                        course_time:'',
                                         course_information: '',
                                         additional_information: '',
                                         course_image: null,
@@ -137,14 +167,36 @@ const CreateCourse = () => {
                                                     <div className="form-group">
                                                         <label className="block text-gray-700 mb-2" htmlFor="courseImage">Upload Course Image</label>
                                                         {/* Image Preview */}
-                                                        <div className="w-32 h-32 min-h-32 max-h-32 border border-gray-300 overflow-hidden flex items-center justify-center">
-                                                            <img
-                                                                src={previewImage ? previewImage : EmptyImage}
-                                                                alt=""
-                                                                className=" object-cover"
-                                                            />
-                                                        </div>
-                                                        <p className='text-red-500'>Size must be less than 5 MB</p>
+                                                        {previewImage ? (
+                                                            <div className="pr_col product-logo md:w-2/12 mb-4 md:mb-0 flex-shrink-0">
+                                                                <div className="relative" style={{ width: '350px', height: '300px' }}>
+                                                                    <img
+                                                                        // width="300"
+                                                                        // height="300"
+                                                                        src={previewImage}
+                                                                        alt="Course Image"
+                                                                        className="w-full h-full object-cover"
+                                                                        decoding="async"
+                                                                        fetchpriority="high"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                                <div className="pr_col product-logo md:w-2/12 mb-4 md:mb-0 flex-shrink-0">
+                                                                    <div className="relative" style={{ width: '350px', height: '300px' }}>
+                                                                        <img
+                                                                            src={EmptyImage}
+                                                                            alt="Course default Image"
+                                                                            className="w-full h-full object-cover"
+                                                                            decoding="async"
+                                                                            fetchpriority="high"
+                                                                        />
+                                                                        <p className="absolute inset-0 flex items-end mb-4 justify-center text-red-500  bg-opacity-50 text-center text-sm font-semibold">
+                                                                            Size must be less than 5 MB
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                        )}
                                                         <input
                                                             type="file"
                                                             name="course_image"
@@ -153,9 +205,8 @@ const CreateCourse = () => {
                                                             accept="image/*"
                                                             value={values.course_image}
                                                             onChange={(event) => {
-                                                                const file = event.currentTarget.files[0];
-                                                                setFieldValue("course_image", file);
-                                                                setPreviewImage(URL.createObjectURL(file));
+                                                                handleChange("course_image")(event);
+                                                                handleImageChange(event);
                                                             }}
                                                             onBlur={handleBlur}
                                                         />
@@ -304,6 +355,23 @@ const CreateCourse = () => {
                                                             />
                                                             {touched.enrollment_capacity && errors.enrollment_capacity ? (
                                                                 <small className="text-danger">{errors.enrollment_capacity}</small>
+                                                            ) : null}
+                                                        </div>
+
+                                                        {/* Course Time */}
+                                                        <div className="form-group mb-4 col-md-6">
+                                                            <input
+                                                                type="text"
+                                                                name="course_time"
+                                                                className="form-control"
+                                                                id="courseTime"
+                                                                placeholder="Time (12:00 AM - 01:00 AM)"
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur}
+                                                                value={values.course_time}
+                                                            />
+                                                            {touched.course_time && errors.course_time ? (
+                                                                <small className="text-danger">{errors.course_time}</small>
                                                             ) : null}
                                                         </div>
 

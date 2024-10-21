@@ -25,9 +25,11 @@ export default Yup.object().shape({
             return value < this.parent.regular_price;
         }),
 
-    vat: Yup.number()
-        .min(0, 'VAT must be a positive number')
-        .max(100, 'VAT must not exceed 100%'),
+    vat: Yup.number() 
+    .transform(value => (value === null || value === '' ? 0 : value))
+    .min(0, 'VAT must be a positive number')
+    .max(100, 'VAT must not exceed 100%')
+    .default(0),
 
     availability: Yup.string()
         .required('Availability is required')
@@ -37,6 +39,15 @@ export default Yup.object().shape({
             'Availability must be in the format "dd/mm/yy to dd/mm/yy"'
         ),
 
+        course_time: Yup.string()
+        .required('Time is required')
+        .min(3, 'Time must be at least 3 characters long')
+        .matches(
+            /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM) - (0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/,
+            'Time must be in the format "HH:MM AM - HH:MM PM"'
+        ),
+        
+
     enrollment_capacity: Yup.number()
         .min(1, 'Enrollment capacity must be at least 1')
         .required('Enrollment capacity is required'),
@@ -45,5 +56,7 @@ export default Yup.object().shape({
         .required('Course information is required')
         .min(10, 'Course information must be at least 10 characters long'),
 
-    additional_information: Yup.string().nullable()
+    additional_information: Yup.string().nullable(),
+
+    course_image: Yup.string().nullable(),
 });
