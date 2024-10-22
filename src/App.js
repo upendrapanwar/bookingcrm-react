@@ -28,7 +28,8 @@ const CreateCourse = lazy(() => import('./containers/admin/courses/AddCourses'))
 const UserList = lazy(()=> import('./containers/admin/users/UserList'));
 const CourseListing = lazy(() => import('./components/common/courses/ListingCourses'));
 const EditCourse = lazy(()=> import('./containers/admin/courses/EditCourses'));
-const CourseDetails = lazy(()=> import('./components/common/courses/CourseDetails'))
+const CourseDetails = lazy(()=> import('./components/common/courses/CourseDetails'));
+const AdminCoursesList = lazy(()=> import('./containers/admin/courses/AdminCoursesList'));
 
 function App() {
     
@@ -95,6 +96,7 @@ export const AdminRoutes = () => {
         <Route path='admin-CreateCourse' element={<CreateCourse />} />
         <Route path='users/user-list' element={<UserList />} />
         <Route path='admin-EditCourse' element={<EditCourse />} />
+        <Route path='courses/courses-list' element={<AdminCoursesList />} />
       </Routes>
     </>
 

@@ -68,7 +68,7 @@ console.log('selectedCourse----',selectedCourse)
     return (
         <>
             {loading === true ? <Loader /> : ''}
-            <section className="product_wrapper front_product_section columns-1 pb-25">
+            <section className="product_wrapper front_product_section columns-1 pt-0">
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12">
@@ -147,7 +147,7 @@ console.log('selectedCourse----',selectedCourse)
                                                             Add to cart
                                                         </a>
                                                         <button
-                                                           // onClick={() => handleMoreInfoClick(course)}
+                                                            onClick={() => handleMoreInfoClick(course)}
                                                             className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 block text-center"
                                                         >
                                                             More Info

@@ -10,9 +10,9 @@ const Home = () => {
     return (
         <>
             <Header/>
+            <section className="product_wrapper front_product_section columns-1 pb-25">
             <ListingCourse/>
-            {/* <section className="product_wrapper front_product_section columns-1 pb-25">
-                <div className="container">
+                {/* <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-lg-8  pt-40">
                             <div className="section-title text-center pb-45 ">
@@ -216,8 +216,8 @@ const Home = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-            </section> */}
+                </div> */}
+            </section>
             <Footer/>
         </>
     );
