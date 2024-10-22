@@ -5,6 +5,15 @@ import { toast } from 'react-toastify';
 import axios from "axios";
 import UserAdminRegisterSchema from '../../../validation-schemas/UserAdminRegisterSchema';
 import Cropper from 'react-easy-crop';
+import Slider from '@material-ui/core/Slider';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
+import { getCroppedImg, getRotatedImage } from '../../../components/common/cropper/CanvasUtils.js';
+import { styles } from '../../../components/common/cropper/Styles.js';
+import ImgDialog from '../../../components/common/cropper/ImgDialog.js';
+import { getOrientation } from 'get-orientation/browser'
+
 
 const ORIENTATION_TO_ANGLE = {
     '3': 180,
@@ -12,13 +21,15 @@ const ORIENTATION_TO_ANGLE = {
     '8': -90,
 }
 
-const AddUser = ({ updateParentAddModalState, closeModal }) => {
+const AddUser = ({ updateParentAddModalState, closeModal, classes }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 })
     const [zoom, setZoom] = useState(1);
     const [imageSrc, setImageSrc] = React.useState(null);
     const [rotation, setRotation] = useState(0)
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
     const [croppedImage, setCroppedImage] = useState(null)
+    const [initialCrop, setInitialCrop] = useState({ x: 0, y: 0 });
+    const [initialZoom, setInitialZoom] = useState(1);
     
     useEffect(() => {
         
@@ -49,10 +60,21 @@ const AddUser = ({ updateParentAddModalState, closeModal }) => {
     }
     /***********************************************************************/
     /***********************************************************************/
-    
+    /**
+     * On crop complete
+     * 
+     * @param (objj,obj)
+     * 
+     */
     const onCropComplete = (croppedArea, croppedAreaPixels) => {
-        console.log(croppedArea, croppedAreaPixels)
+      setCroppedAreaPixels(croppedAreaPixels)
     }
+    /***********************************************************************/
+    /***********************************************************************/
+    /***
+     * Show cropped image
+     * 
+     */
     const showCroppedImage = async () => {
         try {
           const croppedImage = await getCroppedImg(
@@ -65,38 +87,67 @@ const AddUser = ({ updateParentAddModalState, closeModal }) => {
         } catch (e) {
           console.error(e)
         }
-      }
+    }
+    /***********************************************************************/
+    /***********************************************************************/
+    /**
+     *Reset cropped image
+     *
+     */
+    const onClose = () => {
+      setCroppedImage(null)
+    }
+    /***********************************************************************/
+    /***********************************************************************/
+    /**
+     *On chanage file upload
+     *
+     * @param {*} e
+     */
+    const onFileChange = async (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0]
+        let imageDataUrl = await readFile(file)
     
-      const onClose = () => {
-        setCroppedImage(null)
-      }
-    
-      const onFileChange = async (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-          const file = e.target.files[0]
-          let imageDataUrl = await readFile(file)
-    
-          try {
+        try {
             // apply rotation if needed
-            const orientation = await getOrientation(file)
-            const rotation = ORIENTATION_TO_ANGLE[orientation]
-            if (rotation) {
-              imageDataUrl = await getRotatedImage(imageDataUrl, rotation)
-            }
-          } catch (e) {
-            console.warn('failed to detect the orientation')
+          const orientation = await getOrientation(file)
+          const rotation = ORIENTATION_TO_ANGLE[orientation]
+          if (rotation) {
+            imageDataUrl = await getRotatedImage(imageDataUrl, rotation)
           }
-    
-          setImageSrc(imageDataUrl)
+        } catch (e) {
+          console.warn('failed to detect the orientation')
         }
+    
+        setImageSrc(imageDataUrl)
       }
-      function readFile(file) {
-        return new Promise((resolve) => {
-          const reader = new FileReader()
-          reader.addEventListener('load', () => resolve(reader.result), false)
-          reader.readAsDataURL(file)
-        })
-      }
+    }
+    /***********************************************************************/
+    /***********************************************************************/
+    /**
+     * Readfile on file load
+     * 
+     * @param {*} file 
+     * @returns 
+     */
+    function readFile(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.addEventListener('load', () => resolve(reader.result), false)
+        reader.readAsDataURL(file)
+      })
+    }
+    /***********************************************************************/
+    /***********************************************************************/
+    // Reset crop and zoom to initial values
+    const handleReset = () => {
+      setCrop(initialCrop);
+      setZoom(initialZoom);
+      setImageSrc(null);
+    };
+    /***********************************************************************/
+    /***********************************************************************/
     return (
             <>
             <div className="relative w-full h-full max-w-2xl px-4 md:h-auto">
@@ -110,7 +161,7 @@ const AddUser = ({ updateParentAddModalState, closeModal }) => {
                         </button>
                     </div>
                                         
-                    <div className="p-6 space-y-6">
+                    <div className="p-6 space-y-6 containClass overflow-y-auto">
                         <Formik
                             initialValues={{
                                 email: '',
@@ -135,72 +186,75 @@ const AddUser = ({ updateParentAddModalState, closeModal }) => {
                                         <div className="grid grid-cols-6 gap-6">
                                             <div className="col-span-6 sm:col-span-3">
                                                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file</label>
+                                                
                                                 <div>
-      {imageSrc ? (
-        <React.Fragment>
-          <div className={classes.cropContainer}>
-            <Cropper
-              image={imageSrc}
-              crop={crop}
-              rotation={rotation}
-              zoom={zoom}
-              aspect={4 / 3}
-              onCropChange={setCrop}
-              onRotationChange={setRotation}
-              onCropComplete={onCropComplete}
-              onZoomChange={setZoom}
-            />
-          </div>
-          <div className={classes.controls}>
-            <div className={classes.sliderContainer}>
-              <Typography
-                variant="overline"
-                classes={{ root: classes.sliderLabel }}
-              >
-                Zoom
-              </Typography>
-              <Slider
-                value={zoom}
-                min={1}
-                max={3}
-                step={0.1}
-                aria-labelledby="Zoom"
-                classes={{ root: classes.slider }}
-                onChange={(e, zoom) => setZoom(zoom)}
-              />
-            </div>
-            <div className={classes.sliderContainer}>
-              <Typography
-                variant="overline"
-                classes={{ root: classes.sliderLabel }}
-              >
-                Rotation
-              </Typography>
-              <Slider
-                value={rotation}
-                min={0}
-                max={360}
-                step={1}
-                aria-labelledby="Rotation"
-                classes={{ root: classes.slider }}
-                onChange={(e, rotation) => setRotation(rotation)}
-              />
-            </div>
-            <Button
-              onClick={showCroppedImage}
-              variant="contained"
-              color="primary"
-              classes={{ root: classes.cropButton }}
-            >
-              Show Result
-            </Button>
-          </div>
-          <ImgDialog img={croppedImage} onClose={onClose} />
-        </React.Fragment>
-      ) : (
-        <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="profile_image_url" name="profile_image_url" type="file" onChange={onFileChange} accept="image/*" />
-      )}
-    </div>
+                                                {imageSrc ? (
+                                                  <React.Fragment>
+                                                    <div className={classes.cropContainer}>
+                                                      <Cropper
+                                                        image={imageSrc}
+                                                        crop={crop}
+                                                        rotation={rotation}
+                                                        zoom={zoom}
+                                                        aspect={4 / 3}
+                                                        onCropChange={setCrop}
+                                                        onRotationChange={setRotation}
+                                                        onCropComplete={onCropComplete}
+                                                        onZoomChange={setZoom}
+                                                      />
+                                                    </div>
+                                                    <div className={classes.controls}>
+                                                      <div className={classes.sliderContainer}>
+                                                        <Typography
+                                                          variant="overline"
+                                                          classes={{ root: classes.sliderLabel }}
+                                                        >
+                                                          Zoom
+                                                        </Typography>
+                                                        <Slider
+                                                          value={zoom}
+                                                          min={1}
+                                                          max={3}
+                                                          step={0.1}
+                                                          aria-labelledby="Zoom"
+                                                          classes={{ root: classes.slider }}
+                                                          onChange={(e, zoom) => setZoom(zoom)}
+                                                        />
+                                                      </div>
+                                                      <div className={classes.sliderContainer}>
+                                                        <Typography
+                                                          variant="overline"
+                                                          classes={{ root: classes.sliderLabel }}
+                                                        >
+                                                          Rotation
+                                                        </Typography>
+                                                        <Slider
+                                                          value={rotation}
+                                                          min={0}
+                                                          max={360}
+                                                          step={1}
+                                                          aria-labelledby="Rotation"
+                                                          classes={{ root: classes.slider }}
+                                                          onChange={(e, rotation) => setRotation(rotation)}
+                                                        />
+                                                      </div>
+                                                      <button onClick={handleReset}>Reset</button>
+                                                      <Button
+                                                        onClick={showCroppedImage}
+                                                        variant="contained"
+                                                        color="primary"
+                                                        classes={{ root: classes.cropButton }}
+                                                      >
+                                                        Show Result
+                                                      </Button>
+                                                    </div>
+                                                    <img src={croppedImage} alt="croppedImage" />
+                                                    {/*<ImgDialog img={croppedImage} onClose={onClose} />*/}
+                                                  </React.Fragment>
+                                                ) : (
+                                                  <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="profile_image_url" name="profile_image_url" type="file" onChange={onFileChange} accept="image/*" />
+                                                )}
+                                              </div>
                                                 
                                             </div>  
 
@@ -313,4 +367,4 @@ const AddUser = ({ updateParentAddModalState, closeModal }) => {
     );
 }
 
-export default AddUser;
+export default withStyles(styles)(AddUser);
