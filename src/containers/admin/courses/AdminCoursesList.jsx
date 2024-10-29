@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
 import Header from "../../../components/admin/Header";
 import Sidebar from '../../../components/admin/Sidebar';
 import Footer from "../../../components/admin/Footer";
@@ -9,45 +9,43 @@ import DataTable from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import AvatarComponent from '../../../components/common/Avatar';
-import DeleteUserModal from '../../../containers/admin/users/DeleteUserModal';
-import AddUser from '../../../containers/admin/users/AddUser';
-import EditUser from '../../../containers/admin/users/EditUser';
-import CourseListing from "../../../components/common/courses/ListingCourses";
+import EmptyImage from '../../../assets/images/EmptyImage.png';
+import Loader from "../../../components/common/Loader";
 
 
 const AdminCoursesList = () => {
-    const [showAddUserModal, setShowAddUserModal] = useState(false);
-    const [showEditUserModal, setShowEditUserModal] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [allUsers, setAllUsers] = useState("");
+    const navigate = useNavigate();
+
+    const [loading, setLoading] = useState([false]);
     const [columns, setColumns] = useState([]);
     const [orderDataSet, setOrderDataSet] = useState([]);
+    const [courses,setAllCourses] = useState([]);
     const customStyles = {
         pagination: {
-          style: {
-            display: 'flex',
-            justifyContent: 'center',
-          },
-          pageButtonsStyle: {
-            padding: '10px 15px',
-            margin: '0 5px',
-            backgroundColor: '#4caf50',
-            color: '#fff',
-            borderRadius: '5px',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease',
-          },
-          pageButtonHover: {
-            backgroundColor: '#45a049',
-          },
-          pageButtonDisabled: {
-            backgroundColor: '#ccc',
-            cursor: 'not-allowed',
-          },
+            style: {
+                display: 'flex',
+                justifyContent: 'center',
+            },
+            pageButtonsStyle: {
+                padding: '10px 15px',
+                margin: '0 5px',
+                backgroundColor: '#4caf50',
+                color: '#fff',
+                borderRadius: '5px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s ease',
+            },
+            pageButtonHover: {
+                backgroundColor: '#45a049',
+            },
+            pageButtonDisabled: {
+                backgroundColor: '#ccc',
+                cursor: 'not-allowed',
+            },
         },
-        
-      };
+
+    };
     // Custom text for the pagination buttons
     const paginationComponentOptions = {
         rowsPerPageText: 'Rows per page:',
@@ -57,11 +55,10 @@ const AdminCoursesList = () => {
         selectAllRowsItemText: 'All',
         previousPageText: '<< Previous',  // Custom Previous button text
         nextPageText: 'Next >>',          // Custom Next button text
-    };  
+    };
     useEffect(() => {
         //dispatch(getLeadsContent());
-        getAllUsers();
-        console.log('showAddUserModal=',showAddUserModal);
+        getAllCourses();
     }, []);
 
     /***********************************************************************/
@@ -77,13 +74,13 @@ const AdminCoursesList = () => {
     /***********************************************************************/
     /***********************************************************************/
     /**
-     * Update Add User modal state
+     * Navigate To Add Courses 
      * 
-     * @param state
+     * @param navigate
      * 
     */
-    const updateParentAddModalState = (newState) => {
-        setShowAddUserModal(newState);
+    const handleButtonClick = () => {
+        navigate('/admin/admin-CreateCourse');
     };
     /***********************************************************************/
     /***********************************************************************/
@@ -95,160 +92,205 @@ const AdminCoursesList = () => {
      * 
     */
     const handleStatusUpdate = (id) => {
-        console.log('Update id: ',id);
+        console.log('Update id: ', id);
     }
     /***********************************************************************/
     /***********************************************************************/
     /**
-     * Manage Update of user by id
+     * Manage Update of Courses by id
      * 
      * @param id
      * @return Object|null
      * 
     */
     const handleEdit = (id) => {
-        setShowEditUserModal(false);
-        console.log('Update id: ',id);
+        navigate(`/admin/admin-EditCourse?id=${id}`);
     }
     /***********************************************************************/
     /***********************************************************************/
     /**
-     * Manage delete selected user by id
+     * Manage delete selected course by id
      * 
      * @param id
      * @return Object|null
      * 
     */
     const handleDeleteSeletedData = (id) => {
-        console.log('Update id: ',id);
+        console.log('Update id: ', id);
+        let courseId = {
+            id:id,
+        }
+        setLoading(true);
+        
+        axios
+            .put("admin/delete_course",courseId)
+            .then((response) => {
+                toast.dismiss();
+                if (response.data.status) {
+                    console.log('Deleted Course-----', response)
+                    toast.success(response.data.message, { autoClose: 3000 });
+                    getAllCourses();
+                } else {
+                    toast.error(response.data.message, { autoClose: 3000 });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss();
+                if (error.response) {
+                    toast.error(error.response.data.message, { autoClose: 3000 });
+                }
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    setLoading(false);
+                }, 300);
+            });
     }
     /***********************************************************************/
     /***********************************************************************/
-    
+
     /**
-     * Get Users courses list
+     * Get  courses list
      * 
      */
-     const getAllUsers = () => {
-        axios.get('user/get-all-users').then(response => {
-                toast.dismiss();
-    
-                if (response.data) {
-                    console.log(response.data)
-                    if(response.data.status) {
-                        setAllUsers(response.data.data);
-                        console.log(response.data.data)
-                        var usersData = response.data.data;
-                        let usersDataArray = [];
-                        usersData.forEach(function (value) {
-                            usersDataArray.push({
-                                first_name: value.first_name,
-                                last_name: value.last_name,
-                                email: value.email,
-                                role: value.role,
-                                profile_image_url: (value.profile_image_url !=null) ? value.profile_image_url : <AvatarComponent />,
-                                isActive: (value.isActive === true) ? <div className="flex items-center"><div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div><span>Active</span></div> : <div className="flex items-center"><div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></div><span>Inactive</span></div>,
-                                createdAt: value.createdAt
-                            });
-                          });
-                        var columnsData = [
-                            {
-                                name: "",
-                                selector: (row, i) => row.profile_image_url,
-                                cell: (row) => row.profile_image_url,
-                                sortable: false,
+    const getAllCourses = () => {
+        axios.get('admin/get_course').then(response => {
+            toast.dismiss();
+
+            if (response.data) {
+                console.log(response.data)
+                if (response.data.status) {
+                    setAllCourses(response.data.data);
+                    console.log(response.data.data)
+                    var coursesData = response.data.data;
+                    let coursesDataArray = [];
+                    coursesData.forEach(function (value) {
+                        const isActiveStatus = Boolean(value.isActive);
+                        coursesDataArray.push({
+                            course_id: String(value.id || ''),
+                            course_title: String(value.course_title || ''),
+                            category: String(value.category || ''),
+                            course_format: String(value.course_format || ''),
+                            course_image: value.course_image || EmptyImage,
+                            isActiveString: isActiveStatus ? 'Active' : 'Inactive',
+                            createdby: (value.instructor && value.instructor.first_name) ? value.instructor.first_name : '',
+                            createdAt: String(value.createdAt || ''),
+                        });
+                    });
+                    var columnsData = [
+                        {
+                            name: "",
+                            selector: (row, i) => row.course_image,
+                            cell: (row) => (
+                                <img
+                                    src={row.course_image ? row.course_image : EmptyImage}
+                                    alt="Course image"
+                                    style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                                />
+                            ),
+                            sortable: false,
+                        },
+                        {
+                            name: "Course Title",
+                            selector: (row, i) => row.course_title,
+                            cell: (row) => <span>{row.course_title}</span>,
+                            sortable: true,
+                        },
+                        {
+                            name: "category",
+                            selector: (row, i) => row.category,
+                            cell: (row) => <span>{row.category}</span>,
+                            sortable: true,
+                        },
+                        {
+                            name: "Mode",
+                            selector: (row, i) => row.course_format,
+                            cell: (row) => <span>{row.course_format}</span>,
+                            sortable: true,
+                        },
+                        {
+                            name: "Status",
+                            selector: (row) => row.isActiveString,
+                            cell: (row) => row.isActiveString === 'Active' ? (
+                                <div className="flex items-center">
+                                    <div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div>
+                                    <span>Active</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center">
+                                    <div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></div>
+                                    <span>Inactive</span>
+                                </div>
+                            ),
+                            sortable: true,
+                        },
+                        {
+                            name: "Author",
+                            selector: (row, i) => row.createdby,
+                            cell: (row) => row.createdby,
+                            sortable: true,
+                        },
+                        {
+                            name: "Created At",
+                            selector: (row, i) => row.createdAt,
+                            cell: (row) => {
+                                const date = new Date(row.createdAt);
+                                const day = date.getDate();
+                                const month = date.toLocaleString('en-us', { month: 'short' });
+                                const year = date.getFullYear();
+                                const formattedDate = `${day} ${month}, ${year}`;
+                                return <span>{formattedDate}</span>;
                             },
-                            {
-                              name: "First Name",
-                              selector: (row, i) => row.first_name,
-                              cell: (row) => <span>{row.first_name}</span>,
-                              sortable: true,
-                            },
-                            {
-                              name: "Last Name",
-                              selector: (row, i) => row.last_name,
-                              cell: (row) => <span>{row.last_name}</span>,
-                              sortable: true,
-                            },  
-                            {
-                              name: "Email",
-                              selector: (row, i) => row.email,
-                              cell: (row) => <span>{row.email}</span>,
-                              sortable: true,
-                            },
-                            {
-                                name: "Role",
-                                selector: (row, i) => row.role,
-                                cell: (row) => row.role,
-                                sortable: true,
-                              },
-                             
-                              {
-                                name: "Status",
-                                selector: (row, i) => row.isActive,
-                                cell: (row) => row.isActive,
-                                sortable: true,
-                              },
-                            {
-                                name: "Created At",
-                                selector: (row, i) => row.createdAt,
-                                cell: (row) => {
-                                  const date = new Date(row.createdAt);
-                                  const day = date.getDate();
-                                  const month = date.toLocaleString('en-us', { month: 'short' });
-                                  const year = date.getFullYear();
-                                  const formattedDate = `${day} ${month}, ${year}`;
-                                  return <span>{formattedDate}</span>;
-                                },
-                                sortable: true,
-                              },
-                              {
-                                name: "Actions",
-                                cell: (row) => (
-                                  <>
+                            sortable: true,
+                        },
+                        {
+                            name: "Actions",
+                            cell: (row) => (
+                                <>
                                     <button
-                                      onClick={() => handleEdit(row.id)}
-                                      className="mr-10 items-center px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                        onClick={() => handleEdit(row.course_id)}
+                                        className="mr-10 items-center px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                                     >
                                         <svg class="svgclass w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd"></path></svg>
                                         <span className="editBtn">Edit</span>
                                     </button>
                                     <button
-                                      className="items-center px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
-                                      onClick={() => handleDeleteSeletedData(row._id)}
+                                        className="items-center px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+                                        onClick={() => handleDeleteSeletedData(row.course_id)}
                                     >
                                         <svg class="svgclass w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>
-                                      <span className="deleteBtn">Delete</span>
+                                        <span className="deleteBtn">Delete</span>
                                     </button>
-                                  </>
-                                ),
-                              },
-                           
-                          ];
-                        setColumns(columnsData);
-                        setOrderDataSet(usersDataArray);  
-                    }
-                    
+                                </>
+                            ),
+                        },
+
+                    ];
+                    setColumns(columnsData);
+                    setOrderDataSet(coursesDataArray);
                 }
-            }).catch(error => {
-                toast.dismiss();
-                if (error.response) {
-                    toast.error('Data is not available', { position: "top-center",autoClose: 3000 });
-                }
-            });
-        
+
+            }
+        }).catch(error => {
+            toast.dismiss();
+            if (error.response) {
+                toast.error('Data is not available', { position: "top-center", autoClose: 3000 });
+            }
+        });
+
     }
     /***********************************************************************/
     /***********************************************************************/
-    
-    return(
+
+    return (
         <>
+            {loading === true ? <Loader /> : ''}
             <Header />
             <div className="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
                 <Sidebar />
                 <div id="main-content" className="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900">
                     <main>
-                       
+
                         <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
                             <div className="w-full mb-1">
                                 <div className="mb-4">
@@ -263,7 +305,7 @@ const AdminCoursesList = () => {
                                             <li>
                                                 <div className="flex items-center">
                                                     <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
-                                                    <Link to={"#"} className="ml-1 text-gray-700 hover:text-primary-600 md:ml-2 dark:text-gray-300 dark:hover:text-white">Users</Link>
+                                                    <Link to={"#"} className="ml-1 text-gray-700 hover:text-primary-600 md:ml-2 dark:text-gray-300 dark:hover:text-white">Courses</Link>
                                                 </div>
                                             </li>
                                             <li>
@@ -300,8 +342,13 @@ const AdminCoursesList = () => {
                                         </div>
                                     </div>*/}
                                     <div className="flex items-center ml-auto space-x-2 sm:space-x-3">
-                                        <button type="button" data-modal-target="add-user-modal" data-modal-toggle="add-user-modal" className="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" onClick={() => setShowAddUserModal(true)}>
-                                            <svg className="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
+                                        <button
+                                            type="button" className="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                                            onClick={handleButtonClick}
+                                        >
+                                            <svg className="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path>
+                                            </svg>
                                             Add course
                                         </button>
                                         {/*<Link to={"#"} className="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
@@ -312,36 +359,33 @@ const AdminCoursesList = () => {
                                 </div>
                             </div>
                         </div>
-                         <div className="flex flex-col">
+                        <div className="flex flex-col">
                             <div className="overflow-x-auto w-full">
                                 <div className="min-w-full align-middle">
-                                    {/* <div class="overflow-hidden shadow">
+                                    <div class="overflow-hidden shadow">
                                         <DataTableExtensions
-                                        columns={columns}
-                                        data={orderDataSet}
-                                    >
-                                        <DataTable
-                                        title="Table"
-                                        selectableRows
-                                        noHeader
-                                        defaultSortField="id"
-                                        defaultSortAsc={false}
-                                        pagination
-                                        paginationComponentOptions={paginationComponentOptions}
-                                        highlightOnHover
-                                        Clicked
-                                        Selected={handleChange}
-                                        customStyles={customStyles}
-                                        />
-                                    </DataTableExtensions>             
-                                    </div> */}
-
-                                    <CourseListing/>
-                                </div>                
-
+                                            columns={columns}
+                                            data={orderDataSet}
+                                        >
+                                            <DataTable
+                                                title="Table"
+                                                selectableRows
+                                                noHeader
+                                                defaultSortField="id"
+                                                defaultSortAsc={false}
+                                                pagination
+                                                paginationComponentOptions={paginationComponentOptions}
+                                                highlightOnHover
+                                                Clicked
+                                                Selected={handleChange}
+                                                customStyles={customStyles}
+                                            />
+                                        </DataTableExtensions>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
+
                         {/*<div className="sticky bottom-0 right-0 items-center w-full p-4 bg-white border-t border-gray-200 sm:flex sm:justify-between dark:bg-gray-800 dark:border-gray-700">
                             <div className="flex items-center mb-4 sm:mb-0">
                                 <Link to={"#"} className="inline-flex justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
@@ -363,23 +407,33 @@ const AdminCoursesList = () => {
                                 </Link>
                             </div>
                         </div>*/}
-                        <div className={showEditUserModal ? "fixed left-0 right-0 z-50 items-center justify-center  overflow-x-hidden overflow-y-auto top-4 md:inset-0 h-modal sm:h-full" : "fixed left-0 right-0 z-50 items-center justify-center hidden overflow-x-hidden overflow-y-auto top-4 md:inset-0 h-modal sm:h-full"} id="edit-user-modal">
-                            <EditUser />
-                        </div>    
-                        
-                        <div className={showAddUserModal ? "fixed left-0 right-0 z-50 items-center justify-center overflow-x-hidden overflow-y-auto top-4 md:inset-0 h-modal sm:h-full flex" : "fixed left-0 right-0 z-50 items-center justify-center overflow-x-hidden overflow-y-auto top-4 md:inset-0 h-modal sm:h-full hidden"} id="add-user-modal">
-                            <AddUser updateParentAddModalState ={updateParentAddModalState} closeModal={() => setShowAddUserModal(false)}/>
-                        </div>
 
-                        <div className="fixed left-0 right-0 z-50 items-center justify-center hidden overflow-x-hidden overflow-y-auto top-4 md:inset-0 h-modal sm:h-full" id="delete-user-modal">
-                            <DeleteUserModal />
-                        </div>
-                        
+                        {/*<div className="sticky bottom-0 right-0 items-center w-full p-4 bg-white border-t border-gray-200 sm:flex sm:justify-between dark:bg-gray-800 dark:border-gray-700">
+                            <div className="flex items-center mb-4 sm:mb-0">
+                                <Link to={"#"} className="inline-flex justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                    <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                                </Link>
+                                <Link to={"#"} className="inline-flex justify-center p-1 mr-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                                    <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
+                                </Link>
+                                <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span className="font-semibold text-gray-900 dark:text-white">1-20</span> of <span className="font-semibold text-gray-900 dark:text-white">2290</span></span>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <Link to={"#"} className="inline-flex items-center justify-center flex-1 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    <svg className="w-5 h-5 mr-1 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                                    Previous
+                                </Link>
+                                <Link to={"#"} className="inline-flex items-center justify-center flex-1 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    Next
+                                    <svg className="w-5 h-5 ml-1 -mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd"></path></svg>
+                                </Link>
+                            </div>
+                        </div>*/}
                     </main>
                     <Footer />
-                </div>    
+                </div>
             </div>
-        </>        
+        </>
     );
 }
 

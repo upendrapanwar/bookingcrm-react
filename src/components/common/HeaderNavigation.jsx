@@ -37,9 +37,9 @@ const HeaderNavigation = () => {
                                         <li className="nav-item">
                                             <Link to={"#"}>Course Schedules</Link>
                                                 <ul className="sub-menu">
-                                                    <li className="li"><Link to={"#"}>All Courses</Link></li>
-                                                    <li className="li"><Link to={"#"}>CITB Courses</Link></li>
-                                                    <li className="li"><Link to={"#"}>Early Bird Bargains</Link></li>
+                                                    <li className="li"><Link to={"/course-listing"}>All Courses</Link></li>
+                                                    <li className="li"><Link to={"/course-listing"}>CITB Courses</Link></li>
+                                                    <li className="li"><Link to={"/course-listing"}>Early Bird Bargains</Link></li>
                                                 </ul>
                                             </li>
                                             <li className="nav-item">

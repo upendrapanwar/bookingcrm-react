@@ -27,6 +27,16 @@ const CreateCourse = () => {
     }, []);
     /***********************************************************************/
 
+    const formatDate = (date) => {
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}-${month}-${year}`; // dd-mm-yyyy format with hyphens
+    };
+
+  /***********************************************************************/
+
     /**
      * Handle image size
      * 
@@ -64,7 +74,8 @@ const CreateCourse = () => {
 
         try {
             const response = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData);
-            return response.data.secure_url;
+            // return response.data.secure_url;
+            return response.data;
         } catch (error) {
             console.error('Image upload failed:', error);
             throw new Error('Image upload failed');
@@ -79,14 +90,20 @@ const CreateCourse = () => {
     const handleSubmit = async (values, { resetForm }) => {
         setLoading(true);
         // console.log('values---', values)
-        let imageUrl;
+        let imageData;
         if (imageFile) {
-            imageUrl = await handleImageUpload(imageFile);
+            imageData = await handleImageUpload(imageFile);
         }
+        console.log('imageData---', imageData)
         const requestData = {
             ...values,
-            // instructorId: authInfo.id,
-            course_image: imageUrl,
+            instructorId: authInfo.id,
+            ...(imageData && {
+                course_image: imageData.secure_url,
+                image_id: imageData.public_id,
+            }),
+            start_date: formatDate(values.start_date),
+            end_date: formatDate(values.end_date),
         };
 
         axios
@@ -96,7 +113,8 @@ const CreateCourse = () => {
                 if (response.data.status) {
                     toast.success(response.data.message, { autoClose: 3000 });
                     resetForm();
-                    navigate('/admin/admin-dashboard');
+                    // navigate('/admin/admin-dashboard');
+                    navigate(-1)
 
                 } else {
                     resetForm();
@@ -137,9 +155,11 @@ const CreateCourse = () => {
                                         regular_price: '',
                                         sale_price: '',
                                         vat: '',
-                                        availability: '',
+                                       // availability: '',
+                                        start_date: '',
+                                        end_date: '',
                                         enrollment_capacity: '',
-                                        course_time:'',
+                                        course_time: '',
                                         course_information: '',
                                         additional_information: '',
                                         course_image: null,
@@ -160,7 +180,19 @@ const CreateCourse = () => {
                                         isSubmitting
                                     }) => (
                                         <form className="form-signin" onSubmit={handleSubmit}>
-                                            <h1 className="h3 mb-3 font-weight-normal text-center">Create Course</h1>
+                                            <div className="flex justify-between items-center mb-3">
+                                                <h1 className="h3 font-weight-normal text-center">Create Course</h1>
+                                                <button
+                                                    type="button"
+                                                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                                                    onClick={() => navigate(-1)}
+                                                >
+                                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                                                    </svg>
+                                                    Back
+                                                </button>
+                                            </div>
                                             <div className="row mb-4">
                                                 {/* Image Upload Section */}
                                                 <div className="col-md-4">
@@ -182,20 +214,20 @@ const CreateCourse = () => {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                                <div className="pr_col product-logo md:w-2/12 mb-4 md:mb-0 flex-shrink-0">
-                                                                    <div className="relative" style={{ width: '350px', height: '300px' }}>
-                                                                        <img
-                                                                            src={EmptyImage}
-                                                                            alt="Course default Image"
-                                                                            className="w-full h-full object-cover"
-                                                                            decoding="async"
-                                                                            fetchpriority="high"
-                                                                        />
-                                                                        <p className="absolute inset-0 flex items-end mb-4 justify-center text-red-500  bg-opacity-50 text-center text-sm font-semibold">
-                                                                            Size must be less than 5 MB
-                                                                        </p>
-                                                                    </div>
+                                                            <div className="pr_col product-logo md:w-2/12 mb-4 md:mb-0 flex-shrink-0">
+                                                                <div className="relative" style={{ width: '350px', height: '300px' }}>
+                                                                    <img
+                                                                        src={EmptyImage}
+                                                                        alt="Course default Image"
+                                                                        className="w-full h-full object-cover"
+                                                                        decoding="async"
+                                                                        fetchpriority="high"
+                                                                    />
+                                                                    <p className="absolute inset-0 flex items-end mb-4 justify-center text-red-500  bg-opacity-50 text-center text-sm font-semibold">
+                                                                        Size must be less than 5 MB
+                                                                    </p>
                                                                 </div>
+                                                            </div>
                                                         )}
                                                         <input
                                                             type="file"
@@ -324,7 +356,7 @@ const CreateCourse = () => {
                                                             ) : null}
                                                         </div>
 
-                                                        {/* Availability */}
+                                                        {/* Availability
                                                         <div className="form-group mb-4 col-md-6">
                                                             <input
                                                                 type="text"
@@ -339,7 +371,42 @@ const CreateCourse = () => {
                                                             {touched.availability && errors.availability ? (
                                                                 <small className="text-danger">{errors.availability}</small>
                                                             ) : null}
+                                                        </div> */}
+
+                                                        {/* Start Date */}
+                                                        <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="start_date">Start Date</label>
+                                                            <input
+                                                                type="date"
+                                                                name="start_date"
+                                                                className="form-control"
+                                                                id="start_date"
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur}
+                                                                value={values.start_date}
+                                                            />
+                                                            {touched.start_date && errors.start_date ? (
+                                                                <small className="text-danger">{errors.start_date}</small>
+                                                            ) : null}
                                                         </div>
+
+                                                        {/* End Date */}
+                                                        <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="end_date">End Date</label>
+                                                            <input
+                                                                type="date"
+                                                                name="end_date"
+                                                                className="form-control"
+                                                                id="end_date"
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur}
+                                                                value={values.end_date}
+                                                            />
+                                                            {touched.end_date && errors.end_date ? (
+                                                                <small className="text-danger">{errors.end_date}</small>
+                                                            ) : null}
+                                                        </div>
+
 
                                                         {/* Enrollment Capacity */}
                                                         <div className="form-group mb-4 col-md-6">

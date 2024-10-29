@@ -54,7 +54,15 @@
     }
 
     .navigation {
-        top: 120px;
+        top: 50px;
+    }
+
+    .navbar .navbar-toggler .icon-bar {
+        background-color: #FFF;
+    }
+
+    .navigation.sticky {
+        position: relative;
     }
 
     .navbar .navbar-nav .nav-item ul.sub-menu {
@@ -70,7 +78,6 @@
         display: none;
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
-        background: #2e4db9;
         text-align: left;
     }
 
@@ -79,7 +86,7 @@
     }
 
     .navbar .navbar-nav .nav-item ul.sub-menu li a {
-        color: #fff;
+        color: #1d245f;
     }
 
     .navbar .navbar-nav .nav-item ul.sub-menu li a:hover {
@@ -88,6 +95,10 @@
 
     .navbar-collapse {
         background: #fff;
+    }
+
+    .navbar .navbar-nav .nav-item a {
+        color: #1d245f;
     }
 
     .sub-nav-toggler {
@@ -219,6 +230,10 @@
 /* Large Mobile :480px. */
 @media only screen and (max-width: 575.98px) {
 
+    h1 {
+        font-size: 30px;
+    }
+
     p {
         font-size: 15px;
     }
@@ -228,7 +243,11 @@
     }
 
     .navigation {
-        top: 150px;
+        top: 80px;
+    }
+
+    .page_banner_wrapper {
+        margin-top: 74px;
     }
 
     .navbar .navbar-nav .nav-item ul.sub-menu {
@@ -278,6 +297,11 @@
     .sub-nav-toggler i {
         font-size: 14px;
         color: #2c2d3e;
+    }
+
+    .course_fullInfo_section ul.class_date li,
+    .course_fullInfo_section .class_type ul li {
+        width: 100%;
     }
 
 

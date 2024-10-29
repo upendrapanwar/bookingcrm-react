@@ -25,28 +25,36 @@ export default Yup.object().shape({
             return value < this.parent.regular_price;
         }),
 
-    vat: Yup.number() 
-    .transform(value => (value === null || value === '' ? 0 : value))
-    .min(0, 'VAT must be a positive number')
-    .max(100, 'VAT must not exceed 100%')
-    .default(0),
+    vat: Yup.number()
+        .transform(value => (value === null || value === '' ? 0 : value))
+        .min(0, 'VAT must be a positive number')
+        .max(100, 'VAT must not exceed 100%')
+        .default(0),
 
-    availability: Yup.string()
-        .required('Availability is required')
-        .min(3, 'Availability must be at least 3 characters long')
-        .matches(
-            /^\d{2}\/\d{2}\/\d{2} To \d{2}\/\d{2}\/\d{2}$/,
-            'Availability must be in the format "dd/mm/yy to dd/mm/yy"'
-        ),
+    // availability: Yup.string()
+    //     .required('Availability is required')
+    //     .min(3, 'Availability must be at least 3 characters long')
+    //     .matches(
+    //         /^\d{2}\/\d{2}\/\d{2} To \d{2}\/\d{2}\/\d{2}$/,
+    //         'Availability must be in the format "dd/mm/yy to dd/mm/yy"'
+    //     ),
+    start_date: Yup.date()
+        .required('Start date is required')
+        .typeError('Invalid start date'),
 
-        course_time: Yup.string()
+    end_date: Yup.date()
+        .required('End date is required')
+        .typeError('Invalid end date')
+        .min(Yup.ref('start_date'), 'End date must be after start date'),
+
+    course_time: Yup.string()
         .required('Time is required')
         .min(3, 'Time must be at least 3 characters long')
         .matches(
             /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM) - (0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/,
             'Time must be in the format "HH:MM AM - HH:MM PM"'
         ),
-        
+
 
     enrollment_capacity: Yup.number()
         .min(1, 'Enrollment capacity must be at least 1')

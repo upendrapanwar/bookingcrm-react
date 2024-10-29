@@ -12,7 +12,8 @@ import '../src/assets/css/responsive.css';
 import '../src/assets/css/slick.css';
 import 'font-awesome/css/font-awesome.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
-import './assets/fonts/font';
+
+// import './assets/fonts/font';
 import Loader from './components/common/Loader';
 
 const Home = lazy(() => import('./containers/Home'));
@@ -70,7 +71,7 @@ export const PublicRoutes = () => {
         <Route path='/student/student-dashboard' element={<StudentDashboard />} />
         <Route path='/instructor/instructor-dashboard' element={<InstructorDashboard />} />
         <Route path='/manager/manager-dashboard' element={<ManagerDashboard />} />
-        <Route path='course-listing' element={<CourseListing />} />
+        <Route path='/course-listing' element={<CourseListing />} />
         <Route path='course-details' element={<CourseDetails />} />
         <Route index element={<Home />} />
       </Routes>
