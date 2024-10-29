@@ -17,6 +17,7 @@ const CourseDetails = () => {
     if (!course) {
         return <p>No course details available!</p>;
     }
+    console.log('course in detail page---',course)
  /***********************************************************************/
 
     /**
