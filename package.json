@@ -1,6 +1,7 @@
 {
   "name": "bookinglive",
   "version": "0.1.0",
+  "proxy":"https://bookingcrm-node.vercel.app/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",

@@ -15,6 +15,11 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 // import './assets/fonts/font';
 import Loader from './components/common/Loader';
+import CreateCategories from './containers/admin/courses/categories/AddCategories';
+import AdminCategoriesList from './containers/admin/courses/categories/AdminCategoriesList';
+import EditCategories from './containers/admin/courses/categories/EditCategories';
+
+
 
 const Home = lazy(() => import('./containers/Home'));
 const Register = lazy(() => import('./containers/Register'));
@@ -27,6 +32,8 @@ const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
 const CreateCourse = lazy(() => import('./containers/admin/courses/AddCourses'));
 const UserList = lazy(()=> import('./containers/admin/users/UserList'));
+const AddUser = lazy(()=> import('./containers/admin/users/AddUser'));
+
 const CourseListing = lazy(() => import('./components/common/courses/ListingCourses'));
 const EditCourse = lazy(()=> import('./containers/admin/courses/EditCourses'));
 const CourseDetails = lazy(()=> import('./components/common/courses/CourseDetails'));
@@ -96,8 +103,12 @@ export const AdminRoutes = () => {
         <Route path='admin-dashboard' element={<AdminDashboard />} />
         <Route path='admin-CreateCourse' element={<CreateCourse />} />
         <Route path='users/user-list' element={<UserList />} />
+        <Route path='users/add-user' element={<AddUser />} />
         <Route path='admin-EditCourse' element={<EditCourse />} />
         <Route path='courses/courses-list' element={<AdminCoursesList />} />
+        <Route path='admin-CreateCategories' element={<CreateCategories/>} />
+        <Route path='categories/categories-list' element={<AdminCategoriesList/>} />
+        <Route path='admin-EditCategory' element={<EditCategories/>} />
       </Routes>
     </>
 
