@@ -92,14 +92,14 @@ const CourseListing = () => {
     /***********************************************************************/
     /***********************************************************************/
 
-    /**
+    /** 
      * Handle More info
      * 
      */
     const handleMoreInfoClick = (course) => {
         console.log('-------',course)
         setSelectedCourse(course);
-        navigate("course-details", { state: { course } });
+        navigate("/course-listing/course-details", { state: { course } });
     };
     /***********************************************************************/
     /***********************************************************************/

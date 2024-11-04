@@ -72,7 +72,7 @@ export const PublicRoutes = () => {
         <Route path='/instructor/instructor-dashboard' element={<InstructorDashboard />} />
         <Route path='/manager/manager-dashboard' element={<ManagerDashboard />} />
         <Route path='/course-listing' element={<CourseListing />} />
-        <Route path='course-details' element={<CourseDetails />} />
+        <Route path='/course-listing/course-details' element={<CourseDetails />} />
         <Route index element={<Home />} />
       </Routes>
     </>
