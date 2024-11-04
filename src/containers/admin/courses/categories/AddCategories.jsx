@@ -160,8 +160,8 @@ const CreateCategories = (classes) => {
                     }}
                     onSubmit={(values, { setSubmitting, resetForm }) => {
                       console.log('Form Submitted!', values);
-                      setSubmitting(false);
                       handleSubmit(values, { resetForm });
+                      setSubmitting(false);
                     }}
                     validationSchema={CreateCategoriesSchema}
                   >

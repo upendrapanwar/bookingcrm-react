@@ -17,34 +17,34 @@ const CourseListing = () => {
     const [loading, setLoading] = useState([false]);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [activeIndex, setActiveIndex] = useState(null);
+    const [categories, setCategories] = useState([]);
 
-    console.log('selectedCourse---',selectedCourse)
+    console.log('selectedCourse---', selectedCourse)
     useEffect(() => {
         getCourses();
-        console.log('test');
+        getCategories();
     }, []);
     /***********************************************************************/
     /***********************************************************************/
 
-
+    console.log('categories-----', categories)
     /**
-     * Handle to get next 3 Months
+     * Handle to get next 6 Months
      * 
      */
-
-    const getNextThreeMonths = () => {
+    const getNextSixMonths = () => {
         const months = [];
         const currentDate = new Date();
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 6; i++) {
             const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
-            // Get the full month name (e.g., "October")
-            months.push({ title: nextMonth.toLocaleString('default', { month: 'long' }) });
+            // Get the full month name with the year (e.g., "October 2024")
+            months.push({ title: nextMonth.toLocaleString('default', { month: 'long', year: 'numeric' }) });
         }
         return months;
     };
 
-    const items = getNextThreeMonths();
-
+    const items = getNextSixMonths();
+    //console.log('items---', items)
     /***********************************************************************/
     /***********************************************************************/
 
@@ -92,12 +92,45 @@ const CourseListing = () => {
     /***********************************************************************/
     /***********************************************************************/
 
+    /**
+     * Handle to get categories
+     * 
+     */
+    const getCategories = () => {
+        setLoading(true);
+        axios
+            .get("admin/getAllcategories")
+            .then((response) => {
+                toast.dismiss();
+                if (response.data.status) {
+                    console.log('Courses-----', response)
+                    setCategories(response.data.data);
+                    // setLoading(false);
+                } else {
+                    toast.error(response.data.message, { autoClose: 3000 });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss();
+                if (error.response) {
+                    toast.error(error.response.data.message, { autoClose: 3000 });
+                }
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    setLoading(false);
+                }, 300);
+            });
+    }
+    /***********************************************************************/
+    /***********************************************************************/
+
     /** 
      * Handle More info
      * 
      */
     const handleMoreInfoClick = (course) => {
-        console.log('-------',course)
+        console.log('-------', course)
         setSelectedCourse(course);
         navigate("/course-listing/course-details", { state: { course } });
     };
@@ -144,12 +177,9 @@ const CourseListing = () => {
                                         <label>Date</label>
                                         <select className="form-control" name="" tabIndex="-1" aria-hidden="true">
                                             <option value="">Select Month</option>
-                                            <option value="October 2024">October 2024</option>
-                                            <option value="November 2024">November 2024</option>
-                                            <option value="December 2024">December 2024</option>
-                                            <option value="January 2025">January 2025</option>
-                                            <option value="February 2025">February 2025</option>
-                                            <option value="March 2025">March 2025</option>
+                                            {items.map((items, index) => (
+                                                <option key={index} value={items.title}>{items.title}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="form-group col-md-6">
@@ -181,7 +211,7 @@ const CourseListing = () => {
                         <div className="col-md-12">
                             <div className="product_accordian_wrap">
                                 <div className="accordion" id="ProductAccordion">
-                                    {items.map((item, index) => (
+                                    {items.slice(0, 3).map((item, index) => (
                                         <div className="card" key={index}>
                                             <div className="card-header">
                                                 <h2 className="mb-0">
@@ -200,7 +230,7 @@ const CourseListing = () => {
                                                         {(() => {
                                                             const filteredCourses = courses.filter(course => {
                                                                 const startDateParts = course.start_date.split('-');
-                                                                const courseMonth = new Date(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`).toLocaleString('default', { month: 'long' });
+                                                                const courseMonth = new Date(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`).toLocaleString('default', { month: 'long', year: 'numeric' });
                                                                 return courseMonth === item.title;
                                                             });
 
@@ -286,6 +316,11 @@ const CourseListing = () => {
                     </div>
                 </div>
             </section>
+
+
+
+
+
 
             <section className="front_section Container_wrapper pr_video_section">
                 <div className="container">
