@@ -198,7 +198,7 @@ p {
     top: 44px;
     left: 0;
     width: 100%;
-    z-index: 99;
+    z-index: 999;
     background-color: #1d245f;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -266,15 +266,21 @@ p {
 .navbar {
     padding: 0;
 }
-
-.navbar .navbar-nav {}
+/* Basic styling for the main navigation */
+.navbar .navbar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
 .navbar .navbar-nav .nav-item {
     margin: 0 15px;
     position: relative;
 }
 
-.navbar .navbar-nav .nav-item a {
+.navbar .navbar-nav .nav-item>a {
+    padding: 10px 15px;
+    text-decoration: none;
     font-size: 14px;
     color: #FFF;
     font-weight: 600;
@@ -283,31 +289,39 @@ p {
     padding: 19px 0;
 }
 
-.navbar .navbar-nav .nav-item a.active,
-.navbar .navbar-nav .nav-item:hover>a {
-    color: #ff8900;
-}
-
-.navbar .navbar-nav .nav-item ul.sub-menu {
+/* Styling for the sub-menus (second and third level) */
+.navbar .navbar-nav .sub-menu {
+    display: none;
+    /* Hide sub-menus by default */
     position: absolute;
-    top: 130%;
-    left: 50%;
+    top: 100%;
+    /* Position below the parent menu */
+    left: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+
     white-space: nowrap;
-    text-align: center;
     background-color: #fff;
     -webkit-box-shadow: 0px 5px 30px 0px rgba(46, 76, 185, 0.2);
     box-shadow: 0px 5px 30px 0px rgba(46, 76, 185, 0.2);
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
     z-index: 9;
     -webkit-transition: all 0.4s linear;
     transition: all 0.4s linear;
-    opacity: 0;
-    visibility: hidden;
-
 }
 
-.navbar .navbar-nav .nav-item ul.sub-menu::before {
+
+/* Show second-level menu on hover */
+.navbar .navbar-nav .nav-item:hover>.sub-menu {
+    display: block;
+    padding: 5px;
+}
+
+
+
+.navbar .navbar-nav .nav-item>ul.sub-menu::before {
     position: absolute;
     content: '';
     width: 20px;
@@ -316,62 +330,46 @@ p {
     -webkit-box-shadow: 0px 5px 30px 0px rgba(46, 76, 185, 0.2);
     box-shadow: 0px -30px 30px 0px rgba(46, 76, 185, 0.2);
     top: -10px;
-    left: 50%;
+    left: 20%;
     -webkit-transform: translateX(-50%) rotate(45deg);
     transform: translateX(-50%) rotate(45deg);
     z-index: -2;
 }
 
-.navbar .navbar-nav .nav-item:hover ul.sub-menu {
-    top: 120%;
-    opacity: 1;
-    visibility: visible;
+/* Position third-level menus to the right of the second-level */
+.navbar .navbar-nav .sub-menu .sub-menu {
+    top: 0;
+    left: 100%;
+    /* Position to the right */
+    display: none;
+    /* Hide by default */
+    margin-left: 0px;
     padding: 5px;
 }
 
-.navbar .navbar-nav .nav-item ul.sub-menu li {
-    margin: 0;
-}
-
-.navbar .navbar-nav .nav-item ul.sub-menu li a {
-    padding: 10px 30px;
-    -webkit-transition: all 0.4s linear;
-    transition: all 0.4s linear;
+/* Show third-level menu on hover */
+.navbar .navbar-nav .sub-menu li:hover>.sub-menu {
     display: block;
-    color: #000;
-
 }
 
-.navbar .navbar-nav .nav-item ul.sub-menu li:hover>a {
-    background-color: #1d245f;
-    color: #fff;
-}
-
-.navbar .navbar-toggler .icon-bar {
-    width: 30px;
-    height: 2px;
-    margin: 5px 0;
-    background-color: #2c2d3e;
-    display: block;
+.navbar .navbar-nav .sub-menu li {
     position: relative;
-    -webkit-transition: all 0.4s linear;
-    transition: all 0.4s linear;
 }
 
-.navbar .navbar-toggler.active .icon-bar:nth-of-type(1) {
-    -webkit-transform: rotate(46deg);
-    transform: rotate(46deg);
-    top: 7px;
+/* Hover effect for links */
+.navbar .navbar-nav .sub-menu a {
+    padding: 5px 10px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
 }
 
-.navbar .navbar-toggler.active .icon-bar:nth-of-type(2) {
-    opacity: 0;
-}
-
-.navbar .navbar-toggler.active .icon-bar:nth-of-type(3) {
-    -webkit-transform: rotate(134deg);
-    transform: rotate(134deg);
-    top: -7px;
+.navbar .navbar-nav .sub-menu a:hover {
+    background-color: #1d245f;
+    /* Change background on hover */
+    color: #FFF;
+    /* Optional: Change text color on hover */
 }
 
 .sub-nav-toggler {

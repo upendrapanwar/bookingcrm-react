@@ -16,23 +16,23 @@ import CreateCategoriesSchema from "../../../../validation-schemas/CreateCategor
 
 
 
-const ORIENTATION_TO_ANGLE = {
-  '3': 180,
-  '6': 90,
-  '8': -90,
-}
+// const ORIENTATION_TO_ANGLE = {
+//   '3': 180,
+//   '6': 90,
+//   '8': -90,
+// }
 
 const CreateCategories = (classes) => {
   const navigate = useNavigate();
   const authInfo = JSON.parse(localStorage.getItem('authInfo'));
-  const [crop, setCrop] = useState({ x: 0, y: 0 })
-  const [zoom, setZoom] = useState(1);
+  // const [crop, setCrop] = useState({ x: 0, y: 0 })
+  // const [zoom, setZoom] = useState(1);
   const [imageSrc, setImageSrc] = React.useState(null);
-  const [rotation, setRotation] = useState(0)
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-  const [croppedImage, setCroppedImage] = useState(null)
-  const [initialCrop, setInitialCrop] = useState({ x: 0, y: 0 });
-  const [initialZoom, setInitialZoom] = useState(1);
+  // const [rotation, setRotation] = useState(0)
+  // const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
+  // const [croppedImage, setCroppedImage] = useState(null)
+  // const [initialCrop, setInitialCrop] = useState({ x: 0, y: 0 });
+  // const [initialZoom, setInitialZoom] = useState(1);
   const [subCategories, setSubcategories] = useState([]);
 
 
@@ -51,7 +51,6 @@ const CreateCategories = (classes) => {
           'Authorization': `Bearer ${authInfo.token}`
         }
       });
-      console.log("response", response);
 
       if (response.data.status === true && response.data.data.length > 0) {
         const cateData = response.data.data;
@@ -86,20 +85,26 @@ const CreateCategories = (classes) => {
   */
   const handleSubmit = async (values, { resetForm }) => {
     console.log('values=', values);
-
+    const selectedSubCategory = values.sub_category ? JSON.parse(values.sub_category) : null;
+    const formData = {
+      ...values,
+      sub_category: selectedSubCategory ? selectedSubCategory.id : null,
+      sub_category_name: selectedSubCategory ? selectedSubCategory.name : null,
+    };
+  
     try {
-      const res = await axios.post('/admin/add_category', values, {
-        // headers : {
-        // 'Accept': 'application/json',
-        // 'Content-Type': 'application/json; charset=UTF-8',
-        // 'Authorization': `Bearer ${authInfo.token}`
-        // }
+      const res = await axios.post('/admin/add_category', formData, {
+        headers : {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': `Bearer ${authInfo.token}`
+        }
       })
 
-      console.log("checking response", res);
       if (res.data.status === true && res.data.data.length > 0) {
         toast.success(res.data.message);
         resetForm();
+        getAllCate();
         setImageSrc(null);
       }
 
@@ -159,9 +164,9 @@ const CreateCategories = (classes) => {
                       description: '',
                     }}
                     onSubmit={(values, { setSubmitting, resetForm }) => {
-                      console.log('Form Submitted!', values);
-                      setSubmitting(false);
                       handleSubmit(values, { resetForm });
+                      setSubmitting(false);
+
                     }}
                     validationSchema={CreateCategoriesSchema}
                   >
@@ -177,48 +182,6 @@ const CreateCategories = (classes) => {
                       <form onSubmit={handleSubmit}>
                         <div className="grid grid-cols-6 gap-6">
                           <div className="col-span-6 sm:col-span-3 mb-10">
-                            {/* Category Name */}
-                            {/* <div className="col-span-6 sm:col-span-3">
-                              <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category Name</label>
-                              <input
-                                type="text"
-                                name="name"
-                                id="name"
-                                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-                                placeholder="Enter Category Name"
-                                required
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.name}
-                              />
-                              {errors.name && touched.name && (
-                                <small className="text-red-500">{errors.name}</small>
-                              )}
-                            </div>
-
-                            <div className="col-span-6 sm:col-span-3 mb-10">
-                              <label htmlFor="sub_category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sub-category Name</label>                          
-                              <select
-                                name="sub_category"
-                                id="sub_category"
-                                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.sub_category || ""}
-                              >
-                                <option value="">
-                                  Choose Sub-category
-                                </option>
-                                {subCategories.map((subCategory) => (
-                                  <option key={subCategory.id} value={subCategory.id}>
-                                    {subCategory.name}
-                                  </option>
-                                ))}
-                              </select>
-                              {errors.sub_category && touched.sub_category && (
-                                <small className="text-red-500">{errors.sub_category}</small>
-                              )}
-                            </div> */}
                             <div className="col-span-6 sm:col-span-3 mb-10">
                               {/* Category Name */}
                               <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category Name</label>
@@ -237,7 +200,7 @@ const CreateCategories = (classes) => {
                                 <small className="text-red-500">{errors.name}</small>
                               )}
 
-                              <label htmlFor="sub_category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sub-category Name</label>
+                              <label htmlFor="sub_category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parent category Name</label>
                               <select
                                 name="sub_category"
                                 id="sub_category"
@@ -247,10 +210,10 @@ const CreateCategories = (classes) => {
                                 value={values.sub_category || ""}
                               >
                                 <option value="">
-                                  Choose Sub-category
+                                  Choose Parent category
                                 </option>
                                 {subCategories.map((subCategory) => (
-                                  <option key={subCategory.id} value={subCategory.id}>
+                                  <option key={subCategory.id} value={JSON.stringify({ id: subCategory.id, name: subCategory.name })}>
                                     {subCategory.name}
                                   </option>
                                 ))}
@@ -260,27 +223,6 @@ const CreateCategories = (classes) => {
                               )}
                             </div>
 
-                            <div className="col-span-6 sm:col-span-3 mb-10">
-
-                            </div>
-
-                            {/* Description */}
-                            {/* <div className="col-span-6">
-                              <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                              <textarea
-                                id="description"
-                                name="description"
-                                rows="4"
-                                className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500"
-                                placeholder="Category Description"
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                value={values.description}
-                              ></textarea>
-                              {errors.description && touched.description && (
-                                <small className="text-red-500">{errors.description}</small>
-                              )}
-                            </div> */}
                             <div className="col-span-6">
                               <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
                               <textarea
@@ -297,17 +239,6 @@ const CreateCategories = (classes) => {
                                 <small className="text-red-500">{errors.description}</small>
                               )}
                             </div>
-
-                            {/* Submit Button */}
-                            {/* <div className="col-span-6">
-                              <button
-                                type="submit"
-                                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
-                                disabled={isSubmitting}
-                              >
-                                {isSubmitting ? 'Submitting...' : 'Create Category'}
-                              </button>
-                            </div> */}
                             <div className="col-span-6 mt-4">
                               <button
                                 type="submit"

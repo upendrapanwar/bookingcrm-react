@@ -95,6 +95,8 @@ export const PrivateRoutes = () => {
     </>
   ) 
 }
+
+
 export const AdminRoutes = () => {
   return (
     <>
@@ -111,6 +113,5 @@ export const AdminRoutes = () => {
         <Route path='admin-EditCategory' element={<EditCategories/>} />
       </Routes>
     </>
-
   );
 }
