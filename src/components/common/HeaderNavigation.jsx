@@ -294,11 +294,11 @@ const HeaderNavigation = () => {
                                             <Link to={"#"}>Course Delivery Options</Link>
                                         </li>
                                         <li className="nav-item">
-                                            <Link to={"#"}>About Us</Link>
+                                            <Link to={"/about-us"}>About Us</Link>
 
                                         </li>
                                         <li className="nav-item">
-                                            <Link to={"#"}>Contact Us</Link>
+                                            <Link to={"/contact-us"}>Contact Us</Link>
 
                                         </li>
 
