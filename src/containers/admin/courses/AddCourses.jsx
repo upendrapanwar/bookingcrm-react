@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import { toast } from 'react-toastify';
 import axios from "axios";
+import ReactQuill from "react-quill";
+import flatpickr from 'flatpickr';
+import 'react-quill/dist/quill.snow.css';
+import 'flatpickr/dist/flatpickr.min.css';
 import Header from '../../../components/admin/Header';
 import Footer from '../../../components/admin/Footer';
 import EmptyImage from '../../../assets/images/EmptyImage.png';
@@ -12,19 +16,95 @@ import Loader from "../../../components/common/Loader";
 const CreateCourse = () => {
 
     const navigate = useNavigate();
+    const fpRef = useRef(null);
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
     const cloudName = process.env.REACT_APP_CLOUD_NAME;
     // console.log('cloudName---', cloudName);
     const [loading, setLoading] = useState([false]);
     const [previewImage, setPreviewImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
+    const [courseInformationValue, setCourseInformationValue] = useState(null);
+    const [courseScheduleDates, setCourseScheduleDates] = useState(null);
+    const [categories, setCategories] = useState([]);
+
+
+    const styles = {
+        editor: {
+            height: '16em',
+            marginBottom: '3em',
+        },
+    };
+
 
     /***********************************************************************/
 
     useEffect(() => {
+        getCategories();
 
-        console.log('test');
+        let fp = null;
+
+        if (fpRef.current) {
+            fp = flatpickr(fpRef.current, {
+                mode: "multiple",
+                dateFormat: "d-m-y",
+                allowInput: true,
+                conjunction: ",  ",
+                closeOnSelect: false,
+                inline: false,
+                static: false,
+                clickOpens: true,
+                onChange: (selectedDates) => {
+                    // Adjust the dates to handle timezone offset
+                    const adjustedDates = selectedDates.map(date => {
+                        const newDate = new Date(date);
+                        newDate.setMinutes(newDate.getMinutes() + newDate.getTimezoneOffset());
+                        return newDate;
+                    });
+                    setCourseScheduleDates(adjustedDates);
+                }
+            });
+        }
+
+        return () => {
+            if (fp) {
+                fp.destroy();
+            }
+        };
     }, []);
+
+    /***********************************************************************/
+
+    /**
+     * Handle to get categories
+     * 
+     */
+    const getCategories = () => {
+        setLoading(true);
+        axios
+            .get("admin/getAllcategories")
+            .then((response) => {
+                toast.dismiss();
+                if (response.data.status) {
+                    console.log('Courses-----', response)
+                    setCategories(response.data.data);
+                    // setLoading(false);
+                } else {
+                    toast.error(response.data.message, { autoClose: 3000 });
+                }
+            })
+            .catch((error) => {
+                toast.dismiss();
+                if (error.response) {
+                    toast.error(error.response.data.message, { autoClose: 3000 });
+                }
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    setLoading(false);
+                }, 300);
+            });
+    }
+    /***********************************************************************/
     /***********************************************************************/
 
     const formatDate = (date) => {
@@ -35,7 +115,7 @@ const CreateCourse = () => {
         return `${day}-${month}-${year}`; // dd-mm-yyyy format with hyphens
     };
 
-  /***********************************************************************/
+    /***********************************************************************/
 
     /**
      * Handle image size
@@ -89,7 +169,7 @@ const CreateCourse = () => {
      */
     const handleSubmit = async (values, { resetForm }) => {
         setLoading(true);
-        // console.log('values---', values)
+        console.log('values---', values)
         let imageData;
         if (imageFile) {
             imageData = await handleImageUpload(imageFile);
@@ -104,8 +184,10 @@ const CreateCourse = () => {
             }),
             start_date: formatDate(values.start_date),
             end_date: formatDate(values.end_date),
+            course_information: courseInformationValue,
+            courseScheduleDates: courseScheduleDates,
         };
-
+        console.log('requestData----', requestData)
         axios
             .post("admin/add_course", requestData)
             .then((response) => {
@@ -138,6 +220,13 @@ const CreateCourse = () => {
     }
     /***********************************************************************/
 
+    const handleInformationChange = (value) => {
+        console.log('value1234--', value)
+        setCourseInformationValue(value)
+    };
+
+    console.log('categories-----',categories)
+
     return (
         <>
             {loading === true ? <Loader /> : ''}
@@ -151,18 +240,21 @@ const CreateCourse = () => {
                                     initialValues={{
                                         course_title: '',
                                         category: '',
+                                        course_type: '',
                                         course_format: '',
                                         regular_price: '',
                                         sale_price: '',
                                         vat: '',
-                                       // availability: '',
-                                        start_date: '',
-                                        end_date: '',
+                                        // availability: '',
+                                        // start_date: '',
+                                        // end_date: '',
                                         enrollment_capacity: '',
                                         course_time: '',
                                         course_information: '',
                                         additional_information: '',
                                         course_image: null,
+                                        courseScheduleDates: [],
+                                        completing_the_course: '',
                                     }}
                                     onSubmit={(values, { resetForm }) => {
                                         handleSubmit(values, { resetForm });
@@ -253,6 +345,7 @@ const CreateCourse = () => {
                                                     <div className="row">
                                                         {/* Course Title */}
                                                         <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="course_title">Course Title</label>
                                                             <input
                                                                 type="text"
                                                                 name="course_title"
@@ -270,7 +363,8 @@ const CreateCourse = () => {
 
                                                         {/* Category */}
                                                         <div className="form-group mb-4 col-md-6">
-                                                            <input
+                                                            <label htmlFor="category">Category</label>
+                                                            {/* <input
                                                                 type="text"
                                                                 name="category"
                                                                 className="form-control"
@@ -279,14 +373,51 @@ const CreateCourse = () => {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur}
                                                                 value={values.category}
-                                                            />
+                                                            /> */}
+                                                            <select
+                                                                name="category"
+                                                                className="form-control"
+                                                                id="category"
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur}
+                                                                value={values.category}
+                                                            >
+                                                                <option value="" disabled>Select course category</option>
+                                                                {categories.map((categories, index) => (
+                                                                    <option key={index} value={categories.category}>
+                                                                        {categories.category}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
                                                             {touched.category && errors.category ? (
                                                                 <small className="text-danger">{errors.category}</small>
                                                             ) : null}
                                                         </div>
 
+                                                        {/* Course Type */}
+                                                        <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="courseType">Course Type</label>
+                                                            <select
+                                                                name="course_type"
+                                                                className="form-control"
+                                                                id="courseType"
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur}
+                                                                value={values.course_type}
+                                                            >
+                                                                <option value="" disabled>Select course type</option>
+                                                                <option value="Monday to Friday">Monday to Friday</option>
+                                                                <option value="Day Release">Day Release</option>
+                                                                <option value="Weekend">Weekend</option>
+                                                            </select>
+                                                            {touched.course_type && errors.course_type ? (
+                                                                <small className="text-danger">{errors.course_type}</small>
+                                                            ) : null}
+                                                        </div>
+
                                                         {/* Course Format */}
                                                         <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="control">Course Format</label>
                                                             <select
                                                                 name="course_format"
                                                                 className="form-control"
@@ -307,6 +438,7 @@ const CreateCourse = () => {
 
                                                         {/* Regular Price */}
                                                         <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="regular_price">Regular Price</label>
                                                             <input
                                                                 type="number"
                                                                 name="regular_price"
@@ -324,6 +456,7 @@ const CreateCourse = () => {
 
                                                         {/* Sale Price */}
                                                         <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="sale_price">Sale Price</label>
                                                             <input
                                                                 type="number"
                                                                 name="sale_price"
@@ -341,6 +474,7 @@ const CreateCourse = () => {
 
                                                         {/* VAT */}
                                                         <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="vat">Vat</label>
                                                             <input
                                                                 type="number"
                                                                 name="vat"
@@ -373,8 +507,33 @@ const CreateCourse = () => {
                                                             ) : null}
                                                         </div> */}
 
-                                                        {/* Start Date */}
+                                                        {/* courseScheduleDates */}
                                                         <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
+                                                            <div className="course-dates">
+                                                                <input
+                                                                    type="text"
+                                                                    id="courseScheduleDates"
+                                                                    name="courseScheduleDates"
+                                                                    className="form-control"
+                                                                    onChange={(e) => {
+                                                                        const dates = e.target.value; // Handle input as comma-separated values
+                                                                        setFieldValue("courseScheduleDates", dates);
+                                                                    }}
+                                                                    value={courseScheduleDates}
+                                                                    ref={fpRef}
+                                                                    placeholder="Add dates"
+                                                                    required
+                                                                    readOnly
+                                                                />
+                                                                {touched.courseScheduleDates && errors.courseScheduleDates ? (
+                                                                    <small className="text-danger">{errors.courseScheduleDates}</small>
+                                                                ) : null}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Start Date */}
+                                                        {/* <div className="form-group mb-4 col-md-6">
                                                             <label htmlFor="start_date">Start Date</label>
                                                             <input
                                                                 type="date"
@@ -384,14 +543,15 @@ const CreateCourse = () => {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur}
                                                                 value={values.start_date}
+                                                                placeholder="Start Date"
                                                             />
                                                             {touched.start_date && errors.start_date ? (
                                                                 <small className="text-danger">{errors.start_date}</small>
                                                             ) : null}
-                                                        </div>
+                                                        </div> */}
 
                                                         {/* End Date */}
-                                                        <div className="form-group mb-4 col-md-6">
+                                                        {/* <div className="form-group mb-4 col-md-6">
                                                             <label htmlFor="end_date">End Date</label>
                                                             <input
                                                                 type="date"
@@ -401,15 +561,17 @@ const CreateCourse = () => {
                                                                 onChange={handleChange}
                                                                 onBlur={handleBlur}
                                                                 value={values.end_date}
+                                                                placeholder="End Date"
                                                             />
                                                             {touched.end_date && errors.end_date ? (
                                                                 <small className="text-danger">{errors.end_date}</small>
                                                             ) : null}
-                                                        </div>
+                                                        </div> */}
 
 
                                                         {/* Enrollment Capacity */}
                                                         <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="enrollment_capacity">Student Enrollment Capacity</label>
                                                             <input
                                                                 type="number"
                                                                 name="enrollment_capacity"
@@ -427,6 +589,7 @@ const CreateCourse = () => {
 
                                                         {/* Course Time */}
                                                         <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="course_time">Course Time</label>
                                                             <input
                                                                 type="text"
                                                                 name="course_time"
@@ -442,41 +605,73 @@ const CreateCourse = () => {
                                                             ) : null}
                                                         </div>
 
+
+
+
+                                                    </div>
+                                                </div>
+
+                                                <div className="col-md-12">
+                                                    <div className="row">
                                                         {/* Course Information */}
-                                                        <div className="form-group mb-4 col-md-12">
-                                                            <textarea
-                                                                name="course_information"
-                                                                className="form-control"
-                                                                id="courseInformation"
+                                                        <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="course_information">Course Information</label>
+                                                            <ReactQuill
+                                                                className='discr_reactquill '
+                                                                style={styles.editor}
                                                                 placeholder="Enter course information"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.course_information}
-                                                                rows="4"
+                                                                value={courseInformationValue}
+                                                                onChange={handleInformationChange}
+                                                            // modules={{
+                                                            //     toolbar:false,
+                                                            // }}
                                                             />
                                                             {touched.course_information && errors.course_information ? (
                                                                 <small className="text-danger">{errors.course_information}</small>
                                                             ) : null}
                                                         </div>
 
-                                                        {/* Additional Information */}
-                                                        <div className="form-group mb-4 col-md-12">
-                                                            <textarea
-                                                                name="additional_information"
-                                                                className="form-control"
-                                                                id="additionalInformation"
-                                                                placeholder="Enter additional information (optional)"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.additional_information}
-                                                                rows="4"
-                                                            />
-                                                            {touched.additional_information && errors.additional_information ? (
-                                                                <small className="text-danger">{errors.additional_information}</small>
-                                                            ) : null}
+                                                        <div className="col-md-6">
+                                                            <div className="collum">
+                                                                {/* Additional Information */}
+                                                                <div className="form-group mb-4 col-md-12">
+                                                                    <label htmlFor="additional_information">Aditional Information</label>
+                                                                    <textarea
+                                                                        name="additional_information"
+                                                                        className="form-control"
+                                                                        id="additionalInformation"
+                                                                        placeholder="Enter additional information (optional)"
+                                                                        onChange={handleChange}
+                                                                        onBlur={handleBlur}
+                                                                        value={values.additional_information}
+                                                                        rows="4"
+                                                                    />
+                                                                    {touched.additional_information && errors.additional_information ? (
+                                                                        <small className="text-danger">{errors.additional_information}</small>
+                                                                    ) : null}
+                                                                </div>
+
+                                                                <div className="form-group mb-4 col-md-12">
+                                                                    <label htmlFor="completing_the_course">Completing the course</label>
+                                                                    <textarea
+                                                                        name="completing_the_course"
+                                                                        className="form-control"
+                                                                        id="completingthecourse"
+                                                                        placeholder="Enter completing the course information (optional)"
+                                                                        onChange={handleChange}
+                                                                        onBlur={handleBlur}
+                                                                        value={values.completing_the_course}
+                                                                        rows="4"
+                                                                    />
+                                                                    {touched.completing_the_course && errors.completing_the_course ? (
+                                                                        <small className="text-danger">{errors.completing_the_course}</small>
+                                                                    ) : null}
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
                                             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">
                                                 <i className="fas fa-plus-circle mr-2"></i> Create Course

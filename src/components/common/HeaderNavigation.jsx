@@ -4,7 +4,6 @@ import corpelLogoMain from '../../assets/images/corpel-logo-main.png';
 import shoping_cart from '../../assets/icons/shoppingCart.svg';
 import { useSelector } from 'react-redux';
 
-
 const HeaderNavigation = () => {
     const cart = useSelector((state) => state.cart.cart || []);
     const authInfo = JSON.parse(localStorage.getItem("authInfo"));
@@ -43,14 +42,14 @@ const HeaderNavigation = () => {
                                         <li className="nav-item">
                                             <Link to={"/"} className="active">Home</Link>
                                         </li>
-                                        <li className="nav-item">
+                                        {/* <li className="nav-item">
                                             <Link to={"#"}>Course Schedules</Link>
                                             <ul className="sub-menu">
                                                 <li className="li"><Link to={"/course-listing"}>All Courses</Link></li>
                                                 <li className="li"><Link to={"/course-listing"}>CITB Courses</Link></li>
                                                 <li className="li"><Link to={"/course-listing"}>Early Bird Bargains</Link></li>
                                             </ul>
-                                        </li>
+                                        </li> */}
                                         <li className="nav-item">
 
                                             <Link to={"#"}>Course Details</Link>
@@ -308,9 +307,9 @@ const HeaderNavigation = () => {
                                         </li>
                                         <li className="nav-item">
                                             <Link to={"/contact-us"}>Contact Us</Link>
-
                                         </li>
 
+                                       
                                         {/* <li className="nav-item position-relative">
                                             <Link to="/cart" className="nav-link d-flex align-items-center">
                                                 <img src={shoping_cart} alt="Cart" className="cart-icon-small w-5" />
@@ -365,7 +364,6 @@ const HeaderNavigation = () => {
                                             <li className="nav-item">
                                                 <Link to={"/login"}>Login</Link>
                                             </li>
-
                                         )}
 
                                     </ul>

@@ -9,6 +9,9 @@ export default Yup.object().shape({
         .required('Category is required')
         .min(3, 'Category must be at least 3 characters long'),
 
+    course_type: Yup.string()
+        .required('Course type is required'),
+
     course_format: Yup.string()
         .required('Course format is required')
         .min(3, 'Course format must be at least 3 characters long'),
@@ -38,14 +41,27 @@ export default Yup.object().shape({
     //         /^\d{2}\/\d{2}\/\d{2} To \d{2}\/\d{2}\/\d{2}$/,
     //         'Availability must be in the format "dd/mm/yy to dd/mm/yy"'
     //     ),
-    start_date: Yup.date()
-        .required('Start date is required')
-        .typeError('Invalid start date'),
 
-    end_date: Yup.date()
-        .required('End date is required')
-        .typeError('Invalid end date')
-        .min(Yup.ref('start_date'), 'End date must be after start date'),
+    // start_date: Yup.date()
+    //     .required('Start date is required')
+    //     .typeError('Invalid start date'),
+
+    // end_date: Yup.date()
+    //     .required('End date is required')
+    //     .typeError('Invalid end date')
+    //     .min(Yup.ref('start_date'), 'End date must be after start date'),
+
+    // courseScheduleDates: Yup.array()
+    // .of(
+    //     Yup.string()
+    //         .matches(
+    //             /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000\+0000)$/,
+    //             "Invalid date format. Please use a valid ISO date"
+    //         )
+    //         .required("Each date is required")
+    // )
+    // // .min(1, "At least one course schedule date is required")
+    // .required("Course schedule dates are required"),
 
     course_time: Yup.string()
         .required('Time is required')
@@ -61,10 +77,12 @@ export default Yup.object().shape({
         .required('Enrollment capacity is required'),
 
     course_information: Yup.string()
-        .required('Course information is required')
-        .min(10, 'Course information must be at least 10 characters long'),
+        .nullable(),
+    // .required('Course information is required'),
+    //.min(10, 'Course information must be at least 10 characters long'),
 
     additional_information: Yup.string().nullable(),
+    completing_the_course: Yup.string().nullable(),
 
     course_image: Yup.string().nullable(),
 });

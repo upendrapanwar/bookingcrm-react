@@ -14,6 +14,7 @@ import Icons_calendar_outline from '../../../assets/images/Icons/calendar-outlin
 const CourseDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const today = new Date();
 
     const { course } = location.state || {};
 
@@ -52,6 +53,12 @@ const CourseDetails = () => {
         setActiveIndex(activeIndex === index ? null : index);
     };
     /***********************************************************************/
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-GB'); // 'en-GB' will give date format as dd/mm/yyyy
+    };
+    /***********************************************************************/
     /***********************************************************************/
 
     return (
@@ -67,15 +74,25 @@ const CourseDetails = () => {
                         <div className="row">
                             <div className="col-lg-12  pt-40">
                                 <div className="pb-25 ">
-                                    <h1 className="pb-15">
+                                    {/* <h1 className="pb-15">
                                         {course.course_title}| {course.start_date} | {course.course_format}
+                                    </h1> */}
+                                    <h1 className="pb-15">
+                                        {course.course_title} | {
+                                            course.course_schedule_dates
+                                                .map(dateString => new Date(dateString))
+                                                .find(date => date >= today)
+                                                ?.toLocaleDateString('en-GB')
+                                                .split('/')
+                                                .join('-') || 'No upcoming date available'
+                                        } | {course.course_format}
                                     </h1>
                                     <p>
                                         Online Monday to Friday, Day Release &amp; Weekend Courses Are
                                         Available
                                     </p>
                                 </div>{" "}
-                                
+
                             </div>
                         </div>
                     </div>
@@ -84,8 +101,18 @@ const CourseDetails = () => {
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-6">
-                                <h3 className="pb-30">
+                                {/* <h3 className="pb-30">
                                     {course.course_title} | {course.start_date} | {course.course_format}
+                                </h3> */}
+                                <h3 className="pb-30">
+                                    {course.course_title} | {
+                                        course.course_schedule_dates
+                                            .map(dateString => new Date(dateString))
+                                            .find(date => date >= today)
+                                            ?.toLocaleDateString('en-GB')
+                                            .split('/')
+                                            .join('-') || 'No upcoming date available'
+                                    } | {course.course_format}
                                 </h3>
                                 <div className="row">
                                     <div className="col-lg-12 pb-20">
@@ -93,7 +120,7 @@ const CourseDetails = () => {
                                             <div className="calendar_icon">
                                                 <img src={Icons_calendar_outline} alt="" />
                                             </div>
-                                            <ul className="class_date">
+                                            {/* <ul className="class_date">
                                                 <li>
                                                     <span>Day 1 </span> 28-10-24
                                                 </li>
@@ -109,6 +136,20 @@ const CourseDetails = () => {
                                                 <li>
                                                     <span>Day 5 </span> 01-11-24
                                                 </li>
+                                            </ul> */}
+                                            <ul className="class_date">
+                                                {course && course.course_schedule_dates && course.course_schedule_dates.length > 0 ? (
+                                                    course.course_schedule_dates.map((date, index) => {
+                                                        return (
+                                                            <li key={index}>
+                                                                <span>Day {index + 1} </span>
+                                                                {formatDate(date)}
+                                                            </li>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <li>Dates for this course are coming soon. Please check back later.</li>
+                                                )}
                                             </ul>
                                         </div>
                                     </div>
@@ -143,9 +184,9 @@ const CourseDetails = () => {
                                         </div>
                                     </div>
                                     <div className="col-lg-12">
-                                        {/* <a href="#" className="btn btn-md btn-primary">
+                                        <a href="#" className="btn btn-md btn-primary">
                                             Add to Basket
-                                        </a> */}
+                                        </a>
                                     </div>
                                 </div>{" "}
                             </div>
@@ -153,7 +194,7 @@ const CourseDetails = () => {
                                 <div className="section-thumbnail">
                                     <img src={course.course_image || EmptyImage} alt="" />
                                 </div>{" "}
-                                
+
                             </div>
                         </div>
                     </div>
@@ -182,16 +223,7 @@ const CourseDetails = () => {
                                                 </div>
                                                 {isOpen.courseInfo && (
                                                     <div className="card-body">
-                                                        <p>Course Name – SMSTS-Monday-To-Friday</p>
-                                                        <p>Location – Remote</p>
-                                                        <p>Free same day resit if eligible</p>
-                                                        <p>Start Time – 08:30</p>
-                                                        <p>End Time – 17:00</p>
-                                                        <p>Day 1 – 28/10/2024</p>
-                                                        <p>Day 2 – 29/10/2024</p>
-                                                        <p>Day 3 – 30/10/2024</p>
-                                                        <p>Day 4 – 31/10/2024</p>
-                                                        <p>Day 5 – 01/11/2024</p>
+                                                        <div dangerouslySetInnerHTML={{ __html: course.course_information }} />
                                                     </div>
                                                 )}
                                             </div>
@@ -209,7 +241,11 @@ const CourseDetails = () => {
                                                 </div>
                                                 {isOpen.additionalInfo && (
                                                     <div className="card-body">
-                                                        <p>{course.additional_information ? course.additional_information : "Currently, no additional information is available for this course."}</p>
+                                                        <p
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: (course.additional_information || "Currently, no additional information is available for this course.").replace(/\n/g, '<br />')
+                                                            }}
+                                                        />
                                                     </div>
                                                 )}
                                             </div>
