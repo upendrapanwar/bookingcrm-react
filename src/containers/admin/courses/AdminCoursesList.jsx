@@ -224,12 +224,18 @@ const AdminCoursesList = () => {
                             ),
                             sortable: true,
                         },
+                        // {
+                        //     name: "Author",
+                        //     selector: (row, i) => row.createdby,
+                        //     cell: (row) => row.createdby,
+                        //     sortable: true,
+                        // },
                         {
-                            name: "Author",
-                            selector: (row, i) => row.createdby,
-                            cell: (row) => row.createdby,
-                            sortable: true,
-                        },
+                                name: "Author",
+                                selector: (row, i) => row.createdby,
+                                cell: (row) =><span>Admin</span>,
+                                sortable: true,
+                            },
                         {
                             name: "Created At",
                             selector: (row, i) => row.createdAt,

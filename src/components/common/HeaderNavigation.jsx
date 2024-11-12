@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import corpelLogoMain from '../../assets/images/corpel-logo-main.png';
+import shoping_cart from '../../assets/icons/shoppingCart.svg';
 
 const HeaderNavigation = () => {
     const authInfo = JSON.parse(localStorage.getItem("authInfo"));
@@ -34,14 +35,14 @@ const HeaderNavigation = () => {
                                         <li className="nav-item">
                                             <Link to={"/"} className="active">Home</Link>
                                         </li>
-                                        <li className="nav-item">
+                                        {/* <li className="nav-item">
                                             <Link to={"#"}>Course Schedules</Link>
                                             <ul className="sub-menu">
                                                 <li className="li"><Link to={"/course-listing"}>All Courses</Link></li>
                                                 <li className="li"><Link to={"/course-listing"}>CITB Courses</Link></li>
                                                 <li className="li"><Link to={"/course-listing"}>Early Bird Bargains</Link></li>
                                             </ul>
-                                        </li>
+                                        </li> */}
                                         <li className="nav-item">
 
                                             <Link to={"#"}>Course Details</Link>
@@ -272,19 +273,19 @@ const HeaderNavigation = () => {
                                                 </li>
                                                 <li className="li"><Link to={"/course-listing"}>Mental Health Courses</Link>
                                                     <ul className="sub-menu">
-                                                    <li><Link to="/course-listing">Mental Health & Wellbeing</Link></li>
-                                                    <li><Link to="/course-listing">Mental Health Awareness</Link></li>
-                                                    <li><Link to="/course-listing">Mental Health First Aid</Link></li>
+                                                        <li><Link to="/course-listing">Mental Health & Wellbeing</Link></li>
+                                                        <li><Link to="/course-listing">Mental Health Awareness</Link></li>
+                                                        <li><Link to="/course-listing">Mental Health First Aid</Link></li>
                                                     </ul>
                                                 </li>
                                                 <li className="li"><Link to={"/course-listing"}>IEMA Courses</Link></li>
                                                 <li className="li"><Link to={"/course-listing"}>Level 1 Health & Safety</Link></li>
                                                 <li className="li"><Link to={"/course-listing"}>E-Learning Courses</Link>
                                                     <ul className="sub-menu">
-                                                    <li className="li"><Link to={"/course-listing"}>Construction</Link> </li>
-                                                    <li className="li"><Link to={"/course-listing"}>Hospitality</Link> </li>
-                                                    <li className="li"><Link to={"/course-listing"}>Business</Link> </li>
-                                                    <li className="li"><Link to={"/course-listing"}>Social & Care</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"}>Construction</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"}>Hospitality</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"}>Business</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"}>Social & Care</Link> </li>
                                                     </ul>
                                                 </li>
                                                 <li className="li"><Link to={"/course-listing"}>In House Training</Link></li>
@@ -299,7 +300,17 @@ const HeaderNavigation = () => {
                                         </li>
                                         <li className="nav-item">
                                             <Link to={"/contact-us"}>Contact Us</Link>
+                                        </li>
 
+                                        <li className="nav-item position-relative">
+                                            <Link to="/cart" className="nav-link d-flex align-items-center">
+                                                <img src={shoping_cart} alt="Cart" className="cart-icon-small w-5" />
+                                                {/* {cartItemCount > 0 && ( */}
+                                                    <span className="badge bg-danger position-absolute top-1 start-100 translate-middle rounded-circle">
+                                                        {/* {cartItemCount} */}0
+                                                    </span>
+                                                {/* )} */}
+                                            </Link>
                                         </li>
 
                                         {authInfo && authInfo.name ? (
@@ -310,7 +321,6 @@ const HeaderNavigation = () => {
                                             <li className="nav-item">
                                                 <Link to={"/login"}>Login</Link>
                                             </li>
-
                                         )}
 
                                     </ul>
