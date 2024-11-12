@@ -1,7 +1,7 @@
 {
   "name": "bookinglive",
   "version": "0.1.0",
-  "proxy":"https://bookingcrm-node.vercel.app/",
+  "proxy": "https://bookingcrm-node.vercel.app/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -16,7 +16,7 @@
     "@material-ui/icons": "^4.11.3",
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.4",
-    "@reduxjs/toolkit": "^2.2.7",
+    "@reduxjs/toolkit": "^2.3.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -39,6 +39,7 @@
     "react-router-dom": "^6.26.2",
     "react-scripts": "^5.0.1",
     "react-toastify": "^10.0.5",
+    "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"

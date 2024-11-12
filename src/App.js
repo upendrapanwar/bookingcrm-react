@@ -18,6 +18,8 @@ import Loader from './components/common/Loader';
 import CreateCategories from './containers/admin/courses/categories/AddCategories';
 import AdminCategoriesList from './containers/admin/courses/categories/AdminCategoriesList';
 import EditCategories from './containers/admin/courses/categories/EditCategories';
+import Cart from './components/common/cart/Cart';
+import Checkout from './components/common/Checkout';
 
 
 
@@ -84,6 +86,8 @@ export const PublicRoutes = () => {
         <Route path='/course-listing/course-details' element={<CourseDetails />} />
         <Route path='/about-us' element={<AboutUs />} />
         <Route path='/contact-us' element={<ContactUs />} />
+        <Route path='/cart' element={<Cart />} />
+        <Route path='/checkout' element={<Checkout/>} />
         <Route index element={<Home />} />
       </Routes>
     </>

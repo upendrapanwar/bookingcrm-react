@@ -7,12 +7,16 @@ import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import EmptyImage from "../../../assets/images/EmptyImage.png";
 import bannerBg from '../../../assets/images/page-banner-bg.jpg';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../../store/reducers/cart-reducer';
+
 
 const CourseListing = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
-    //console.log('authINFO',authInfo)
+
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState([false]);
     const [selectedCourse, setSelectedCourse] = useState(null);
@@ -121,6 +125,18 @@ const CourseListing = () => {
                     setLoading(false);
                 }, 300);
             });
+    }
+    /***********************************************************************/
+    /***********************************************************************/
+
+    /** 
+     * Handle AddToCart 
+     * 
+     */
+    const AddToCart = async (cart) => {
+        console.log("cart checking here", cart);
+        dispatch(addToCart(cart));
+        toast.success(`${cart.course_title} added to cart!`);
     }
     /***********************************************************************/
     /***********************************************************************/
@@ -285,7 +301,7 @@ const CourseListing = () => {
                                                                         </div>
                                                                         <div className="pr_col product-btns">
                                                                             <div className="pr-btns">
-                                                                                <a href="#" className="btns add-to-cart">Add to cart</a>
+                                                                                <Link to="#" className="btns add-to-cart" onClick={() => AddToCart(course)}>Add to cart</Link>
                                                                                 {/* <a href="#" className="btns more-info">More info</a> */}
                                                                                 <a
                                                                                     href="#"

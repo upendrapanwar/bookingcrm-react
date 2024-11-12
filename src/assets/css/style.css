@@ -266,6 +266,7 @@ p {
 .navbar {
     padding: 0;
 }
+
 /* Basic styling for the main navigation */
 .navbar .navbar-nav {
     list-style: none;
@@ -1148,9 +1149,11 @@ textarea.form-control {
         line-height: 1.25rem;
     }
 }
+
 .pt-16 {
     padding-top: 4rem;
 }
+
 @media (min-width: 1024px) {
     .lg\:flex {
         display: flex;
@@ -1162,8 +1165,11 @@ textarea.form-control {
         padding: 2rem;
     }
 }
+
 @media (min-width: 1024px) {
     .lg\:ml-64 {
         margin-left: 16rem;
     }
 }
+
+

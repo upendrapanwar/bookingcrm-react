@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Loader from '../../../../components/common/Loader';
+import { toast } from 'react-toastify';
 import { useLocation } from "react-router-dom";
 import { Formik } from "formik";
 import Header from "../../../../components/admin/Header";
@@ -9,32 +11,134 @@ import Footer from "../../../../components/admin/Footer";
 import CreateCategoriesSchema from "../../../../validation-schemas/CreateCategorySchema.js"
 
 
+
 const EditCategories = () => {
 
   const location = useLocation();
   const rowData = location.state?.rowData;
   const authInfo = JSON.parse(localStorage.getItem('authInfo'));
+  const navigate = useNavigate();
 
 
   const [subCategories, setSubcategories] = useState([]);
+  const [categoryData, setCategoryData] = useState('');
+  const [loading, setLoading] = useState([false]);
 
 
   useEffect(() => {
-    // getEditCate();
-  },[])
+    getAllCate();
+    getEditCate();
+  }, [])
 
 
-  const getEditCate = async() => {
-    const res = await axios.get(`/admin/getcategory/${rowData}`,{
-      headers : {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': `Bearer ${authInfo.token}`
+  const getAllCate = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("/admin/getAllcategories", {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': `Bearer ${authInfo.token}`
+        }
+      });
+
+      if (response.data.status === true && response.data.data.length > 0) {
+        const cateData = response.data.data;
+        const categoryList = cateData.map((item) => ({
+          id: item.id,
+          name: item.category
+        }));
+        setSubcategories(categoryList);
+      };
+    } catch (error) {
+      toast.dismiss();
+      if (error.response) {
+        toast.error(error.response.data.message, { autoClose: 3000 });
       }
-    })
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    console.log("checking response from get api", res);
-  }
+  const getEditCate = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/admin/getcategory/${rowData}`, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': `Bearer ${authInfo.token}`
+        }
+      });
+
+      if (response.data.status === true) {
+        const data = response.data.data;
+        console.log("data", data)
+        setCategoryData(data);
+      };
+
+    } catch (error) {
+      toast.dismiss();
+      if (error.response) {
+        toast.error(error.response.data.message, { autoClose: 3000 });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const handleSubmit = async (values) => {
+    setLoading(true);
+  
+    let selectedSubCategory;
+    
+    try {
+      selectedSubCategory = values.sub_category && values.sub_category.startsWith("{")
+        ? JSON.parse(values.sub_category)
+        : { id: categoryData.parent , name: values.sub_category };
+  
+    } catch (error) {
+      console.error("Error parsing sub_category:", error);
+      selectedSubCategory = null;
+    }
+  
+    // Access id and name
+    const subCategoryId = selectedSubCategory ? selectedSubCategory.id : null;
+    const subCategoryName = selectedSubCategory ? selectedSubCategory.name : null;
+  
+    const formData = {
+      ...values,
+      sub_category_id: subCategoryId,
+      sub_category_name: subCategoryName,
+    };
+   
+    try {
+      const response = await axios.put(`/admin/edit_category/${rowData}`, formData, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
+          Authorization: `Bearer ${authInfo.token}`,
+        },
+      });
+  
+      console.log("response", response);
+      if(response.data.status === true){
+
+        toast.success("Data updated successfully!", { autoClose: 3000 });
+        navigate("/admin/categories/categories-list/");
+      }
+
+    } catch (error) {
+      toast.dismiss();
+      if (error.response) {
+        toast.error(error.response.data.message, { autoClose: 3000 });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   return (
     <>
@@ -43,6 +147,8 @@ const EditCategories = () => {
         <Sidebar />
         <div id="main-content" className="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900">
           <main>
+            {loading === true ? <Loader /> : ''}
+
             <div className="p-4 bg-white block sm:flex items-center justify-between border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
               <div className="w-full mb-1">
                 <div className="mb-4">
@@ -77,14 +183,15 @@ const EditCategories = () => {
                 <div className="p-6 space-y-6 overflow-y-auto">
                   <Formik
                     initialValues={{
-                      name: '',
-                      sub_category: "",
-                      description: '',
+                      name: categoryData.category || '',
+                      sub_category: categoryData.parentCategory || "",
+                      description: categoryData.description || '',
                     }}
+                    enableReinitialize={true}
                     onSubmit={(values, { setSubmitting, resetForm }) => {
-                      // handleSubmit(values, { resetForm });
+                      console.log("Formik values: ", values);
+                      handleSubmit(values, { resetForm });
                       setSubmitting(false);
-
                     }}
                     validationSchema={CreateCategoriesSchema}
                   >
@@ -98,7 +205,7 @@ const EditCategories = () => {
                       isSubmitting,
                     }) => (
                       <form
-                      // onSubmit={handleSubmit}
+                        onSubmit={handleSubmit}
                       >
                         <div className="grid grid-cols-6 gap-6">
                           <div className="col-span-6 sm:col-span-3 mb-10">
@@ -120,18 +227,27 @@ const EditCategories = () => {
                                 <small className="text-red-500">{errors.name}</small>
                               )}
 
-                              <label htmlFor="sub_category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Parent category Name</label>
+                             
+                              <label htmlFor="sub_category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Parent category Name
+                              </label>
                               <select
                                 name="sub_category"
                                 id="sub_category"
                                 className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                value={values.sub_category || ""}
+                                value={values.sub_category || JSON.stringify({ id: categoryData.parentCategoryId, name: categoryData.parentCategory })} // Default selection
                               >
-                                <option value="">
-                                  Choose Parent category
+                                {/* Default Option */}
+                                <option value={JSON.stringify({
+                                  id: categoryData.parentCategoryId ? categoryData.parentCategoryId : "defaultId",
+                                  name: categoryData.parentCategory
+                                })}>
+                                  {categoryData.parentCategory}
                                 </option>
+
+                                {/* Subcategory Options */}
                                 {subCategories.map((subCategory) => (
                                   <option key={subCategory.id} value={JSON.stringify({ id: subCategory.id, name: subCategory.name })}>
                                     {subCategory.name}
@@ -140,7 +256,7 @@ const EditCategories = () => {
                               </select>
                               {errors.sub_category && touched.sub_category && (
                                 <small className="text-red-500">{errors.sub_category}</small>
-                              )} 
+                              )}
                             </div>
 
                             <div className="col-span-6">

@@ -1,39 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Formik } from "formik";
-import Slider from '@material-ui/core/Slider';
-import Button from '@material-ui/core/Button';
-import Cropper from 'react-easy-crop';
-import Typography from '@material-ui/core/Typography';
-import { getCroppedImg, getRotatedImage } from '../../../../components/common/cropper/CanvasUtils.js';
-import { getOrientation } from 'get-orientation/browser';
 import Header from "../../../../components/admin/Header";
 import Sidebar from '../../../../components/admin/Sidebar';
 import Footer from "../../../../components/admin/Footer";
 import CreateCategoriesSchema from "../../../../validation-schemas/CreateCategorySchema.js"
+import Loader from "../../../../components/common/Loader.jsx";
 
 
-
-// const ORIENTATION_TO_ANGLE = {
-//   '3': 180,
-//   '6': 90,
-//   '8': -90,
-// }
-
-const CreateCategories = (classes) => {
-  const navigate = useNavigate();
+const CreateCategories = () => {
   const authInfo = JSON.parse(localStorage.getItem('authInfo'));
-  // const [crop, setCrop] = useState({ x: 0, y: 0 })
-  // const [zoom, setZoom] = useState(1);
+  
   const [imageSrc, setImageSrc] = React.useState(null);
-  // const [rotation, setRotation] = useState(0)
-  // const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
-  // const [croppedImage, setCroppedImage] = useState(null)
-  // const [initialCrop, setInitialCrop] = useState({ x: 0, y: 0 });
-  // const [initialZoom, setInitialZoom] = useState(1);
   const [subCategories, setSubcategories] = useState([]);
+  const [loading, setLoading] = useState([false]);
 
 
 
@@ -43,6 +25,7 @@ const CreateCategories = (classes) => {
 
 
   const getAllCate = async () => {
+    setLoading(true);
     try {
       const response = await axios.get("/admin/getAllcategories", {
         headers: {
@@ -66,6 +49,8 @@ const CreateCategories = (classes) => {
       if (error.response) {
         toast.error(error.response.data.message, { autoClose: 3000 });
       }
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -84,7 +69,6 @@ const CreateCategories = (classes) => {
    * 
   */
   const handleSubmit = async (values, { resetForm }) => {
-    console.log('values=', values);
     const selectedSubCategory = values.sub_category ? JSON.parse(values.sub_category) : null;
     const formData = {
       ...values,
@@ -120,6 +104,7 @@ const CreateCategories = (classes) => {
 
   return (
     <>
+    {loading === true ? <Loader /> : ''}
       <Header />
       <div className="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
         <Sidebar />
@@ -166,7 +151,6 @@ const CreateCategories = (classes) => {
                     onSubmit={(values, { setSubmitting, resetForm }) => {
                       handleSubmit(values, { resetForm });
                       setSubmitting(false);
-
                     }}
                     validationSchema={CreateCategoriesSchema}
                   >

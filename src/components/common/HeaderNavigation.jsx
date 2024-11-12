@@ -1,15 +1,24 @@
 import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import corpelLogoMain from '../../assets/images/corpel-logo-main.png';
+import shoping_cart from '../../assets/icons/shoppingCart.svg';
+import { useSelector } from 'react-redux';
+
 
 const HeaderNavigation = () => {
+    const cart = useSelector((state) => state.cart.cart || []);
     const authInfo = JSON.parse(localStorage.getItem("authInfo"));
     const navigate = useNavigate();
+
+      // Yahan har item ki quantity ko total mein add kar rahe hain
+      const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+
     const logout = (e) => {
         localStorage.clear();
         navigate("/login");
         window.location.href = "/login";
     }
+
 
     return (
         <>
@@ -272,19 +281,19 @@ const HeaderNavigation = () => {
                                                 </li>
                                                 <li className="li"><Link to={"/course-listing"}>Mental Health Courses</Link>
                                                     <ul className="sub-menu">
-                                                    <li><Link to="/course-listing">Mental Health & Wellbeing</Link></li>
-                                                    <li><Link to="/course-listing">Mental Health Awareness</Link></li>
-                                                    <li><Link to="/course-listing">Mental Health First Aid</Link></li>
+                                                        <li><Link to="/course-listing">Mental Health & Wellbeing</Link></li>
+                                                        <li><Link to="/course-listing">Mental Health Awareness</Link></li>
+                                                        <li><Link to="/course-listing">Mental Health First Aid</Link></li>
                                                     </ul>
                                                 </li>
                                                 <li className="li"><Link to={"/course-listing"}>IEMA Courses</Link></li>
                                                 <li className="li"><Link to={"/course-listing"}>Level 1 Health & Safety</Link></li>
                                                 <li className="li"><Link to={"/course-listing"}>E-Learning Courses</Link>
                                                     <ul className="sub-menu">
-                                                    <li className="li"><Link to={"/course-listing"}>Construction</Link> </li>
-                                                    <li className="li"><Link to={"/course-listing"}>Hospitality</Link> </li>
-                                                    <li className="li"><Link to={"/course-listing"}>Business</Link> </li>
-                                                    <li className="li"><Link to={"/course-listing"}>Social & Care</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"}>Construction</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"}>Hospitality</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"}>Business</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"}>Social & Care</Link> </li>
                                                     </ul>
                                                 </li>
                                                 <li className="li"><Link to={"/course-listing"}>In House Training</Link></li>
@@ -301,6 +310,52 @@ const HeaderNavigation = () => {
                                             <Link to={"/contact-us"}>Contact Us</Link>
 
                                         </li>
+
+                                        {/* <li className="nav-item position-relative">
+                                            <Link to="/cart" className="nav-link d-flex align-items-center">
+                                                <img src={shoping_cart} alt="Cart" className="cart-icon-small w-5" />
+                                                {courseCount > 0 && (
+                                                    <span className="badge bg-danger position-absolute top-1 start-100 translate-middle rounded-circle">
+                                                    0
+                                                </span>
+                                                )}
+                                            </Link>
+                                        </li> */}
+
+                                        <li className="nav-item position-relative">
+                                            <Link to="/cart" className="nav-link d-flex align-items-center">
+                                                <img src={shoping_cart} alt="Cart" className="cart-icon-small w-5" />
+                                                <span className="badge bg-danger position-absolute top-1 start-100 translate-middle rounded-circle">
+                                                {totalQuantity > 0 ? totalQuantity : 0} 
+                                                </span>
+                                            </Link>
+                                        </li>
+
+                                        {/* <li className="nav-item position-relative">
+                                            <Link to="/cart" className="nav-link d-flex align-items-center">
+                                                <img src={shoping_cart} alt="Cart" className="cart-icon-small w-5" />
+                                                <span className="badge bg-danger position-absolute top-1 start-100 translate-middle rounded-circle">
+                                                    {courseCount > 0 ? courseCount : 0}
+                                                </span>
+                                            </Link>
+                                        </li> */}
+                                        {/* <li className="nav-item position-relative">
+                                            <Link to="/cart" className="nav-link d-flex align-items-center">
+                                                <img src={shoping_cart} alt="Cart" className="cart-icon-small w-5" />
+                                                {courseCount  > 0 ? (
+                                                    <span className="badge bg-danger position-absolute top-1 start-100 translate-middle rounded-circle">
+                                                        {courseCount}
+                                                    </span>                    
+                                                ):(
+                                                    <span className="badge bg-danger position-absolute top-1 start-100 translate-middle rounded-circle">
+                                                        0
+                                                    </span>
+                                                )
+                                            } 
+                                                
+                                            </Link>
+                                        </li> */}
+
 
                                         {authInfo && authInfo.name ? (
                                             <li className="nav-item">

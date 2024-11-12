@@ -8,11 +8,14 @@ import Footer from '../components/common/Footer';
 import citbConstructionLogo from '../assets/images/citb-SSSTS-construction-logo-300x300.png';
 import bannerBg from '../assets/images/page-banner-bg.jpg'
 import EmptyImage from "../assets/images/EmptyImage.png";
+import { useDispatch } from "react-redux";
+import {addToCart} from '../store/reducers/cart-reducer';
 
 
 const Home = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
     //console.log('authINFO',authInfo)
     const [courses, setCourses] = useState([]);
@@ -57,6 +60,19 @@ const Home = () => {
     /***********************************************************************/
     /***********************************************************************/
 
+    /**
+     * Handle to AddToCart 
+     * 
+     */
+    const handleAddToCart = async (course) => {
+        const cart = course;
+        console.log("add to cart- cart:", cart);
+        dispatch(addToCart(cart));
+        toast.success(`${cart.course_title} added to cart!`);
+    }
+    /***********************************************************************/
+    /***********************************************************************/
+
     /** 
      * Handle More info
      * 
@@ -68,6 +84,11 @@ const Home = () => {
     };
     /***********************************************************************/
     /***********************************************************************/
+
+
+
+
+
 
     return (
         <>
@@ -150,9 +171,9 @@ const Home = () => {
                                             </div>
                                             <div className="pr_col product-btns">
                                                 <div className="pr-btns">
-                                                    <a href="#" className="btns add-to-cart">
+                                                    <Link to="#" className="btns add-to-cart"  onClick={() =>handleAddToCart(course)}>
                                                         Add to cart
-                                                    </a>
+                                                    </Link>
                                                     <a
                                                         href="#"
                                                         onClick={(e) => {
