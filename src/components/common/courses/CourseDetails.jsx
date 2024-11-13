@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import {Link, useNavigate, useLocation } from 'react-router-dom';
 import Loader from "../../../components/common/Loader";
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
+import { addToCart } from '../../../store/reducers/cart-reducer';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import bannerBg from '../../../assets/images/page-banner-bg.jpg';
 import icon_hours from '../../../assets/images/Icons/24-hours.png';
 import icon_course from '../../../assets/images/Icons/course.png';
@@ -14,6 +17,7 @@ import Icons_calendar_outline from '../../../assets/images/Icons/calendar-outlin
 const CourseDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const today = new Date();
 
     const { course } = location.state || {};
@@ -58,6 +62,15 @@ const CourseDetails = () => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-GB'); // 'en-GB' will give date format as dd/mm/yyyy
     };
+    /***********************************************************************/
+
+    const handleAddToCart = async (course, e) => {
+        e.preventDefault();
+        const cart = course;
+        console.log("add to cart- cart:", cart);
+        dispatch(addToCart(cart));
+        toast.success(`${cart.course_title} added to cart!`);
+    }
     /***********************************************************************/
     /***********************************************************************/
 
@@ -184,9 +197,12 @@ const CourseDetails = () => {
                                         </div>
                                     </div>
                                     <div className="col-lg-12">
-                                        <a href="#" className="btn btn-md btn-primary">
-                                            Add to Basket
-                                        </a>
+                                        <button 
+                                            className="btn btn-md btn-primary"
+                                            onClick={(e) => handleAddToCart(course, e)}
+                                        >
+                                            Add to cart
+                                        </button>
                                     </div>
                                 </div>{" "}
                             </div>
@@ -223,7 +239,7 @@ const CourseDetails = () => {
                                                 </div>
                                                 {isOpen.courseInfo && (
                                                     <div className="card-body">
-                                                        <div dangerouslySetInnerHTML={{ __html: course.course_information }} />
+                                                        <div dangerouslySetInnerHTML={{ __html: course.course_information || "Currently, no course information is available for this course." }} />
                                                     </div>
                                                 )}
                                             </div>
@@ -263,7 +279,12 @@ const CourseDetails = () => {
                                                 </div>
                                                 {isOpen.Completing_the_course && (
                                                     <div className="card-body">
-                                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris imperdiet nulla quis vehicula congue. Etiam non ultrices eros. Pellentesque volutpat enim vitae purus feugiat, at dictum tortor varius. Praesent eleifend arcu vel turpis lobortis iaculis. Phasellus hendrerit vel sem nec varius. Suspendisse sed elementum massa. Suspendisse euismod nisi eu elementum venenatis. Vivamus euismod id dolor sit amet pretium. Mauris maximus bibendum lorem non commodo. Ut sed quam a urna fringilla vulputate. Aliquam non mi finibus, rhoncus sapien non, accumsan enim. Phasellus gravida neque ac neque vestibulum vestibulum non eget libero. Donec urna lorem, tempor non suscipit in, fringilla et ante. Vestibulum iaculis purus et bibendum dictum. Vestibulum gravida sem at tortor aliquet suscipit.</p>
+                                                        {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris imperdiet nulla quis vehicula congue. Etiam non ultrices eros. Pellentesque volutpat enim vitae purus feugiat, at dictum tortor varius. Praesent eleifend arcu vel turpis lobortis iaculis. Phasellus hendrerit vel sem nec varius. Suspendisse sed elementum massa. Suspendisse euismod nisi eu elementum venenatis. Vivamus euismod id dolor sit amet pretium. Mauris maximus bibendum lorem non commodo. Ut sed quam a urna fringilla vulputate. Aliquam non mi finibus, rhoncus sapien non, accumsan enim. Phasellus gravida neque ac neque vestibulum vestibulum non eget libero. Donec urna lorem, tempor non suscipit in, fringilla et ante. Vestibulum iaculis purus et bibendum dictum. Vestibulum gravida sem at tortor aliquet suscipit.</p> */}
+                                                        <p
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: (course.completing_the_course || "Currently, no Completing the course information is available for this course.").replace(/\n/g, '<br />')
+                                                            }}
+                                                        />
                                                     </div>
                                                 )}
                                             </div>

@@ -653,8 +653,8 @@ const CourseListing = () => {
                                                                             <div className="pr-btns">
                                                                                 <Link to="#" className="btns add-to-cart" onClick={() => AddToCart(course)}>Add to cart</Link>
                                                                                 {/* <a href="#" className="btns more-info">More info</a> */}
-                                                                                <a
-                                                                                    href="#"
+                                                                                <Link
+                                                                                    to="#"
                                                                                     onClick={(e) => {
                                                                                         e.preventDefault();
                                                                                         handleMoreInfoClick(course);
@@ -662,7 +662,7 @@ const CourseListing = () => {
                                                                                     className="btns more-info"
                                                                                 >
                                                                                     More Info
-                                                                                </a>
+                                                                                </Link>
                                                                             </div>
                                                                         </div>
                                                                     </div>

@@ -33,7 +33,8 @@ const EditCourse = () => {
     const [courseInformationValue, setCourseInformationValue] = useState(null);
     const [courseScheduleDates, setCourseScheduleDates] = useState(null);
     const [categories, setCategories] = useState([]);
-
+    const [selectedDates, setSelectedDates] = useState([]);
+    const formikRef = useRef(null);
 
     const styles = {
         editor: {
@@ -54,28 +55,60 @@ const EditCourse = () => {
         let fp = null;
 
         if (fpRef.current && course.course_schedule_dates) {
-            // Parse the dates if they're in string format
-            const initialDates = Array.isArray(course.course_schedule_dates)
-                ? course.course_schedule_dates
-                : course.course_schedule_dates.split(',').map(date => date.trim());
+            // Parse the initial dates properly
+            let initialDates = [];
+            
+            if (typeof course.course_schedule_dates === 'string') {
+                // Handle comma-separated string
+                initialDates = course.course_schedule_dates
+                    .split(',')
+                    .map(date => date.trim())
+                    .map(formatDateString)
+                    .filter(date => date !== null); // Remove any invalid dates
+            } else if (Array.isArray(course.course_schedule_dates)) {
+                // Handle array of dates
+                initialDates = course.course_schedule_dates
+                    .map(formatDateString)
+                    .filter(date => date !== null);
+            }
 
+            // Set initial states
+            setSelectedDates(initialDates);
             setCourseScheduleDates(initialDates);
 
+            // Initialize flatpickr
             fp = flatpickr(fpRef.current, {
                 mode: "multiple",
-                dateFormat: "d-m-y",
+                dateFormat: "Y-m-d",
                 allowInput: true,
-                conjunction: ",  ",
+                conjunction: ", ",
                 closeOnSelect: false,
                 inline: false,
                 static: false,
                 clickOpens: true,
                 defaultDate: initialDates,
-                onChange: (selectedDates) => {
-                    setCourseScheduleDates(selectedDates);
-                    // setFieldValue("course_schedule_dates", dateStr);
+                onChange: (selectedDates, dateStr, instance) => {
+                    // Handle date selection
+                    const formattedDates = selectedDates.map(date => 
+                        new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+                            .toISOString()
+                            .split('T')[0]
+                    );
+                    
+                    setSelectedDates(formattedDates);
+                    setCourseScheduleDates(formattedDates);
+                    
+                    // Update Formik value
+                    if (formikRef.current) {
+                        formikRef.current.setFieldValue('course_schedule_dates', formattedDates);
+                    }
                 }
             });
+
+            // Force flatpickr to update with initial dates
+            if (initialDates.length > 0) {
+                fp.setDate(initialDates, false);
+            }
         }
 
         return () => {
@@ -83,7 +116,7 @@ const EditCourse = () => {
                 fp.destroy();
             }
         };
-    }, [course.course_schedule_dates]);
+    }, [course.course_schedule_dates]); // Dependency on course data
     
     
 
@@ -342,6 +375,13 @@ console.log('requestData---',requestData)
         setCourseInformationValue(value)
     };
 
+    // Helper function to parse and format dates
+    const formatDateString = (dateStr) => {
+        if (!dateStr) return null;
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return null; // Invalid date
+        return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
+    };
 
     console.log('course in react', course)
     return (
@@ -625,21 +665,23 @@ console.log('requestData---',requestData)
                                                                     <input
                                                                         type="text"
                                                                         id="courseScheduleDates"
-                                                                        name="courseScheduleDates"
+                                                                        name="course_schedule_dates"
                                                                         className="form-control"
-                                                                        onChange={(e) => {
-                                                                            const dates = e.target.value; // Handle input as comma-separated values
-                                                                            setFieldValue("course_schedule_dates", dates);
-                                                                        }}
-                                                                        value={courseScheduleDates}
                                                                         ref={fpRef}
-                                                                        placeholder="Add dates"
-                                                                        required
+                                                                        placeholder="Click to select dates"
                                                                         readOnly
                                                                     />
-                                                                    {/* {touched.courseScheduleDates && errors.courseScheduleDates ? (
-                                                                        <small className="text-danger">{errors.courseScheduleDates}</small>
-                                                                    ) : null} */}
+                                                                    {touched.course_schedule_dates && 
+                                                                     errors.course_schedule_dates && (
+                                                                        <small className="text-danger">
+                                                                            {errors.course_schedule_dates}
+                                                                        </small>
+                                                                    )}
+                                                                    {selectedDates.length > 0 && (
+                                                                        <small className="text-muted d-block mt-1">
+                                                                            Current dates: {selectedDates.join(', ')}
+                                                                        </small>
+                                                                    )}
                                                                 </div>
                                                             </div>
 
