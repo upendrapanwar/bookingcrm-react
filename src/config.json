@@ -1,3 +1,3 @@
 {
-    "apiURI": "http://localhost:7700/"
+    "apiURI": "https://bookingcrm-node.vercel.app/"
 }

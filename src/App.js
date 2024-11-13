@@ -20,6 +20,7 @@ import AdminCategoriesList from './containers/admin/courses/categories/AdminCate
 import EditCategories from './containers/admin/courses/categories/EditCategories';
 import Cart from './components/common/cart/Cart';
 import Checkout from './components/common/Checkout';
+import Order from './components/common/Order';
 
 
 
@@ -88,6 +89,7 @@ export const PublicRoutes = () => {
         <Route path='/contact-us' element={<ContactUs />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/checkout' element={<Checkout/>} />
+        <Route path='/order-done' element={<Order/>} />
         <Route index element={<Home />} />
       </Routes>
     </>

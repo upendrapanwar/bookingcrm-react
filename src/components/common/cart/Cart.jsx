@@ -122,7 +122,7 @@ const Cart = () => {
                                 </div>
                             </div>
                             <div className="mt-4">
-                                 <button className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded w-full" onClick={handleCheckOut}>
+                                 <button className="bg-blue text-white font-bold py-2 px-4 rounded w-full" onClick={handleCheckOut}>
                                    Proceed to Checkout
                                 </button>
                             </div>

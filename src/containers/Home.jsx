@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import axios from "axios";
-import Loader from "../components/common/Loader";
-import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
-import citbConstructionLogo from '../assets/images/citb-SSSTS-construction-logo-300x300.png';
-import bannerBg from '../assets/images/page-banner-bg.jpg'
-import EmptyImage from "../assets/images/EmptyImage.png";
+// import Loader from "../components/common/Loader";
+// import Header from '../components/common/Header';
+// import Footer from '../components/common/Footer';
+// import citbConstructionLogo from '../assets/images/citb-SSSTS-construction-logo-300x300.png';
+// import bannerBg from '../assets/images/page-banner-bg.jpg'
+// import EmptyImage from "../assets/images/EmptyImage.png";
 import { useDispatch } from "react-redux";
 import { addToCart } from '../store/reducers/cart-reducer';
 import CourseListing from '../components/common/courses/ListingCourses';

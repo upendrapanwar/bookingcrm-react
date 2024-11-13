@@ -1,33 +1,110 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import { Formik } from "formik";
 import checkoutValidation from '../../validation-schemas/CheckoutSchema'
 import { useSelector } from 'react-redux';
-
-
+import { useDispatch } from "react-redux";
+import { addToCart, clearCart } from '../../store/reducers/cart-reducer';
+import Loader from "../../components/common/Loader";
+import { toast } from 'react-toastify';
 
 const Checkout = () => {
+
+    const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart.cart || []);
     const totalPrice = cart.reduce((total, item) => total + item.regular_price * item.quantity, 0);
+    const authInfo = JSON.parse(localStorage.getItem('authInfo'));
 
+    const [loading, setLoading] = useState(false);
+    // const [paymentSuccess, setPaymentSuccess] = useState(false);
+    const navigate = useNavigate(); // for navigation
 
-    const handleSubmit = async(values) => {
+    const submitOrder = async (values) => {
+        setLoading(true);
         console.log("values",values);
-    }
+        localStorage.setItem("orderDetails", JSON.stringify(values));
+        dispatch(clearCart());
+        navigate('/order-done');
+        setLoading(false);
+        // try {
+        //     const formData = {
+        //         ...values,
+        //         userId : authInfo.id
+        //     }
+        //     console.log("formData", formData);
+        //     const response = await axios.post(`/placedOrder`, {formData}, {
+        //         headers: {
+        //             'Accept': 'application/json',
+        //             'Content-Type': 'application/json; charset=UTF-8',
+        //             'Authorization': `Bearer ${authInfo.token}`
+        //         }
+        //     });
+        //     console.log("response", response);
+        // } catch (error) {
 
+        // } finally {
+
+        // }
+
+       
+    };
+
+    // Close the modal and navigate after 3 seconds
+    const handlePaymentSuccessClose = () => {
+        setTimeout(() => {
+            // setPaymentSuccess(false); // Close modal
+            navigate('/'); // Navigate to home page
+        }, 3000); // 3-second delay before redirect
+    };
+
+
+    const handleCheckout = () => {
+        const total = (totalPrice * 1.1).toFixed(2)
+        let reqBody = {
+            //   "amount": getTotal().totalPrice
+
+            'amount': Number(total) * 100
+        };
+        axios.post("user/checkoutSession/", reqBody, {
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json;charset=UTF-8",
+                Authorization: `Bearer ${authInfo.token}`,
+            },
+        })
+            .then((response) => {
+                console.log("response", response.data.status)
+                console.log("url", response.data.data.url)
+                if (response.data.status === true) {
+                    window.location.href = response.data.data.url;
+                }
+            })
+            .catch((error) => {
+                if (error.response && error.response.data.status === false) {
+                    toast.error(error.response.data.message);
+                }
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    // dispatch(setLoading({ loading: false }));
+                }, 300);
+            });
+    };
 
     return (
         <>
             <Header />
-            <div class="font-sans bg-white p-4">
-                <div class="max-w-4xl mx-auto">
-                    <div class="text-center">
-                        <h2 class="text-3xl font-extrabold text-gray-800 inline-block border-b-[3px] border-gray-800 pb-1">Checkout</h2>
+            <div className="font-sans bg-white p-4">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center">
+                        <h2 className="text-3xl font-extrabold text-gray-800 inline-block border-b-[3px] border-gray-800 pb-1">Checkout</h2>
                     </div>
 
-                    <div class="mt-12">
-                        <div class="grid md:grid-cols-3 gap-4">
+                    <div className="mt-12">
+                        <div className="grid md:grid-cols-3 gap-4">
                             <div className="mt-12">
                                 <Formik
                                     initialValues={{
@@ -48,8 +125,11 @@ const Checkout = () => {
                                         cvv: ''
                                     }}
                                     validationSchema={checkoutValidation}
-                                    onSubmit={(values, { resetForm }) => {
-                                        handleSubmit(values, { resetForm });
+                                    onSubmit={async  (values, { resetForm }) => {
+                                        // Submit the form values here
+                                        console.log(values);
+                                        await submitOrder(values);
+                                        resetForm();
                                     }}
                                 >
                                     {({
@@ -281,12 +361,7 @@ const Checkout = () => {
                                                                     </label>
                                                                 </div>
 
-                                                                {/* <div class="flex items-center">
-                                                                    <input type="radio" class="w-5 h-5 cursor-pointer" id="paypal" />
-                                                                    <label for="paypal" class="ml-4 flex gap-2 cursor-pointer">
-                                                                        <img src="https://readymadeui.com/images/paypal.webp" class="w-20" alt="paypalCard" />
-                                                                    </label>
-                                                                </div> */}
+
                                                             </div>
 
                                                         </div>
@@ -333,13 +408,28 @@ const Checkout = () => {
                                                         </div>
                                                     </div>
 
-                                                    <button
+                                                    {/* <button
                                                         type="submit"
                                                         className="w-full mt-6 py-2 px-4 bg-blue-600 text-white font-semibold text-lg rounded-md disabled:bg-gray-400"
                                                         disabled={isSubmitting}
                                                     >
                                                         {isSubmitting ? 'Processing...' : 'Submit'}
+
+                                                    </button> */}
+                                                    <button
+                                                        type="submit"
+                                                        className="w-full mt-6 py-2 px-4 bg-blue-600 text-white font-semibold text-lg rounded-md disabled:bg-gray-400"
+                                                        // disabled={isSubmitting}
+                                                    >
+                                                        {isSubmitting ? 'Processing...' : 'PLACE ORDER'}
                                                     </button>
+
+                                                    {/* Display "Payment has been done" message after successful processing
+                                                    {paymentSuccess && !loading && !isSubmitting && (
+                                                        <div className="mt-4 text-green-600 font-semibold">
+                                                            Payment has been done successfully!
+                                                        </div>
+                                                    )} */}
                                                 </div>
                                             </div>
                                         </form>
@@ -351,6 +441,22 @@ const Checkout = () => {
                 </div>
             </div>
             <Footer />
+
+            {/* Modal to show payment success */}
+            {/* {paymentSuccess && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+                        <h3 className="text-2xl font-bold text-green-600">Payment Successful</h3>
+                        <p>Your payment has been successfully processed.</p>
+                         <button
+                            onClick={handlePaymentSuccessClose}
+                            className="mt-4 bg-blue-600 text-white py-2 px-6 rounded-lg"
+                        >
+                            Go to Home
+                        </button> 
+                    </div>
+                </div>
+            )} */}
         </>
     )
 }

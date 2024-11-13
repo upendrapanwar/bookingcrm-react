@@ -9,8 +9,7 @@ const HeaderNavigation = () => {
     const authInfo = JSON.parse(localStorage.getItem("authInfo"));
     const navigate = useNavigate();
 
-      // Yahan har item ki quantity ko total mein add kar rahe hain
-      const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+    const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
 
     const logout = (e) => {
         localStorage.clear();
