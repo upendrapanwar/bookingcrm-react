@@ -21,6 +21,8 @@ import EditCategories from './containers/admin/courses/categories/EditCategories
 import Cart from './components/common/cart/Cart';
 import Checkout from './components/common/Checkout';
 import CourseDeliveryOptions from './components/common/CourseDeliveryOptions';
+import Order from './components/common/Order';
+import CheckoutForm from './components/common/CheckoutForm';
 
 
 
@@ -90,6 +92,11 @@ export const PublicRoutes = () => {
         <Route path='/cart' element={<Cart />} />
         <Route path='/checkout' element={<Checkout />} />
         <Route path='/course-delivery-option' element={<CourseDeliveryOptions />} />
+        <Route path='/checkout' element={<Checkout/>} />
+        {/* <Route path='/checkout-form' element={<CheckoutForm/>} /> */}
+
+        
+        <Route path='/order-done' element={<Order/>} />
         <Route index element={<Home />} />
       </Routes>
     </>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import corpelLogoMain from '../../assets/images/corpel-logo-main.png';
+import corpelLogoMain from '../../assets/images/corpel-logo-white.png';
 import shoping_cart from '../../assets/icons/shoppingCart.svg';
 import { useSelector } from 'react-redux';
 import Loader from "../../components/common/Loader";
