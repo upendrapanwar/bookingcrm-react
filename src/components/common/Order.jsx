@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
+import Loader from "../../components/common/Loader";
 
 const Order = () => {
   const [orderDetails, setOrderDetails] = useState([]);

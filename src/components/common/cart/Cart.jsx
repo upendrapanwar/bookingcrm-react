@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,12 +7,72 @@ import DataTable from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import { useNavigate } from 'react-router-dom';
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
+
+
+//const stripePromise = loadStripe("pk_test_51QKGTWCHTdQvfuyCjb1L0IIPZZrMyeB49Jg7kOdfbYo5C6vcAPM3ZiQNAnViMPpYRhDX0Mr81ThvXty30PXi6bkh00DbyB1Lgr");
+
 
 const Cart = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const cart = useSelector((state) => state.cart.cart || []);
     const totalPrice = cart.reduce((total, item) => total + item.regular_price * item.quantity, 0);
+
+   
+
+
+    useEffect(() => {
+        // Create PaymentIntent as soon as the page loads
+
+    }, []);
+
+    const handleCheckoutStripe = () => {
+        navigate("/checkout");
+    //     const total = (totalPrice * 1.1).toFixed(2)
+    //     let reqBody = {
+    //         'amount': Number(total) * 100
+    //     };
+    //     console.log("total", total);
+
+    //     console.log("reqBody", reqBody);
+    //     axios.post("user/checkoutSession/", reqBody, {
+    //         headers: {
+    //             Accept: "application/json",
+    //             "Content-Type": "application/json;charset=UTF-8",
+    //             // Authorization: `Bearer ${authInfo.token}`,
+    //         },
+    //     })
+    //         .then((response) => {
+    //             console.log("response", response)
+    //             console.log("url", response.data.data.url)
+    //             if (response.data.status === true) {
+    //                 const Data = response.data.data;
+    //                 navigate("/checkout", {state: Data});
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             if (error.response && error.response.data.status === false) {
+    //                 toast.error(error.response.data.message);
+    //             }
+    //         })
+    //         .finally(() => {
+    //             setTimeout(() => {
+    //                 // dispatch(setLoading({ loading: false }));
+    //             }, 300);
+    //         });
+    };
+
+
+    // const appearance = {
+    //     theme: 'stripe',
+    // };
+    // // Enable the skeleton loader UI for optimal loading.
+    // const loader = 'auto';
 
     const columns = [
         {
@@ -80,9 +140,9 @@ const Cart = () => {
     };
 
 
-    const handleCheckOut = async() => {
-        navigate("/checkout");
-    }
+    // const handleCheckOut = async() => {
+
+    // }
 
     return (
         <>
@@ -122,11 +182,10 @@ const Cart = () => {
                                 </div>
                             </div>
                             <div className="mt-4">
-                                 <button className="bg-blue text-white font-bold py-2 px-4 rounded w-full" onClick={handleCheckOut}>
-                                   Proceed to Checkout
+                                <button className="bg-blue text-white font-bold py-2 px-4 rounded w-full" onClick={handleCheckoutStripe}>
+                                    Proceed to Checkout
                                 </button>
                             </div>
-
                         </div>
                     </div>
                 </div>

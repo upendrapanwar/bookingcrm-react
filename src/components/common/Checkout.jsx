@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+// import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { loadStripe } from '@stripe/stripe-js';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Header from '../../components/common/Header';
@@ -9,89 +11,154 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { addToCart, clearCart } from '../../store/reducers/cart-reducer';
 import Loader from "../../components/common/Loader";
+import { useLocation } from 'react-router-dom';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutForm from './CheckoutForm';
 import { toast } from 'react-toastify';
+
+const stripePromise = loadStripe("pk_test_51QKGTWCHTdQvfuyCjb1L0IIPZZrMyeB49Jg7kOdfbYo5C6vcAPM3ZiQNAnViMPpYRhDX0Mr81ThvXty30PXi6bkh00DbyB1Lgr");
 
 const Checkout = () => {
 
-    const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart.cart || []);
     const totalPrice = cart.reduce((total, item) => total + item.regular_price * item.quantity, 0);
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
+    // const stripe = useStripe();
+    // const elements = useElements();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const data = location.state;
+    console.log("data", data)
 
     const [loading, setLoading] = useState(false);
-    // const [paymentSuccess, setPaymentSuccess] = useState(false);
-    const navigate = useNavigate(); // for navigation
+    const [clientSecret, setClientSecret] = useState("");
+    const [dpmCheckerLink, setDpmCheckerLink] = useState("");
 
-    const submitOrder = async (values) => {
-        setLoading(true);
-        console.log("values",values);
-        localStorage.setItem("orderDetails", JSON.stringify(values));
-        dispatch(clearCart());
-        navigate('/order-done');
-        setLoading(false);
-        // try {
-        //     const formData = {
-        //         ...values,
-        //         userId : authInfo.id
-        //     }
-        //     console.log("formData", formData);
-        //     const response = await axios.post(`/placedOrder`, {formData}, {
-        //         headers: {
-        //             'Accept': 'application/json',
-        //             'Content-Type': 'application/json; charset=UTF-8',
-        //             'Authorization': `Bearer ${authInfo.token}`
-        //         }
-        //     });
-        //     console.log("response", response);
-        // } catch (error) {
+    console.log("clientSecret",clientSecret)
 
-        // } finally {
-
-        // }
-
-       
-    };
-
-    // Close the modal and navigate after 3 seconds
-    const handlePaymentSuccessClose = () => {
-        setTimeout(() => {
-            // setPaymentSuccess(false); // Close modal
-            navigate('/'); // Navigate to home page
-        }, 3000); // 3-second delay before redirect
-    };
+    // useEffect(() => {
+    //     handleCheckoutStripe();
+    // }, []);
 
 
-    const handleCheckout = () => {
-        const total = (totalPrice * 1.1).toFixed(2)
-        let reqBody = {
-            //   "amount": getTotal().totalPrice
+    // const handleCheckoutStripe = () => {
 
-            'amount': Number(total) * 100
-        };
-        axios.post("user/checkoutSession/", reqBody, {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json;charset=UTF-8",
-                Authorization: `Bearer ${authInfo.token}`,
-            },
-        })
-            .then((response) => {
-                console.log("response", response.data.status)
-                console.log("url", response.data.data.url)
+    //     console.log("use Effect function run")
+    //     const total = (totalPrice * 1.1).toFixed(2)
+    //     let reqBody = {
+    //         'amount': Number(total) * 100
+    //     };
+    //     console.log("total", total);
+
+    //     console.log("reqBody", reqBody);
+    //     axios.post("user/checkoutSession/", reqBody, {
+    //         headers: {
+    //             Accept: "application/json",
+    //             "Content-Type": "application/json;charset=UTF-8",
+    //             // Authorization: `Bearer ${authInfo.token}`,
+    //         },
+    //     })
+    //         .then((response) => {
+    //             console.log("response", response)
+    //             console.log("url", response.data.data.url)
+    //             if (response.data.status === true) {
+    //                 const Data = response.data.data;
+    //                 console.log("Data", Data)
+    //                 setClientSecret(Data.client_secret)
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             if (error.response && error.response.data.status === false) {
+    //                 toast.error(error.response.data.message);
+    //             }
+    //         })
+    //         .finally(() => {
+    //             setTimeout(() => {
+    //                 // dispatch(setLoading({ loading: false }));
+    //             }, 300);
+    //         });
+    // };
+
+
+
+
+    useEffect(() => {
+        const handleCheckoutStripe = async () => {
+            try {
+                console.log("use Effect function run");
+                const total = (totalPrice * 1.1).toFixed(2);
+                let reqBody = {
+                    'amount': Number(total) * 100, // Convert to cents for Stripe
+                };
+
+                console.log("total", total);
+                console.log("reqBody", reqBody);
+
+                const response = await axios.post("user/checkoutSession/", reqBody, {
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json;charset=UTF-8",
+                        // Authorization: `Bearer ${authInfo.token}`,
+                    },
+                });
+
+                console.log("response", response);
+                console.log("url", response.data.data.url);
+
                 if (response.data.status === true) {
-                    window.location.href = response.data.data.url;
+                    const Data = response.data.data;
+                    console.log("Data", Data);
+                    setClientSecret(Data.client_secret);
+                    setDpmCheckerLink(`https://dashboard.stripe.com/settings/payment_methods/review?transaction_id=${Data.id}`);
+
                 }
-            })
-            .catch((error) => {
+            } catch (error) {
                 if (error.response && error.response.data.status === false) {
                     toast.error(error.response.data.message);
+                } else {
+                    toast.error('An error occurred during the checkout process');
                 }
-            })
-            .finally(() => {
+            } finally {
                 setTimeout(() => {
-                    // dispatch(setLoading({ loading: false }));
+                    // dispatch(setLoading({ loading: false })); // Uncomment if necessary
                 }, 300);
+            }
+        };
+
+        handleCheckoutStripe(); // Call the function inside useEffect
+
+    }, []);
+
+    const appearance = {
+        theme: 'stripe',
+    };
+    // Enable the skeleton loader UI for optimal loading.
+    const loader = 'auto';
+
+
+    const submitOrder = async (values) => {
+        try {
+            const formData = {
+                ...values,
+                userId: authInfo.id
+            }
+            console.log("formData", formData);
+            const response = await axios.post(`/placedOrder`, { formData }, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json; charset=UTF-8',
+                    'Authorization': `Bearer ${authInfo.token}`
+                }
             });
+            console.log("response", response);
+        } catch (error) {
+
+        } finally {
+
+        }
+
+
     };
 
     return (
@@ -125,7 +192,7 @@ const Checkout = () => {
                                         cvv: ''
                                     }}
                                     validationSchema={checkoutValidation}
-                                    onSubmit={async  (values, { resetForm }) => {
+                                    onSubmit={async (values, { resetForm }) => {
                                         // Submit the form values here
                                         console.log(values);
                                         await submitOrder(values);
@@ -349,7 +416,7 @@ const Checkout = () => {
                                                             </div>
                                                         </div>
 
-                                                        <div>
+                                                        {/* <div>
                                                             <h3 className="text-xl font-bold text-gray-800">Payment Details</h3>
                                                             <div class="grid gap-4 sm:grid-cols-2">
                                                                 <div class="flex items-center">
@@ -405,31 +472,30 @@ const Checkout = () => {
                                                                 />
                                                                 {errors.cvv && touched.cvv && <small className="text-red-500">{errors.cvv}</small>}
                                                             </div>
-                                                        </div>
+                                                        </div> */}
+                                                     {clientSecret && (
+                                                        <Elements options={{ clientSecret, appearance, Loader }} stripe={stripePromise} >
+                                                            <CheckoutForm  dpmCheckerLink={dpmCheckerLink}/>
+                                                        </Elements>
+                                                     )}
                                                     </div>
 
                                                     {/* <button
                                                         type="submit"
-                                                        className="w-full mt-6 py-2 px-4 bg-blue-600 text-white font-semibold text-lg rounded-md disabled:bg-gray-400"
-                                                        disabled={isSubmitting}
+                                                        disabled={loading || isSubmitting || !stripe || !elements}
+                                                        className="w-full py-3 px-4 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 focus:outline-none"
                                                     >
-                                                        {isSubmitting ? 'Processing...' : 'Submit'}
-
+                                                        {loading || isSubmitting ? "Processing…" : "Pay Now"}
                                                     </button> */}
-                                                    <button
+
+
+                                                    
+                                                    {/* <button
                                                         type="submit"
                                                         className="w-full mt-6 py-2 px-4 bg-blue-600 text-white font-semibold text-lg rounded-md disabled:bg-gray-400"
-                                                        // disabled={isSubmitting}
                                                     >
                                                         {isSubmitting ? 'Processing...' : 'PLACE ORDER'}
-                                                    </button>
-
-                                                    {/* Display "Payment has been done" message after successful processing
-                                                    {paymentSuccess && !loading && !isSubmitting && (
-                                                        <div className="mt-4 text-green-600 font-semibold">
-                                                            Payment has been done successfully!
-                                                        </div>
-                                                    )} */}
+                                                    </button> */}
                                                 </div>
                                             </div>
                                         </form>
@@ -441,24 +507,10 @@ const Checkout = () => {
                 </div>
             </div>
             <Footer />
-
-            {/* Modal to show payment success */}
-            {/* {paymentSuccess && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-                        <h3 className="text-2xl font-bold text-green-600">Payment Successful</h3>
-                        <p>Your payment has been successfully processed.</p>
-                         <button
-                            onClick={handlePaymentSuccessClose}
-                            className="mt-4 bg-blue-600 text-white py-2 px-6 rounded-lg"
-                        >
-                            Go to Home
-                        </button> 
-                    </div>
-                </div>
-            )} */}
         </>
     )
 }
+
+
 
 export default Checkout
