@@ -4,11 +4,15 @@ import {
     useStripe,
     useElements
 } from "@stripe/react-stripe-js";
+import { Link } from "react-router-dom";
 
 export default function CheckoutForm({ dpmCheckerLink }) {
     console.log("dpmCheckerLink", dpmCheckerLink)
     const stripe = useStripe();
     const elements = useElements();
+
+    console.log("stripe",stripe);
+    console.log("elements",elements);
 
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +21,8 @@ export default function CheckoutForm({ dpmCheckerLink }) {
         e.preventDefault();
 
         if (!stripe || !elements) {
+            console.log("elements",elements);
+            console.log("stripe",stripe);
             // Stripe.js hasn't yet loaded.
             // Make sure to disable form submission until Stripe.js has loaded.
             return;
@@ -28,7 +34,9 @@ export default function CheckoutForm({ dpmCheckerLink }) {
             elements,
             confirmParams: {
                 // Make sure to change this to your payment completion page
-                return_url: "https://bookinglive.fullstacksmsts.co.uk",
+                // return_url: "https://bookinglive.fullstacksmsts.co.uk",
+                return_url: "http://localhost:3000/complete",
+
             },
         });
 
@@ -50,6 +58,7 @@ export default function CheckoutForm({ dpmCheckerLink }) {
         layout: "tabs"
     }
 
+    
     return (
         <>
             <form id="payment-form" onSubmit={handleSubmit}>
@@ -67,7 +76,7 @@ export default function CheckoutForm({ dpmCheckerLink }) {
             <div id="dpm-annotation">
                 <p>
                     Payment methods are dynamically displayed based on customer location, order amount, and currency.&nbsp;
-                    <a href={dpmCheckerLink} target="_blank" rel="noopener noreferrer" id="dpm-integration-checker">Preview payment methods by transaction</a>
+                    <Link to={dpmCheckerLink} target="_blank" rel="noopener noreferrer" id="dpm-integration-checker">Preview payment methods by transaction</Link>
                 </p>
             </div>
         </>

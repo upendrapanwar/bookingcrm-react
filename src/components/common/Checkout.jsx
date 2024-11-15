@@ -9,9 +9,9 @@ import { Formik } from "formik";
 import checkoutValidation from '../../validation-schemas/CheckoutSchema'
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
-import { addToCart, clearCart } from '../../store/reducers/cart-reducer';
+// import { addToCart, clearCart } from '../../store/reducers/cart-reducer';
 import Loader from "../../components/common/Loader";
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 import { toast } from 'react-toastify';
@@ -27,9 +27,9 @@ const Checkout = () => {
     // const elements = useElements();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
-    const data = location.state;
-    console.log("data", data)
+    // const location = useLocation();
+    // const data = location.state;
+    // console.log("data", data)
 
     const [loading, setLoading] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
@@ -89,7 +89,7 @@ const Checkout = () => {
                 console.log("use Effect function run");
                 const total = (totalPrice * 1.1).toFixed(2);
                 let reqBody = {
-                    'amount': Number(total) * 100, // Convert to cents for Stripe
+                    'amount': Number(total) * 100, 
                 };
 
                 console.log("total", total);
@@ -474,7 +474,7 @@ const Checkout = () => {
                                                             </div>
                                                         </div> */}
                                                      {clientSecret && (
-                                                        <Elements options={{ clientSecret, appearance, Loader }} stripe={stripePromise} >
+                                                        <Elements options={{ clientSecret, appearance, loader }} stripe={stripePromise} >
                                                             <CheckoutForm  dpmCheckerLink={dpmCheckerLink}/>
                                                         </Elements>
                                                      )}

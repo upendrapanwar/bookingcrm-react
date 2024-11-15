@@ -22,6 +22,7 @@ import Cart from './components/common/cart/Cart';
 import Checkout from './components/common/Checkout';
 import Order from './components/common/Order';
 import CheckoutForm from './components/common/CheckoutForm';
+import CompletePage from './components/common/CompletePage';
 
 
 
@@ -90,6 +91,7 @@ export const PublicRoutes = () => {
         <Route path='/contact-us' element={<ContactUs />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/checkout' element={<Checkout/>} />
+        <Route path='/complete' element={<CompletePage/>} />
         {/* <Route path='/checkout-form' element={<CheckoutForm/>} /> */}
 
         
