@@ -324,7 +324,7 @@ const HeaderNavigation = () => {
                                             </ul>
                                         </li>
                                         <li className="nav-item">
-                                            <Link to={"#"}>Course Delivery Options</Link>
+                                            <Link to={"/course-delivery-option"}>Course Delivery Options</Link>
                                         </li>
                                         <li className="nav-item">
                                             <Link to={"/about-us"}>About Us</Link>
@@ -381,7 +381,7 @@ const HeaderNavigation = () => {
                                         </li> */}
 
 
-                                        {authInfo && authInfo.name ? (
+                                        {/* {authInfo && authInfo.name ? (
                                             <li className="nav-item">
                                                 <Link to={"#"} onClick={(e) => logout()}>Logout</Link>
                                             </li>
@@ -389,7 +389,7 @@ const HeaderNavigation = () => {
                                             <li className="nav-item">
                                                 <Link to={"/login"}>Login</Link>
                                             </li>
-                                        )}
+                                        )} */}
 
                                     </ul>
                                 </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Loader from "../../../components/common/Loader";
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
@@ -179,8 +179,16 @@ const CourseDetails = () => {
                                                     <span>
                                                         <img src={icon_hours} alt="" />
                                                     </span>{" "}
-                                                    {course.course_time}
+                                                    <ul className='w-100 p-0 m-0'>
+                                                        {/* {course.course_time} */}
+                                                        {course.course_time.map((time, index) => (
+                                                            <li className='w-100' key={index}>
+                                                                {time.start} - {time.end}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
                                                 </li>
+
                                             </ul>
                                         </div>
                                     </div>
@@ -197,7 +205,7 @@ const CourseDetails = () => {
                                         </div>
                                     </div>
                                     <div className="col-lg-12">
-                                        <button 
+                                        <button
                                             className="btn btn-md btn-primary"
                                             onClick={(e) => handleAddToCart(course, e)}
                                         >

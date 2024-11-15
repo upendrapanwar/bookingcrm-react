@@ -63,13 +63,16 @@ export default Yup.object().shape({
     // // .min(1, "At least one course schedule date is required")
     // .required("Course schedule dates are required"),
 
-    course_time: Yup.string()
-        .required('Time is required')
-        .min(3, 'Time must be at least 3 characters long')
-        .matches(
-            /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM) - (0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/,
-            'Time must be in the format "HH:MM AM - HH:MM PM"'
-        ),
+    // course_time: Yup.string()
+    //     .required('Time is required')
+    //     .min(3, 'Time must be at least 3 characters long')
+    //     .matches(
+    //         /^(0[1-9]|1[0-2]):[0-5][0-9] (AM|PM) - (0[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/,
+    //         'Time must be in the format "HH:MM AM - HH:MM PM"'
+    //     ),
+    course_time: Yup.array()
+        .min(1, 'At least one time range is required')
+        .required('Course time is required'),
 
 
     enrollment_capacity: Yup.number()
