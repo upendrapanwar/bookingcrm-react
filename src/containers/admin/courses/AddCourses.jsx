@@ -5,6 +5,15 @@ import { toast } from 'react-toastify';
 import axios from "axios";
 import ReactQuill from "react-quill";
 import flatpickr from 'flatpickr';
+
+import { SmileOutlined } from '@ant-design/icons';
+import { Space, TimePicker } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+// import TimePicker from 'react-time-picker';
+// import DatePicker from "react-multi-date-picker"
+// import DatePanel from "react-multi-date-picker/plugins/date_panel"
+// import TimePicker from "react-multi-date-picker/plugins/time_picker";
 import 'react-quill/dist/quill.snow.css';
 import 'flatpickr/dist/flatpickr.min.css';
 import Header from '../../../components/admin/Header';
@@ -12,11 +21,14 @@ import Footer from '../../../components/admin/Footer';
 import EmptyImage from '../../../assets/images/EmptyImage.png';
 import CreateCourseSchema from '../../../validation-schemas/CreateCourseSchema';
 import Loader from "../../../components/common/Loader";
+// import 'react-time-picker/dist/TimePicker.css';
+// import 'react-clock/dist/Clock.css';
 
 const CreateCourse = () => {
 
     const navigate = useNavigate();
     const fpRef = useRef(null);
+    const formikRef = useRef(null);
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
     const cloudName = process.env.REACT_APP_CLOUD_NAME;
     // console.log('cloudName---', cloudName);
@@ -24,10 +36,17 @@ const CreateCourse = () => {
     const [previewImage, setPreviewImage] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [courseInformationValue, setCourseInformationValue] = useState(null);
-    const [courseScheduleDates, setCourseScheduleDates] = useState(null);
+    const [courseScheduleDates, setCourseScheduleDates] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedDates, setSelectedDates] = useState([]);
-    const formikRef = useRef(null);
+    // const [selectedTimes, setSelectedTimes] = useState([]);
+    const [timeSchedules, setTimeSchedules] = useState([
+        { startTime: '08:00', endTime: '09:00' }
+    ]);
+    const [timeRanges, setTimeRanges] = useState([
+        { key: 0, time: null }
+    ]);
+    
 
 
     const styles = {
@@ -37,6 +56,30 @@ const CreateCourse = () => {
         },
     };
 
+
+
+    
+
+    // const handleTimeChange = (index, type, newTime) => {
+    //     const newSchedules = [...timeSchedules];
+    //     newSchedules[index][type] = newTime;
+    //     setTimeSchedules(newSchedules);
+    // };
+
+    const addTimeField = () => {
+        setTimeSchedules([...timeSchedules, { startTime: '08:00', endTime: '09:00' }]);
+    };
+
+    const removeTimeField = (index) => {
+        const newSchedules = timeSchedules.filter((_, i) => i !== index);
+        setTimeSchedules(newSchedules);
+    };
+
+
+    dayjs.extend(customParseFormat);
+    const onChange = (time, timeString) => {
+        console.log(time, timeString);
+    };
 
     /***********************************************************************/
 
@@ -55,6 +98,13 @@ const CreateCourse = () => {
                 inline: false,
                 static: false,
                 clickOpens: true,
+                altInput: true,
+                altFormat: "Y-m-d",
+                onReady: function (selectedDates, dateStr, instance) {
+                    instance.altInput.placeholder = "Click to select dates";
+                    instance.altInput.value = selectedDates.length ? dateStr : "Click to select dates";
+                    instance.input.style.display = 'none';
+                },
                 onChange: (dates) => {
                     const formattedDates = dates.map(date => {
                         return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
@@ -63,20 +113,29 @@ const CreateCourse = () => {
                     });
                     setSelectedDates(formattedDates);
                     setCourseScheduleDates(formattedDates);
-                    
+
                     if (formikRef.current) {
                         formikRef.current.setFieldValue('courseScheduleDates', formattedDates);
                     }
                 }
             });
+
+            // Set initial dates if they exist
+            if (selectedDates.length > 0) {
+                const dateObjects = selectedDates.map(dateStr => new Date(dateStr));
+                fp.setDate(dateObjects, true);
+            }
+
+            // Store flatpickr instance in ref for later use
+            fpRef.current.flatpickr = fp;
         }
 
         return () => {
-            if (fp) {
-                fp.destroy();
+            if (fpRef.current && fpRef.current.flatpickr) {
+                fpRef.current.flatpickr.destroy();
             }
         };
-    }, []);
+    }, []); // Empty dependency array - only run on mount
 
     /***********************************************************************/
 
@@ -231,7 +290,57 @@ const CreateCourse = () => {
         setCourseInformationValue(value)
     };
 
-    console.log('categories-----',categories)
+
+/***********************************************************************/
+
+    const handleTimeChange = (timeRange, index) => {
+        const newTimeRanges = [...timeRanges];
+        newTimeRanges[index] = {
+            ...newTimeRanges[index],
+            time: timeRange
+        };
+        setTimeRanges(newTimeRanges);
+
+        // Format times in AM/PM format
+        const formattedTimes = newTimeRanges
+            .filter(range => range.time)
+            .map(range => ({
+                start: range.time[0].format('hh:mm A'),  // Changed format here
+                end: range.time[1].format('hh:mm A')     // Changed format here
+            }));
+
+            if (formikRef.current) {
+                formikRef.current.setFieldValue('course_time', formattedTimes);
+            }
+        //formikProps.setFieldValue('course_time', formattedTimes);
+    };
+
+    const addTimeRange = () => {
+        setTimeRanges([
+            ...timeRanges,
+            { key: timeRanges.length, time: null }
+        ]);
+    };
+
+    const removeTimeRange = (indexToRemove) => {
+        const newTimeRanges = timeRanges.filter((_, index) => index !== indexToRemove);
+        setTimeRanges(newTimeRanges);
+        
+        const formattedTimes = newTimeRanges
+            .filter(range => range.time)
+            .map(range => ({
+                start: range.time[0].format('hh:mm A'),
+                end: range.time[1].format('hh:mm A')
+            }));
+
+            if (formikRef.current) {
+                formikRef.current.setFieldValue('course_time', formattedTimes);
+            }
+        //formikProps.setFieldValue('course_time', formattedTimes);
+    };
+
+    /***********************************************************************/
+    //console.log('categories-----', categories)
 
     return (
         <>
@@ -255,7 +364,7 @@ const CreateCourse = () => {
                                         // start_date: '',
                                         // end_date: '',
                                         enrollment_capacity: '',
-                                        course_time: '',
+                                        course_time: [], // Will store array of time ranges
                                         course_information: '',
                                         additional_information: '',
                                         course_image: null,
@@ -267,7 +376,7 @@ const CreateCourse = () => {
                                 >
                                     {(formikProps) => {
                                         formikRef.current = formikProps;
-                                        
+
                                         return (
                                             <form className="form-signin" onSubmit={formikProps.handleSubmit}>
                                                 <div className="flex justify-between items-center mb-3">
@@ -325,8 +434,12 @@ const CreateCourse = () => {
                                                                 className="form-control-file border border-gray-300 rounded-lg p-2 w-full"
                                                                 id="courseImage"
                                                                 accept="image/*"
-                                                                value={formikProps.values.course_image}
-                                                                onChange={formikProps.handleChange}
+                                                                //value={formikProps.values.course_image}
+                                                                //onChange={formikProps.handleChange}
+                                                                onChange={(event) => {
+                                                                    formikProps.setFieldValue("course_image", "");
+                                                                    handleImageChange(event);
+                                                                }}
                                                                 onBlur={formikProps.handleBlur}
                                                             />
                                                             {formikProps.touched.course_image && formikProps.errors.course_image ? (
@@ -485,84 +598,6 @@ const CreateCourse = () => {
                                                                 ) : null}
                                                             </div>
 
-                                                            {/* Availability
-                                                            <div className="form-group mb-4 col-md-6">
-                                                                <input
-                                                                    type="text"
-                                                                    name="availability"
-                                                                    className="form-control"
-                                                                    id="availability"
-                                                                    placeholder="Availability (dd/mm/yy To dd/mm/yy)"
-                                                                    onChange={handleChange}
-                                                                    onBlur={handleBlur}
-                                                                    value={values.availability}
-                                                                />
-                                                                {touched.availability && errors.availability ? (
-                                                                    <small className="text-danger">{errors.availability}</small>
-                                                                ) : null}
-                                                            </div> */}
-
-                                                            {/* courseScheduleDates */}
-                                                            <div className="form-group mb-4 col-md-6">
-                                                                <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
-                                                                <div className="course-dates">
-                                                                    <input
-                                                                        type="text"
-                                                                        id="courseScheduleDates"
-                                                                        name="courseScheduleDates"
-                                                                        className="form-control"
-                                                                        ref={fpRef}
-                                                                        placeholder="Click to select dates"
-                                                                        readOnly
-                                                                    />
-                                                                    {formikProps.touched.courseScheduleDates && formikProps.errors.courseScheduleDates ? (
-                                                                        <small className="text-danger">{formikProps.errors.courseScheduleDates}</small>
-                                                                    ) : null}
-                                                                    {selectedDates.length > 0 && (
-                                                                        <small className="text-muted d-block mt-1">
-                                                                            Selected dates: {selectedDates.join(', ')}
-                                                                        </small>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-
-                                                            {/* Start Date */}
-                                                            {/* <div className="form-group mb-4 col-md-6">
-                                                                <label htmlFor="start_date">Start Date</label>
-                                                                <input
-                                                                    type="date"
-                                                                    name="start_date"
-                                                                    className="form-control"
-                                                                    id="start_date"
-                                                                    onChange={handleChange}
-                                                                    onBlur={handleBlur}
-                                                                    value={values.start_date}
-                                                                    placeholder="Start Date"
-                                                                />
-                                                                {touched.start_date && errors.start_date ? (
-                                                                    <small className="text-danger">{errors.start_date}</small>
-                                                                ) : null}
-                                                            </div> */}
-
-                                                            {/* End Date */}
-                                                            {/* <div className="form-group mb-4 col-md-6">
-                                                                <label htmlFor="end_date">End Date</label>
-                                                                <input
-                                                                    type="date"
-                                                                    name="end_date"
-                                                                    className="form-control"
-                                                                    id="end_date"
-                                                                    onChange={handleChange}
-                                                                    onBlur={handleBlur}
-                                                                    value={values.end_date}
-                                                                    placeholder="End Date"
-                                                                />
-                                                                {touched.end_date && errors.end_date ? (
-                                                                    <small className="text-danger">{errors.end_date}</small>
-                                                                ) : null}
-                                                            </div> */}
-
-
                                                             {/* Enrollment Capacity */}
                                                             <div className="form-group mb-4 col-md-6">
                                                                 <label htmlFor="enrollment_capacity">Student Enrollment Capacity</label>
@@ -584,27 +619,132 @@ const CreateCourse = () => {
                                                             {/* Course Time */}
                                                             <div className="form-group mb-4 col-md-6">
                                                                 <label htmlFor="course_time">Course Time</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="course_time"
-                                                                    className="form-control"
-                                                                    id="courseTime"
-                                                                    placeholder="Time (12:00 AM - 01:00 AM)"
-                                                                    onChange={formikProps.handleChange}
-                                                                    onBlur={formikProps.handleBlur}
-                                                                    value={formikProps.values.course_time}
-                                                                />
+                                                                <div className="time-ranges-container">
+                                                                    {timeRanges.map((range, index) => (
+                                                                        <div key={range.key} className="mb-2 d-flex align-items-center gap-2">
+                                                                            <TimePicker.RangePicker
+                                                                                prefix={<SmileOutlined />}
+                                                                                format="hh:mm A"  // Changed format here
+                                                                                use12Hours       // Added this to use 12-hour format
+                                                                                value={range.time}
+                                                                                onChange={(time) => handleTimeChange(time, index)}
+                                                                                className="flex-grow-1"
+                                                                            />
+                                                                            {timeRanges.length > 1 && (
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="btn btn-sm  btn-outline-danger"
+                                                                                    onClick={() => removeTimeRange(index)}
+                                                                                >
+                                                                                    <i className="fas">X</i>
+                                                                                </button>
+                                                                            )}
+                                                                        </div>
+                                                                    ))}
+                                                                    
+                                                                    <button
+                                                                        type="button"
+                                                                        className="btn btn-outline-secondary btn-sm mt-2"
+                                                                        onClick={addTimeRange}
+                                                                    >
+                                                                        <i className="fas  mr-1"></i> Add More
+                                                                    </button>
+
+                                                                    {/* Display selected times */}
+                                                                    {/* {timeRanges.some(range => range.time) && (
+                                                                        <div className="mt-3 selected-times">
+                                                                            <h6 className="text-muted">Selected Time Ranges:</h6>
+                                                                            <div className="selected-times-list">
+                                                                                {timeRanges.map((range, index) => (
+                                                                                    range.time && (
+                                                                                        <div key={index} className="small text-success">
+                                                                                            {range.time[0].format('hh:mm A')} - {range.time[1].format('hh:mm A')}
+                                                                                        </div>
+                                                                                    )
+                                                                                ))}
+                                                                            </div>
+                                                                        </div> 
+                                                                    )}*/}
+                                                                </div>
                                                                 {formikProps.touched.course_time && formikProps.errors.course_time ? (
                                                                     <small className="text-danger">{formikProps.errors.course_time}</small>
                                                                 ) : null}
                                                             </div>
 
+                                                            {/* courseScheduleDates */}
+                                                            <div className="form-group mb-4 col-md-6">
+                                                                <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
+                                                                <div className="course-dates">
+                                                                    <input
+                                                                        type="text"
+                                                                        id="courseScheduleDates"
+                                                                        name="courseScheduleDates"
+                                                                        className="form-control"
+                                                                        ref={fpRef}
+                                                                        placeholder="Click to select dates"
+                                                                        readOnly
+                                                                    />
+                                                                    {formikProps.touched.courseScheduleDates && formikProps.errors.courseScheduleDates ? (
+                                                                        <small className="text-danger">{formikProps.errors.courseScheduleDates}</small>
+                                                                    ) : null}
+                                                                    {selectedDates.length <= 0 ? (
+                                                                        <small className="text-muted d-block mt-1">
+                                                                            You can select multiple dates.
+                                                                        </small>
+                                                                    ) : null}
 
+                                                                    {/* Selected Dates Table */}
+                                                                    {selectedDates.length > 0 && (
+                                                                        <div className="mt-0">
+                                                                            <div className="card shadow-sm">
+                                                                                <div className="table-responsive" >
+                                                                                    <table className="table table-hover table-sm mb-0">
+                                                                                        <thead className="table-light sticky-top">
+                                                                                            <tr>
+                                                                                                <th className="px-3 py-2">Selected Dates</th>
+                                                                                                <th className="text-center" style={{ width: '50px' }}></th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody className="small">
+                                                                                            {selectedDates.map((date, index) => (
+                                                                                                <tr key={index}>
+                                                                                                    <td className="px-3 py-2 align-middle">{date}</td>
+                                                                                                    <td className="text-center align-middle">
+                                                                                                        <button
+                                                                                                            type="button"
+                                                                                                            className="btn btn-sm  btn-outline-danger  p-2"
+                                                                                                            onClick={() => {
+                                                                                                                const newDates = selectedDates.filter((_, i) => i !== index);
+                                                                                                                setSelectedDates(newDates);
+                                                                                                                setCourseScheduleDates(newDates);
 
+                                                                                                                // Update flatpickr instance with new dates
+                                                                                                                if (fpRef.current.flatpickr) {
+                                                                                                                    const dateObjects = newDates.map(dateStr => new Date(dateStr));
+                                                                                                                    fpRef.current.flatpickr.setDate(dateObjects, true);
+                                                                                                                }
+
+                                                                                                                if (formikRef.current) {
+                                                                                                                    formikRef.current.setFieldValue('courseScheduleDates', newDates);
+                                                                                                                }
+                                                                                                            }}
+                                                                                                        >X
+                                                                                                            {/* <i className="fas fa-times">X</i> */}
+                                                                                                        </button>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            ))}
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
 
                                                         </div>
                                                     </div>
-
                                                     <div className="col-md-12">
                                                         <div className="row">
                                                             {/* Course Information */}
@@ -625,10 +765,10 @@ const CreateCourse = () => {
                                                                 ) : null}
                                                             </div>
 
-                                                            <div className="col-md-6">
-                                                                <div className="collum">
+                                                            {/* <div className="col-md-6">
+                                                                <div className="collum"> */}
                                                                     {/* Additional Information */}
-                                                                    <div className="form-group mb-4 col-md-12">
+                                                                    <div className="form-group mb-4 col-md-6">
                                                                         <label htmlFor="additional_information">Aditional Information</label>
                                                                         <textarea
                                                                             name="additional_information"
@@ -638,14 +778,14 @@ const CreateCourse = () => {
                                                                             onChange={formikProps.handleChange}
                                                                             onBlur={formikProps.handleBlur}
                                                                             value={formikProps.values.additional_information}
-                                                                            rows="4"
+                                                                            rows="12"
                                                                         />
                                                                         {formikProps.touched.additional_information && formikProps.errors.additional_information ? (
                                                                             <small className="text-danger">{formikProps.errors.additional_information}</small>
                                                                         ) : null}
                                                                     </div>
 
-                                                                    <div className="form-group mb-4 col-md-12">
+                                                                    <div className="form-group mb-4 col-md-6">
                                                                         <label htmlFor="completing_the_course">Completing the course</label>
                                                                         <textarea
                                                                             name="completing_the_course"
@@ -655,14 +795,14 @@ const CreateCourse = () => {
                                                                             onChange={formikProps.handleChange}
                                                                             onBlur={formikProps.handleBlur}
                                                                             value={formikProps.values.completing_the_course}
-                                                                            rows="4"
+                                                                            rows="8"
                                                                         />
                                                                         {formikProps.touched.completing_the_course && formikProps.errors.completing_the_course ? (
                                                                             <small className="text-danger">{formikProps.errors.completing_the_course}</small>
                                                                         ) : null}
                                                                     </div>
-                                                                </div>
-                                                            </div>
+                                                                {/* </div>
+                                                            </div> */}
                                                         </div>
                                                     </div>
 
@@ -670,6 +810,7 @@ const CreateCourse = () => {
                                                 <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">
                                                     <i className="fas fa-plus-circle mr-2"></i> Create Course
                                                 </button>
+
                                             </form>
                                         );
                                     }}
@@ -687,3 +828,18 @@ const CreateCourse = () => {
 }
 
 export default CreateCourse;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

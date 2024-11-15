@@ -1,5 +1,5 @@
-import React,{Suspense,lazy} from 'react'
-import { Routes, Route } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 //import './index.css';
 import './output.css';
@@ -20,6 +20,7 @@ import AdminCategoriesList from './containers/admin/courses/categories/AdminCate
 import EditCategories from './containers/admin/courses/categories/EditCategories';
 import Cart from './components/common/cart/Cart';
 import Checkout from './components/common/Checkout';
+import CourseDeliveryOptions from './components/common/CourseDeliveryOptions';
 
 
 
@@ -33,40 +34,40 @@ const ManagerDashboard = lazy(() => import('./containers/manager/ManagerDashboar
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
 const CreateCourse = lazy(() => import('./containers/admin/courses/AddCourses'));
-const UserList = lazy(()=> import('./containers/admin/users/UserList'));
-const AddUser = lazy(()=> import('./containers/admin/users/AddUser'));
+const UserList = lazy(() => import('./containers/admin/users/UserList'));
+const AddUser = lazy(() => import('./containers/admin/users/AddUser'));
 
 const CourseListing = lazy(() => import('./components/common/courses/ListingCourses'));
-const EditCourse = lazy(()=> import('./containers/admin/courses/EditCourses'));
-const CourseDetails = lazy(()=> import('./components/common/courses/CourseDetails'));
-const AdminCoursesList = lazy(()=> import('./containers/admin/courses/AdminCoursesList'));
-const AboutUs = lazy(()=> import('./components/common/AboutUs'));
-const ContactUs = lazy(()=> import('./components/common/ContactUs'));
+const EditCourse = lazy(() => import('./containers/admin/courses/EditCourses'));
+const CourseDetails = lazy(() => import('./components/common/courses/CourseDetails'));
+const AdminCoursesList = lazy(() => import('./containers/admin/courses/AdminCoursesList'));
+const AboutUs = lazy(() => import('./components/common/AboutUs'));
+const ContactUs = lazy(() => import('./components/common/ContactUs'));
 
 function App() {
-    
+
   return (
     <>
-    <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} />
 
-    <Routes>
-      <Route path="/*" element={
-        <Suspense fallback={<Loader/>}>
-          <PublicRoutes />
-          
-        </Suspense>
-        } 
-      />
+      <Routes>
+        <Route path="/*" element={
+          <Suspense fallback={<Loader />}>
+            <PublicRoutes />
 
-      <Route path="/admin/*" element={
-          <Suspense fallback={<Loader/>}>
+          </Suspense>
+        }
+        />
+
+        <Route path="/admin/*" element={
+          <Suspense fallback={<Loader />}>
             <AdminRoutes />
           </Suspense>
-        } 
-      />
-    </Routes>
+        }
+        />
+      </Routes>
 
-  </>
+    </>
   );
 
 }
@@ -74,10 +75,10 @@ function App() {
 export default App;
 
 export const PublicRoutes = () => {
-  return ( 
+  return (
     <>
       <Routes>
-        <Route path='login' element={<Login />} /> 
+        <Route path='login' element={<Login />} />
         <Route path='register' element={<Register />} />
         <Route path='/student/student-dashboard' element={<StudentDashboard />} />
         <Route path='/instructor/instructor-dashboard' element={<InstructorDashboard />} />
@@ -87,22 +88,42 @@ export const PublicRoutes = () => {
         <Route path='/about-us' element={<AboutUs />} />
         <Route path='/contact-us' element={<ContactUs />} />
         <Route path='/cart' element={<Cart />} />
-        <Route path='/checkout' element={<Checkout/>} />
+        <Route path='/checkout' element={<Checkout />} />
+        <Route path='/course-delivery-option' element={<CourseDeliveryOptions />} />
         <Route index element={<Home />} />
       </Routes>
     </>
   )
 }
 
-export const PrivateRoutes = () => {
-  return (
-    <>
-      <Routes>
-        
-      </Routes>
-    </>
-  ) 
-}
+// export const PrivateRoutes = () => {
+//   return (
+//     <>
+//       <Routes>
+
+//       </Routes>
+//     </>
+//   ) 
+// }
+
+export const PrivateRoute = ({ children }) => {
+
+  const isAuthenticated = () => {
+    const authInfo = localStorage.getItem("authInfo");
+
+    if (authInfo) {
+      const { token, role } = JSON.parse(authInfo);
+      console.log('Token & User Role:', token, role);
+
+      return token && role === "admin";
+    }
+
+    return false;
+  };
+
+
+  return isAuthenticated() ? children : <Navigate to="/admin/login" />;
+};
 
 
 export const AdminRoutes = () => {
@@ -110,15 +131,51 @@ export const AdminRoutes = () => {
     <>
       <Routes>
         <Route path='login' element={<AdminLogin />} />
-        <Route path='admin-dashboard' element={<AdminDashboard />} />
-        <Route path='admin-CreateCourse' element={<CreateCourse />} />
-        <Route path='users/user-list' element={<UserList />} />
-        <Route path='users/add-user' element={<AddUser />} />
-        <Route path='admin-EditCourse' element={<EditCourse />} />
-        <Route path='courses/courses-list' element={<AdminCoursesList />} />
-        <Route path='admin-CreateCategories' element={<CreateCategories/>} />
-        <Route path='categories/categories-list' element={<AdminCategoriesList/>} />
-        <Route path='admin-EditCategory' element={<EditCategories/>} />
+        <Route path='admin-dashboard' element={
+          <PrivateRoute>
+            <AdminDashboard />
+          </PrivateRoute>
+        } />
+        <Route path='admin-CreateCourse' element={
+          <PrivateRoute>
+            <CreateCourse />
+          </PrivateRoute>
+        } />
+        <Route path='users/user-list' element={
+          <PrivateRoute>
+            <UserList />
+          </PrivateRoute>
+        } />
+        <Route path='users/add-user' element={
+          <PrivateRoute>
+            <AddUser />
+          </PrivateRoute>
+        } />
+        <Route path='admin-EditCourse' element={
+          <PrivateRoute>
+            <EditCourse />
+          </PrivateRoute>
+        } />
+        <Route path='courses/courses-list' element={
+          <PrivateRoute>
+            <AdminCoursesList />
+          </PrivateRoute>
+        } />
+        <Route path='admin-CreateCategories' element={
+          <PrivateRoute>
+            <CreateCategories />
+          </PrivateRoute>
+        } />
+        <Route path='categories/categories-list' element={
+          <PrivateRoute>
+            <AdminCategoriesList />
+          </PrivateRoute>
+        } />
+        <Route path='admin-EditCategory' element={
+          <PrivateRoute>
+            <EditCategories />
+          </PrivateRoute>
+        } />
       </Routes>
     </>
   );
