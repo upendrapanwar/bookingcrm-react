@@ -831,6 +831,7 @@ const EditCourse = () => {
 
                                                         <div className="col-md-12">
                                                             <div className="row">
+                                                                
                                                                 {/* Course Information */}
                                                                 <div className="form-group mb-4 col-md-6">
                                                                     <label htmlFor="course_information">Course Information</label>
