@@ -87,7 +87,7 @@ const CourseListing = () => {
     const getCourses = () => {
         setLoading(true);
         axios
-            .get("admin/get_course")
+            .get("user/get-all-courses")
             .then((response) => {
                 toast.dismiss();
                 if (response.data.status) {
@@ -651,7 +651,14 @@ const CourseListing = () => {
                                                                                 <ul>
                                                                                     <li className='pt-2'>{course.course_type}</li>
                                                                                     {/* <li>Weekend</li> */}
-                                                                                    <li className='pt-2'>{course.course_time}</li>
+                                                                                    {/* <li className='pt-2'>{course.course_time}</li> */}
+                                                                                    <ul>
+                                                                                        {course.course_time.map((time, index) => (
+                                                                                            <li key={index} className='pt-2'>
+                                                                                                {time.start} - {time.end}
+                                                                                            </li>
+                                                                                        ))}
+                                                                                    </ul>
                                                                                     {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
                                                                                 </ul>
                                                                             </div>

@@ -5,15 +5,8 @@ import { toast } from 'react-toastify';
 import axios from "axios";
 import ReactQuill from "react-quill";
 import flatpickr from 'flatpickr';
-
 import { SmileOutlined } from '@ant-design/icons';
-import { Space, TimePicker } from 'antd';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-// import TimePicker from 'react-time-picker';
-// import DatePicker from "react-multi-date-picker"
-// import DatePanel from "react-multi-date-picker/plugins/date_panel"
-// import TimePicker from "react-multi-date-picker/plugins/time_picker";
+import { TimePicker } from 'antd';
 import 'react-quill/dist/quill.snow.css';
 import 'flatpickr/dist/flatpickr.min.css';
 import Header from '../../../components/admin/Header';
@@ -21,8 +14,6 @@ import Footer from '../../../components/admin/Footer';
 import EmptyImage from '../../../assets/images/EmptyImage.png';
 import CreateCourseSchema from '../../../validation-schemas/CreateCourseSchema';
 import Loader from "../../../components/common/Loader";
-// import 'react-time-picker/dist/TimePicker.css';
-// import 'react-clock/dist/Clock.css';
 
 const CreateCourse = () => {
 
@@ -39,15 +30,8 @@ const CreateCourse = () => {
     const [courseScheduleDates, setCourseScheduleDates] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedDates, setSelectedDates] = useState([]);
-    // const [selectedTimes, setSelectedTimes] = useState([]);
-    const [timeSchedules, setTimeSchedules] = useState([
-        { startTime: '08:00', endTime: '09:00' }
-    ]);
-    const [timeRanges, setTimeRanges] = useState([
-        { key: 0, time: null }
-    ]);
+    const [timeRanges, setTimeRanges] = useState([ { key: 0, time: null } ]);
     
-
 
     const styles = {
         editor: {
@@ -56,30 +40,6 @@ const CreateCourse = () => {
         },
     };
 
-
-
-    
-
-    // const handleTimeChange = (index, type, newTime) => {
-    //     const newSchedules = [...timeSchedules];
-    //     newSchedules[index][type] = newTime;
-    //     setTimeSchedules(newSchedules);
-    // };
-
-    const addTimeField = () => {
-        setTimeSchedules([...timeSchedules, { startTime: '08:00', endTime: '09:00' }]);
-    };
-
-    const removeTimeField = (index) => {
-        const newSchedules = timeSchedules.filter((_, i) => i !== index);
-        setTimeSchedules(newSchedules);
-    };
-
-
-    dayjs.extend(customParseFormat);
-    const onChange = (time, timeString) => {
-        console.log(time, timeString);
-    };
 
     /***********************************************************************/
 
@@ -135,7 +95,7 @@ const CreateCourse = () => {
                 fpRef.current.flatpickr.destroy();
             }
         };
-    }, []); // Empty dependency array - only run on mount
+    }, []);
 
     /***********************************************************************/
 
@@ -208,7 +168,7 @@ const CreateCourse = () => {
     /***********************************************************************/
 
     /**
-     * Handle after form submission
+     * Handle Image Upload
      * 
      */
     const handleImageUpload = async (file) => {
@@ -288,6 +248,9 @@ const CreateCourse = () => {
     const handleInformationChange = (value) => {
         console.log('value1234--', value)
         setCourseInformationValue(value)
+        if (formikRef.current) {
+            formikRef.current.setFieldValue('course_information', value);
+        }
     };
 
 
@@ -360,16 +323,14 @@ const CreateCourse = () => {
                                         regular_price: '',
                                         sale_price: '',
                                         vat: '',
-                                        // availability: '',
-                                        // start_date: '',
-                                        // end_date: '',
                                         enrollment_capacity: '',
-                                        course_time: [], // Will store array of time ranges
+                                        course_time: [],
                                         course_information: '',
                                         additional_information: '',
                                         course_image: null,
                                         courseScheduleDates: [],
                                         completing_the_course: '',
+                                        why_use_our_training: '',
                                     }}
                                     onSubmit={handleSubmit}
                                     validationSchema={CreateCourseSchema}
@@ -472,16 +433,6 @@ const CreateCourse = () => {
                                                             {/* Category */}
                                                             <div className="form-group mb-4 col-md-6">
                                                                 <label htmlFor="category">Category</label>
-                                                                {/* <input
-                                                                    type="text"
-                                                                    name="category"
-                                                                    className="form-control"
-                                                                    id="category"
-                                                                    placeholder="Enter course category"
-                                                                    onChange={handleChange}
-                                                                    onBlur={handleBlur}
-                                                                    value={values.category}
-                                                                /> */}
                                                                 <select
                                                                     name="category"
                                                                     className="form-control"
@@ -785,6 +736,7 @@ const CreateCourse = () => {
                                                                         ) : null}
                                                                     </div>
 
+                                                                    {/* Completing the course */}
                                                                     <div className="form-group mb-4 col-md-6">
                                                                         <label htmlFor="completing_the_course">Completing the course</label>
                                                                         <textarea
@@ -801,6 +753,24 @@ const CreateCourse = () => {
                                                                             <small className="text-danger">{formikProps.errors.completing_the_course}</small>
                                                                         ) : null}
                                                                     </div>
+
+                                                                    {/* Why Use CST Training */}
+                                                                    <div className="form-group mb-4 col-md-6">
+                                                                            <label htmlFor="why_use_our_training">Why Use Bookinglive Training</label>
+                                                                            <textarea
+                                                                                name="why_use_our_training"
+                                                                                className="form-control"
+                                                                                id="whyuseourtraining"
+                                                                                placeholder="Enter why use Bookinglive training"
+                                                                                onChange={formikProps.handleChange}
+                                                                                onBlur={formikProps.handleBlur}
+                                                                                value={formikProps.values.why_use_our_training}
+                                                                                rows="8"
+                                                                            />
+                                                                            {formikProps.touched.why_use_our_training && formikProps.errors.why_use_our_training ? (
+                                                                                <small className="text-danger">{formikProps.errors.why_use_our_training}</small>
+                                                                            ) : null}
+                                                                        </div>
                                                                 {/* </div>
                                                             </div> */}
                                                         </div>

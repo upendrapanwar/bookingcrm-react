@@ -13,6 +13,7 @@ import icons_test_results from '../../../assets/images/Icons/test-results.png';
 import image_smsts from '../../../assets/images/SMSTS-1024x594.jpg';
 import EmptyImage from "../../../assets/images/EmptyImage.png";
 import Icons_calendar_outline from '../../../assets/images/Icons/calendar-outline.png';
+import 'react-quill/dist/quill.snow.css';
 
 const CourseDetails = () => {
     const location = useLocation();
@@ -110,9 +111,21 @@ const CourseDetails = () => {
                         </div>
                     </div>
                 </section>
-                <section className="page_section course_fullInfo_section">
+                <section className="page_section course_fullInfo_section pt-3">
                     <div className="container">
                         <div className="row">
+                            <div className="d-flex justify-content-end mb-3">
+                                <button
+                                    type="button"
+                                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                                    onClick={() => navigate(-1)}
+                                >
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                    Back
+                                </button>
+                            </div>
                             <div className="col-lg-6">
                                 {/* <h3 className="pb-30">
                                     {course.course_title} | {course.start_date} | {course.course_format}
@@ -133,23 +146,6 @@ const CourseDetails = () => {
                                             <div className="calendar_icon">
                                                 <img src={Icons_calendar_outline} alt="" />
                                             </div>
-                                            {/* <ul className="class_date">
-                                                <li>
-                                                    <span>Day 1 </span> 28-10-24
-                                                </li>
-                                                <li>
-                                                    <span>Day 2 </span> 29-10-24
-                                                </li>
-                                                <li>
-                                                    <span>Day 3 </span> 30-10-24
-                                                </li>
-                                                <li>
-                                                    <span>Day 4 </span> 31-10-24
-                                                </li>
-                                                <li>
-                                                    <span>Day 5 </span> 01-11-24
-                                                </li>
-                                            </ul> */}
                                             <ul className="class_date">
                                                 {course && course.course_schedule_dates && course.course_schedule_dates.length > 0 ? (
                                                     course.course_schedule_dates.map((date, index) => {
@@ -246,8 +242,8 @@ const CourseDetails = () => {
                                                     </h2>
                                                 </div>
                                                 {isOpen.courseInfo && (
-                                                    <div className="card-body">
-                                                        <div dangerouslySetInnerHTML={{ __html: course.course_information || "Currently, no course information is available for this course." }} />
+                                                    <div className="card-body text-dark">
+                                                        <div dangerouslySetInnerHTML={{ __html: course.course_information}} />
                                                     </div>
                                                 )}
                                             </div>
