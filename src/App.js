@@ -24,6 +24,7 @@ import CourseDeliveryOptions from './components/common/CourseDeliveryOptions';
 import Order from './components/common/Order';
 import CheckoutForm from './components/common/CheckoutForm';
 import CompletePage from './components/common/CompletePage';
+import PaymentDone from './components/common/PaymentDone';
 
 
 
@@ -94,7 +95,8 @@ export const PublicRoutes = () => {
         <Route path='/checkout' element={<Checkout />} />
         <Route path='/course-delivery-option' element={<CourseDeliveryOptions />} />
         <Route path='/checkout' element={<Checkout/>} />
-        <Route path='/complete' element={<CompletePage/>} />
+        <Route path='/payment-done' element={<PaymentDone/>} />
+        {/* <Route path='/complete' element={<CompletePage/>} /> */}
         {/* <Route path='/checkout-form' element={<CheckoutForm/>} /> */}
 
         
