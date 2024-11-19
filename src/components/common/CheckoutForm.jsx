@@ -5,14 +5,15 @@ import {
     useElements
 } from "@stripe/react-stripe-js";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
 export default function CheckoutForm({ dpmCheckerLink }) {
     console.log("dpmCheckerLink", dpmCheckerLink)
     const stripe = useStripe();
     const elements = useElements();
 
-    console.log("stripe",stripe);
-    console.log("elements",elements);
+    console.log("stripe", stripe);
+    console.log("elements", elements);
 
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -21,8 +22,8 @@ export default function CheckoutForm({ dpmCheckerLink }) {
         e.preventDefault();
 
         if (!stripe || !elements) {
-            console.log("elements",elements);
-            console.log("stripe",stripe);
+            console.log("elements", elements);
+            console.log("stripe", stripe);
             // Stripe.js hasn't yet loaded.
             // Make sure to disable form submission until Stripe.js has loaded.
             return;
@@ -30,24 +31,42 @@ export default function CheckoutForm({ dpmCheckerLink }) {
 
         setIsLoading(true);
 
-        const { error } = await stripe.confirmPayment({
-            elements,
-            confirmParams: {
-                // Make sure to change this to your payment completion page
-                // return_url: "https://bookinglive.fullstacksmsts.co.uk",
-                return_url: "http://localhost:3000/complete",
+        try {
+            const { error, paymentIntent } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {
+                    return_url: "http://localhost:3000/complete",
+                },
+                // redirect: "if_required",
+            });
 
-            },
-        });
+            if (error) {
+                if (error.type === "card_error" || error.type === "validation_error") {
+                    setMessage(error.message);
+                } else {
+                    setMessage("An unexpected error occurred.");
+                }
+            } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+                // Send email notification
+                try {
+                    await axios.post('user/send-payment-email', {
+                        paymentIntent: paymentIntent.id,
+                        amount: paymentIntent.amount,
+                        // email: userEmail,
+                        // name: userName,
+                        // Add any other relevant payment details
+                    });
 
-        // This point will only be reached if there is an immediate error when
-        // confirming the payment. Otherwise, your customer will be redirected to
-        // your `return_url`. For some payment methods like iDEAL, your customer will
-        // be redirected to an intermediate site first to authorize the payment, then
-        // redirected to the `return_url`.
-        if (error.type === "card_error" || error.type === "validation_error") {
-            setMessage(error.message);
-        } else {
+                    // Redirect after email is sent
+                    // window.location.href = "http://localhost:3000/complete";
+                } catch (emailError) {
+                    console.error('Failed to send email:', emailError.response?.data || emailError);
+                    // Still redirect even if email fails
+                    // window.location.href = "http://localhost:3000/complete";
+                }
+            }
+        } catch (err) {
+            console.error('Payment error:', err);
             setMessage("An unexpected error occurred.");
         }
 
@@ -58,7 +77,7 @@ export default function CheckoutForm({ dpmCheckerLink }) {
         layout: "tabs"
     }
 
-    
+
     return (
         <>
             <form id="payment-form" onSubmit={handleSubmit}>

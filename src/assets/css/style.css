@@ -763,6 +763,12 @@ textarea.form-control {
     color: #FFF;
 }
 
+.product_accordian_wrap .card .course-heading{
+    background-color:  #FFF!important;
+    color: #ff8900!important;
+    font-size: 22px;
+}
+
 .product_accordian_wrap .card-header {
     background-color: #fb5607;
     border-bottom: 0px solid rgba(0, 0, 0, .125);
