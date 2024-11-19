@@ -25,6 +25,7 @@ const EditCourse = () => {
     const navigate = useNavigate();
     const fpRef = useRef(null);
     const formikRef = useRef(null);
+    const fpInstanceRef = useRef(null);
     const query = new URLSearchParams(useLocation().search);
     const courseId = query.get('id');
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
@@ -41,13 +42,7 @@ const EditCourse = () => {
     const [courseScheduleDates, setCourseScheduleDates] = useState(null);
     const [categories, setCategories] = useState([]);
     const [selectedDates, setSelectedDates] = useState([]);
-   // const [updatedTime, setUpdatedTime] = useState([]);
-    // const [timeSchedules, setTimeSchedules] = useState([
-    //     { startTime: '08:00', endTime: '09:00' }
-    // ]);
-    const [timeRanges, setTimeRanges] = useState([
-        { key: 0, time: null }
-    ]);
+    const [timeRanges, setTimeRanges] = useState([{ key: 0, time: null }]);
 
     const styles = {
         editor: {
@@ -61,83 +56,80 @@ const EditCourse = () => {
     useEffect(() => {
         getCourse();
         getCategories();
-        console.log('test');
     }, []);
+    /***********************************************************************/
 
-    // useEffect(() => {
-    //     if (course && course.course_information) {
-    //         setCourseInformationValue(course.course_information);
-    //     }
-    // }, [course]);
-    
-
+    /* useEffect for courseScheduleDates */
     useEffect(() => {
         let fp = null;
 
-        if (fpRef.current && course.course_schedule_dates) {
-            // Parse the initial dates properly
+        if (course && course.course_schedule_dates) {
             let initialDates = [];
 
             if (typeof course.course_schedule_dates === 'string') {
-                // Handle comma-separated string
-                initialDates = course.course_schedule_dates
-                    .split(',')
-                    .map(date => date.trim())
-                    .map(formatDateString)
-                    .filter(date => date !== null); // Remove any invalid dates
+                initialDates = course.course_schedule_dates.split(',').map(date => date.trim());
             } else if (Array.isArray(course.course_schedule_dates)) {
-                // Handle array of dates
-                initialDates = course.course_schedule_dates
-                    .map(formatDateString)
-                    .filter(date => date !== null);
+                initialDates = course.course_schedule_dates;
             }
 
-            // Set initial states
             setSelectedDates(initialDates);
             setCourseScheduleDates(initialDates);
 
-            // Initialize flatpickr
-            fp = flatpickr(fpRef.current, {
-                mode: "multiple",
-                dateFormat: "Y-m-d",
-                allowInput: true,
-                conjunction: ", ",
-                closeOnSelect: false,
-                inline: false,
-                static: false,
-                clickOpens: true,
-                defaultDate: initialDates,
-                onChange: (selectedDates, dateStr, instance) => {
-                    // Handle date selection
-                    const formattedDates = selectedDates.map(date =>
-                        new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-                            .toISOString()
-                            .split('T')[0]
-                    );
+            if (fpRef.current) {
+                fp = flatpickr(fpRef.current, {
+                    mode: "multiple",
+                    dateFormat: "Y-m-d",
+                    allowInput: true,
+                    conjunction: ", ",
+                    closeOnSelect: false,
+                    inline: false,
+                    static: false,
+                    clickOpens: true,
+                    altInput: true,
+                    altFormat: "Y-m-d",
+                    defaultDate: initialDates,
+                    onReady: function (selectedDates, dateStr, instance) {
+                        instance.altInput.placeholder = "Click to select dates";
+                        instance.altInput.value = selectedDates.length ? dateStr : "Click to select dates";
+                        instance.input.style.display = 'none';
 
-                    setSelectedDates(formattedDates);
-                    setCourseScheduleDates(formattedDates);
+                        if (formikRef.current && initialDates.length > 0) {
+                            formikRef.current.setFieldValue('courseScheduleDates', initialDates);
+                        }
+                    },
+                    onChange: (dates) => {
+                        const formattedDates = dates.map(date => {
+                            return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+                                .toISOString()
+                                .split('T')[0];
+                        });
+                        setSelectedDates(formattedDates);
+                        setCourseScheduleDates(formattedDates);
 
-                    // Update Formik value
-                    if (formikRef.current) {
-                        formikRef.current.setFieldValue('course_schedule_dates', formattedDates);
+                        if (formikRef.current) {
+                            formikRef.current.setFieldValue('courseScheduleDates', formattedDates);
+                        }
                     }
-                }
-            });
+                });
 
-            // Force flatpickr to update with initial dates
-            if (initialDates.length > 0) {
-                fp.setDate(initialDates, false);
+                fpInstanceRef.current = fp;
+
+                if (initialDates.length > 0) {
+                    fp.setDate(initialDates, false);
+                }
             }
         }
 
         return () => {
-            if (fp) {
-                fp.destroy();
+            if (fpInstanceRef.current) {
+                fpInstanceRef.current.destroy();
+                fpInstanceRef.current = null;
             }
         };
-    }, [course.course_schedule_dates]); // Dependency on course data
+    }, [course]);
+    /***********************************************************************/
 
+    /* useEffect for coursetime */
     useEffect(() => {
         if (course.course_time && Array.isArray(course.course_time)) {
             const initialTimeRanges = course.course_time.map((timeSlot, index) => {
@@ -351,11 +343,9 @@ const EditCourse = () => {
                 course_image: imageData.secure_url,
                 image_id: imageData.public_id
             }),
-            // start_date: formatDateTosave(values.start_date),
-            // end_date: formatDateTosave(values.end_date),
-            course_information: courseInformationValue,
-            course_schedule_dates: courseScheduleDates,
-            //course_time: updatedTime,
+           // course_information: courseInformationValue,
+           course_information: courseInformationValue === '<p><br></p>' ? '' : courseInformationValue,
+           course_schedule_dates: courseScheduleDates,
         };
         console.log('requestData---', requestData)
         axios
@@ -389,37 +379,43 @@ const EditCourse = () => {
     }
     /***********************************************************************/
 
-    const formatDate = (date) => {
-        const [day, month, year] = date.split('-');
-        return `${year}-${month}-${day}`; // yyyy-mm-dd format
-    }
+    // const formatDate = (date) => {
+    //     const [day, month, year] = date.split('-');
+    //     return `${year}-${month}-${day}`; // yyyy-mm-dd format
+    // }
 
     /***********************************************************************/
 
-    const formatDateTosave = (date) => {
-        const d = new Date(date);
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = d.getFullYear();
-        return `${day}-${month}-${year}`; // dd-mm-yyyy format with hyphens
-    };
+    // const formatDateTosave = (date) => {
+    //     const d = new Date(date);
+    //     const day = String(d.getDate()).padStart(2, '0');
+    //     const month = String(d.getMonth() + 1).padStart(2, '0');
+    //     const year = d.getFullYear();
+    //     return `${day}-${month}-${year}`; // dd-mm-yyyy format with hyphens
+    // };
     /***********************************************************************/
 
     const handleInformationChange = (value) => {
-        console.log('value1234--', value)
+        // Store the raw HTML value
         setCourseInformationValue(value);
+        
+        const isEmptyContent = !value || value === '<p><br></p>' || value.replace(/<(.|\n)*?>/g, '').trim().length === 0;
+    
+        // Update Formik with empty string if content is empty, otherwise use the value
         if (formikRef.current) {
-            formikRef.current.setFieldValue('course_information', value);
+            formikRef.current.setFieldValue('course_information', isEmptyContent ? '' : value);
+            // Mark the field as touched to trigger validation
+            formikRef.current.setFieldTouched('course_information', true);
         }
     };
 
     // Helper function to parse and format dates
-    const formatDateString = (dateStr) => {
-        if (!dateStr) return null;
-        const date = new Date(dateStr);
-        if (isNaN(date.getTime())) return null; // Invalid date
-        return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
-    };
+    // const formatDateString = (dateStr) => {
+    //     if (!dateStr) return null;
+    //     const date = new Date(dateStr);
+    //     if (isNaN(date.getTime())) return null; // Invalid date
+    //     return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
+    // };
 
 
     /***********************************************************************/
@@ -442,7 +438,7 @@ const EditCourse = () => {
 
         if (formikRef.current) {
             formikRef.current.setFieldValue('course_time', formattedTimes);
-           // setUpdatedTime(formattedTimes);
+            // setUpdatedTime(formattedTimes);
         }
     };
 
@@ -492,16 +488,13 @@ const EditCourse = () => {
                                             regular_price: course.regular_price || '',
                                             sale_price: course.sale_price || '',
                                             vat: course.vat || '',
-                                            // availability: course.availability || '',
-                                            // start_date: formatDate(course.start_date) || '',
-                                            // end_date: formatDate(course.end_date) || '',
-
                                             enrollment_capacity: course.enrollment_capacity || '',
                                             course_time: course.course_time || [],
                                             course_information: course.course_information || '',
                                             additional_information: course.additional_information || '',
                                             course_schedule_dates: course.course_schedule_dates || courseScheduleDates,
                                             completing_the_course: course.completing_the_course || '',
+                                            why_use_our_training: course.why_use_our_training || '',
                                             // course_image: course.course_image || null,
                                         }}
                                         onSubmit={(values, { resetForm }) => {
@@ -799,7 +792,7 @@ const EditCourse = () => {
                                                                 </div>
 
                                                                 {/*courseScheduleDates */}
-                                                                <div className="form-group mb-4 col-md-6">
+                                                                {/* <div className="form-group mb-4 col-md-6">
                                                                     <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
                                                                     <div className="course-dates">
                                                                         <input
@@ -823,6 +816,77 @@ const EditCourse = () => {
                                                                             </small>
                                                                         )}
                                                                     </div>
+                                                                </div> */}
+
+                                                                <div className="form-group mb-4 col-md-6">
+                                                                    <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
+                                                                    <div className="course-dates">
+                                                                        <input
+                                                                            type="text"
+                                                                            id="courseScheduleDates"
+                                                                            name="courseScheduleDates"
+                                                                            className="form-control"
+                                                                            ref={fpRef}
+                                                                            placeholder="Click to select dates"
+                                                                            readOnly
+                                                                        />
+                                                                        {formikProps.touched.courseScheduleDates && formikProps.errors.courseScheduleDates ? (
+                                                                            <small className="text-danger">{formikProps.errors.courseScheduleDates}</small>
+                                                                        ) : null}
+                                                                        {selectedDates.length <= 0 ? (
+                                                                            <small className="text-muted d-block mt-1">
+                                                                                You can select multiple dates.
+                                                                            </small>
+                                                                        ) : null}
+
+                                                                        {/* Selected Dates Table */}
+                                                                        {selectedDates.length > 0 && (
+                                                                            <div className="mt-0">
+                                                                                <div className="card shadow-sm">
+                                                                                    <div className="table-responsive" >
+                                                                                        <table className="table table-hover table-sm mb-0">
+                                                                                            <thead className="table-light sticky-top">
+                                                                                                <tr>
+                                                                                                    <th className="px-3 py-2">Selected Dates</th>
+                                                                                                    <th className="text-center" style={{ width: '50px' }}></th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody className="small">
+                                                                                                {selectedDates.map((date, index) => (
+                                                                                                    <tr key={index}>
+                                                                                                        <td className="px-3 py-2 align-middle">{date}</td>
+                                                                                                        <td className="text-center align-middle">
+                                                                                                            <button
+                                                                                                                type="button"
+                                                                                                                className="btn btn-sm  btn-outline-danger  p-2"
+                                                                                                                onClick={() => {
+                                                                                                                    const newDates = selectedDates.filter((_, i) => i !== index);
+                                                                                                                    setSelectedDates(newDates);
+                                                                                                                    setCourseScheduleDates(newDates);
+
+                                                                                                                    // Update flatpickr instance with new dates
+                                                                                                                    if (fpInstanceRef.current) {
+                                                                                                                        const dateObjects = newDates.map(dateStr => new Date(dateStr));
+                                                                                                                        fpInstanceRef.current.setDate(dateObjects, true);
+                                                                                                                    }
+
+                                                                                                                    if (formikRef.current) {
+                                                                                                                        formikRef.current.setFieldValue('courseScheduleDates', newDates);
+                                                                                                                    }
+                                                                                                                }}
+                                                                                                            >X
+                                                                                                                {/* <i className="fas fa-times">X</i> */}
+                                                                                                            </button>
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                ))}
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
 
                                                             </div>
@@ -831,62 +895,81 @@ const EditCourse = () => {
 
                                                         <div className="col-md-12">
                                                             <div className="row">
+
                                                                 {/* Course Information */}
                                                                 <div className="form-group mb-4 col-md-6">
                                                                     <label htmlFor="course_information">Course Information</label>
                                                                     <ReactQuill
-                                                                        className='discr_reactquill '
+                                                                        className='discr_reactquill'
                                                                         style={styles.editor}
                                                                         placeholder="Enter course information"
                                                                         value={courseInformationValue || ''}
                                                                         onChange={handleInformationChange}
-                                                                    // modules={{
-                                                                    //     toolbar:false,
-                                                                    // }}
+                                                                        onBlur={() => {
+                                                                            // Mark field as touched when focus leaves the editor
+                                                                            formikRef.current?.setFieldTouched('course_information', true);
+                                                                        }}
                                                                     />
-                                                                    {formikProps.touched.course_information && formikProps.dirtyerrors.course_information ? (
+                                                                    {formikProps.touched.course_information && formikProps.errors.course_information ? (
                                                                         <small className="text-danger">{formikProps.errors.course_information}</small>
                                                                     ) : null}
                                                                 </div>
 
-                                                                <div className="col-md-6">
-                                                                    <div className="collum">
-                                                                        {/* Additional Information */}
-                                                                        <div className="form-group mb-4 col-md-12">
-                                                                            <label htmlFor="additional_information">Aditional Information</label>
-                                                                            <textarea
-                                                                                name="additional_information"
-                                                                                className="form-control"
-                                                                                id="additionalInformation"
-                                                                                placeholder="Enter additional information (optional)"
-                                                                                onChange={formikProps.handleChange}
-                                                                                onBlur={formikProps.handleBlur}
-                                                                                value={formikProps.values.additional_information}
-                                                                                rows="4"
-                                                                            />
-                                                                            {formikProps.touched.additional_information && formikProps.errors.additional_information ? (
-                                                                                <small className="text-danger">{formikProps.errors.additional_information}</small>
-                                                                            ) : null}
-                                                                        </div>
-
-                                                                        <div className="form-group mb-4 col-md-12">
-                                                                            <label htmlFor="completing_the_course">Completing the course</label>
-                                                                            <textarea
-                                                                                name="completing_the_course"
-                                                                                className="form-control"
-                                                                                id="completingthecourse"
-                                                                                placeholder="Enter completing the course information (optional)"
-                                                                                onChange={formikProps.handleChange}
-                                                                                onBlur={formikProps.handleBlur}
-                                                                                value={formikProps.values.completing_the_course}
-                                                                                rows="4"
-                                                                            />
-                                                                            {formikProps.touched.completing_the_course && formikProps.errors.completing_the_course ? (
-                                                                                <small className="text-danger">{formikProps.errors.completing_the_course}</small>
-                                                                            ) : null}
-                                                                        </div>
-                                                                    </div>
+                                                                {/* <div className="col-md-6">
+                                                                    <div className="collum"> */}
+                                                                {/* Additional Information */}
+                                                                <div className="form-group mb-4 col-md-6">
+                                                                    <label htmlFor="additional_information">Aditional Information</label>
+                                                                    <textarea
+                                                                        name="additional_information"
+                                                                        className="form-control"
+                                                                        id="additionalInformation"
+                                                                        placeholder="Enter additional information (optional)"
+                                                                        onChange={formikProps.handleChange}
+                                                                        onBlur={formikProps.handleBlur}
+                                                                        value={formikProps.values.additional_information}
+                                                                        rows="12"
+                                                                    />
+                                                                    {formikProps.touched.additional_information && formikProps.errors.additional_information ? (
+                                                                        <small className="text-danger">{formikProps.errors.additional_information}</small>
+                                                                    ) : null}
                                                                 </div>
+
+                                                                <div className="form-group mb-4 col-md-6">
+                                                                    <label htmlFor="completing_the_course">Completing the course</label>
+                                                                    <textarea
+                                                                        name="completing_the_course"
+                                                                        className="form-control"
+                                                                        id="completingthecourse"
+                                                                        placeholder="Enter completing the course information (optional)"
+                                                                        onChange={formikProps.handleChange}
+                                                                        onBlur={formikProps.handleBlur}
+                                                                        value={formikProps.values.completing_the_course}
+                                                                        rows="8"
+                                                                    />
+                                                                    {formikProps.touched.completing_the_course && formikProps.errors.completing_the_course ? (
+                                                                        <small className="text-danger">{formikProps.errors.completing_the_course}</small>
+                                                                    ) : null}
+                                                                </div>
+
+                                                                <div className="form-group mb-4 col-md-6">
+                                                                    <label htmlFor="why_use_our_training">Why Use Bookinglive Training</label>
+                                                                    <textarea
+                                                                        name="why_use_our_training"
+                                                                        className="form-control"
+                                                                        id="whyuseourtraining"
+                                                                        placeholder="Enter why use Bookinglive training"
+                                                                        onChange={formikProps.handleChange}
+                                                                        onBlur={formikProps.handleBlur}
+                                                                        value={formikProps.values.why_use_our_training}
+                                                                        rows="8"
+                                                                    />
+                                                                    {formikProps.touched.why_use_our_training && formikProps.errors.why_use_our_training ? (
+                                                                        <small className="text-danger">{formikProps.errors.why_use_our_training}</small>
+                                                                    ) : null}
+                                                                </div>
+                                                                {/* </div>
+                                                                </div> */}
                                                             </div>
                                                         </div>
                                                     </div>
