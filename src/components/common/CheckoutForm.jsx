@@ -1,103 +1,77 @@
 import React, { useState } from "react";
-import {
-    PaymentElement,
-    useStripe,
-    useElements
-} from "@stripe/react-stripe-js";
-import { Link } from "react-router-dom";
-import axios from 'axios';
+import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import Loader from "../../components/common/Loader";
 
-export default function CheckoutForm({ dpmCheckerLink }) {
-    console.log("dpmCheckerLink", dpmCheckerLink)
+export default function CheckoutForm({ dpmCheckerLink, isFormValid, triggerValidation, isDirty }) {
     const stripe = useStripe();
     const elements = useElements();
-
-    console.log("stripe", stripe);
-    console.log("elements", elements);
-
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const formErrors = await triggerValidation();
+        console.log(formErrors);
+
+        if (Object.keys(formErrors).length > 0 && isDirty) {
+            setMessage("Please fill out the required fields correctly.");
+            setLoading(false);
+            return;
+        }
+
+        setMessage(null);
+
         if (!stripe || !elements) {
-            console.log("elements", elements);
-            console.log("stripe", stripe);
-            // Stripe.js hasn't yet loaded.
-            // Make sure to disable form submission until Stripe.js has loaded.
+            setLoading(false);
             return;
         }
 
         setIsLoading(true);
 
-        try {
-            const { error, paymentIntent } = await stripe.confirmPayment({
-                elements,
-                confirmParams: {
-                    return_url: "http://localhost:3000/complete",
-                },
-                // redirect: "if_required",
-            });
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                return_url: "http://localhost:3000/payment-done",
+            },
+        });
 
-            if (error) {
-                if (error.type === "card_error" || error.type === "validation_error") {
-                    setMessage(error.message);
-                } else {
-                    setMessage("An unexpected error occurred.");
-                }
-            } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-                // Send email notification
-                try {
-                    await axios.post('user/send-payment-email', {
-                        paymentIntent: paymentIntent.id,
-                        amount: paymentIntent.amount,
-                        // email: userEmail,
-                        // name: userName,
-                        // Add any other relevant payment details
-                    });
-
-                    // Redirect after email is sent
-                    // window.location.href = "http://localhost:3000/complete";
-                } catch (emailError) {
-                    console.error('Failed to send email:', emailError.response?.data || emailError);
-                    // Still redirect even if email fails
-                    // window.location.href = "http://localhost:3000/complete";
-                }
-            }
-        } catch (err) {
-            console.error('Payment error:', err);
-            setMessage("An unexpected error occurred.");
+        if (error) {
+            setMessage(error.message || "An unexpected error occurred.");
         }
 
         setIsLoading(false);
+        setLoading(false);
     };
 
     const paymentElementOptions = {
-        layout: "tabs"
-    }
-
+        layout: "tabs",
+    };
 
     return (
         <>
-            <form id="payment-form" onSubmit={handleSubmit}>
+            {loading === true ? <Loader /> : ''}
 
-                <PaymentElement id="payment-element" options={paymentElementOptions} />
-                <button disabled={isLoading || !stripe || !elements} id="submit">
-                    <span id="button-text">
-                        {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
-                    </span>
-                </button>
-                {/* Show any error or success messages */}
-                {message && <div id="payment-message">{message}</div>}
-            </form>
-            {/* [DEV]: Display dynamic payment methods annotation and integration checker */}
-            <div id="dpm-annotation">
-                <p>
-                    Payment methods are dynamically displayed based on customer location, order amount, and currency.&nbsp;
-                    <Link to={dpmCheckerLink} target="_blank" rel="noopener noreferrer" id="dpm-integration-checker">Preview payment methods by transaction</Link>
-                </p>
-            </div>
+            <PaymentElement id="payment-element" options={paymentElementOptions} />
+
+            <button
+                onClick={async (e) => {
+                    e.preventDefault();
+                    await triggerValidation();
+                    handleSubmit(e);
+                }}
+                type="button"
+                disabled={isLoading || !stripe || !elements}
+                id="submit"
+                className="bg-blue text-white font-bold w-100 py-2 px-4 rounded w-full my-3"
+            >
+                {isLoading ? <div class="spinner-border spinner-border-sm" id="spinner"></div> : "Pay now"}
+            </button>
+
+            {message && <p className="text-red-500 mt-2">{message}</p>}
+
         </>
     );
 }

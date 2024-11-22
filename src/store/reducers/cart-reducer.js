@@ -94,6 +94,7 @@ const cartSlice = createSlice({
       state.discount = 0;
       state.totalPrice = 0;
     },
+    
     getDiscount: (state, action) => {
       //let totalQuantity = 0
       let totalPrice = 0

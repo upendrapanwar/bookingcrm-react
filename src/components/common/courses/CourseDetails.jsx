@@ -24,7 +24,7 @@ const CourseDetails = () => {
     const { course } = location.state || {};
 
     const [loading, setLoading] = useState(false);
-    const [isOpen, setIsOpen] = useState({ courseInfo: false, additionalInfo: false, Completing_the_course: false, Why_cst_training: false });
+    const [isOpen, setIsOpen] = useState({ courseInfo: true, additionalInfo: false, Completing_the_course: false, Why_cst_training: false });
     const [activeIndex, setActiveIndex] = useState(null);
 
 
@@ -38,14 +38,21 @@ const CourseDetails = () => {
      * Handle toggle
      * 
      */
+    // const toggleSection = (section) => {
+    //     setIsOpen((prevState) => ({
+    //         ...prevState,
+    //         [section]: !prevState[section],
+    //         courseInfo: section === 'courseInfo' ? !prevState.courseInfo : false,
+    //         Completing_the_course: section === 'Completing_the_course' ? !prevState.Completing_the_course : false,
+    //         Why_cst_training: section === 'Why_cst_training' ? !prevState.Why_cst_training : false,
+    //         additionalInfo: section === 'additionalInfo' ? !prevState.additionalInfo : false,
+    //     }));
+    // };
+
     const toggleSection = (section) => {
         setIsOpen((prevState) => ({
             ...prevState,
             [section]: !prevState[section],
-            courseInfo: section === 'courseInfo' ? !prevState.courseInfo : false,
-            Completing_the_course: section === 'Completing_the_course' ? !prevState.Completing_the_course : false,
-            Why_cst_training: section === 'Why_cst_training' ? !prevState.Why_cst_training : false,
-            additionalInfo: section === 'additionalInfo' ? !prevState.additionalInfo : false,
         }));
     };
     /***********************************************************************/
@@ -212,13 +219,18 @@ const CourseDetails = () => {
                             </div>
                             <div className="col-lg-6 pb-10">
                                 <div className="section-thumbnail">
-                                    <img src={course.course_image || EmptyImage} alt="" />
+                                    {/* <img src={course.course_image || EmptyImage} alt="" /> */}
+                                    <img 
+                                        src={course.course_image || EmptyImage} 
+                                        alt="" 
+                                        style={{ width: '100%', height: 'auto', maxHeight: '300px', objectFit: 'cover' }} 
+                                    />
                                 </div>{" "}
-
                             </div>
                         </div>
                     </div>
                 </section>
+
                 <section className="page_section bg-blue course_detail_accordian">
                     <div className="container">
                         <div className="row">
@@ -300,13 +312,18 @@ const CourseDetails = () => {
                                                             className="btn btn-link btn-block text-left collapsed"
                                                             onClick={() => toggleSection('Why_cst_training')}
                                                         >
-                                                            Why use cst Training
+                                                            Why use our Training
                                                         </button>
                                                     </h2>
                                                 </div>
                                                 {isOpen.Why_cst_training && (
                                                     <div className="card-body">
-                                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris imperdiet nulla quis vehicula congue. Etiam non ultrices eros. Pellentesque volutpat enim vitae purus feugiat, at dictum tortor varius. Praesent eleifend arcu vel turpis lobortis iaculis. Phasellus hendrerit vel sem nec varius. Suspendisse sed elementum massa. Suspendisse euismod nisi eu elementum venenatis. Vivamus euismod id dolor sit amet pretium. Mauris maximus bibendum lorem non commodo. Ut sed quam a urna fringilla vulputate. Aliquam non mi finibus, rhoncus sapien non, accumsan enim. Phasellus gravida neque ac neque vestibulum vestibulum non eget libero. Donec urna lorem, tempor non suscipit in, fringilla et ante. Vestibulum iaculis purus et bibendum dictum. Vestibulum gravida sem at tortor aliquet suscipit.</p>
+                                                        {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris imperdiet nulla quis vehicula congue. Etiam non ultrices eros. Pellentesque volutpat enim vitae purus feugiat, at dictum tortor varius. Praesent eleifend arcu vel turpis lobortis iaculis. Phasellus hendrerit vel sem nec varius. Suspendisse sed elementum massa. Suspendisse euismod nisi eu elementum venenatis. Vivamus euismod id dolor sit amet pretium. Mauris maximus bibendum lorem non commodo. Ut sed quam a urna fringilla vulputate. Aliquam non mi finibus, rhoncus sapien non, accumsan enim. Phasellus gravida neque ac neque vestibulum vestibulum non eget libero. Donec urna lorem, tempor non suscipit in, fringilla et ante. Vestibulum iaculis purus et bibendum dictum. Vestibulum gravida sem at tortor aliquet suscipit.</p> */}
+                                                        <p
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: (course.why_use_our_training || "Currently, no  information is available for this course.").replace(/\n/g, '<br />')
+                                                            }}
+                                                        />
                                                     </div>
                                                 )}
                                             </div>
@@ -327,9 +344,9 @@ const CourseDetails = () => {
                                     <p className="pb-20">
                                         Call us to discuss, ask questions, or book your course in person.
                                     </p>
-                                    <a className="btn btn-md btn-white" href="#">
+                                    <Link className="btn btn-md btn-white" to="/contact-us">
                                         Get in touch
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

@@ -10,18 +10,16 @@ import EmptyImage from "../../../assets/images/EmptyImage.png";
 import bannerBg from '../../../assets/images/page-banner-bg.jpg';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../store/reducers/cart-reducer';
-import FindCourseSchema from '../../../validation-schemas/FindCourseSchema';
 
 const CourseListing = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const accordionRefs = useRef([]);
-    const authInfo = JSON.parse(localStorage.getItem('authInfo'));
 
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState([false]);
-    const [selectedCourse, setSelectedCourse] = useState(null);
+    // const [selectedCourse, setSelectedCourse] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const [categories, setCategories] = useState([]);
     const [searchCourses, setSearchCourses] = useState([]);
@@ -164,7 +162,7 @@ const CourseListing = () => {
      */
     const handleMoreInfoClick = (course) => {
         console.log('-------', course)
-        setSelectedCourse(course);
+        // setSelectedCourse(course);
         navigate("/course-listing/course-details", { state: { course } });
     };
     /***********************************************************************/
@@ -177,29 +175,36 @@ const CourseListing = () => {
     const handleSubmit = (values, { resetForm }) => {
         console.log("Selected Month:", values.month);
         console.log("Selected Type:", values.type);
-        setSearchMonth(values.month);
-        setSearchType(values.type);
+
+        // Set search criteria in state
+        setSearchMonth(values.month || null);
+        setSearchType(values.type || null);
 
         try {
-            const inputDate = new Date(values.month);
+            // Get the current date if month is not provided
+            const currentDate = new Date();
+            const inputDate = values.month ? new Date(values.month) : currentDate;
             const inputMonth = inputDate.getMonth();
             const inputYear = inputDate.getFullYear();
 
             console.log("Filtering for month/year:", inputMonth, inputYear);
 
+            // Filter the courses based on provided inputs
             const searchCourses = courses.filter(course => {
                 if (!course) return false;
 
-                const typeMatch = course.course_type?.toLowerCase() === values.type.toLowerCase();
+                const typeMatch = values.type
+                    ? course.course_type?.toLowerCase() === values.type.toLowerCase()
+                    : true;
 
                 let monthMatch = false;
                 if (course.course_schedule_dates && course.course_schedule_dates.length > 0) {
                     try {
-                        // Convert the first date in course_schedule_dates to a Date object
                         const courseDate = new Date(course.course_schedule_dates[0]);
 
                         if (!isNaN(courseDate.getTime())) {
-                            monthMatch = courseDate.getMonth() === inputMonth &&
+                            monthMatch =
+                                courseDate.getMonth() === inputMonth &&
                                 courseDate.getFullYear() === inputYear;
 
                             console.log("Course date comparison:", {
@@ -217,18 +222,31 @@ const CourseListing = () => {
                     }
                 }
 
-                // Both type and month should match to include the course
-                return typeMatch && monthMatch;
+                // Determine final match logic based on provided inputs
+                if (values.type && values.month) {
+                    return typeMatch && monthMatch;
+                } else if (values.type) {
+                    return typeMatch;
+                } else if (values.month) {
+                    return monthMatch;
+                }
+                return false;
             });
 
+            // Update state with the filtered courses
             setSearchCourses(searchCourses);
             setIsSearch(true);
+
             console.log("Search Courses:", searchCourses);
+
+            // Reset the form after the search
             resetForm();
         } catch (error) {
             console.error("Error in handleSubmit:", error);
         }
     };
+
+
 
 
     /***********************************************************************/
@@ -245,9 +263,16 @@ const CourseListing = () => {
     /***********************************************************************/
 
     const handleViewMore = () => {
-        navigate('#'); // Replace with the actual route
+        navigate('#');
     };
+    /***********************************************************************/
+    /***********************************************************************/
 
+    const handleClose = () => {
+        setIsSearch(false);
+    };
+    /***********************************************************************/
+    /***********************************************************************/
     // console.log('selectedCourse----', selectedCourse)
     return (
         <>
@@ -289,7 +314,6 @@ const CourseListing = () => {
                                     type: "",
                                 }}
                                 onSubmit={handleSubmit}
-                                validationSchema={FindCourseSchema}
                             >
                                 {({
                                     values,
@@ -320,9 +344,9 @@ const CourseListing = () => {
                                                         </option>
                                                     ))}
                                                 </select>
-                                                {touched.month && errors.month ? (
-                                                    <small className="text-danger">{errors.month}</small>
-                                                ) : null}
+                                                {/* {touched.month && errors.month ? (
+                                                        <small className="text-danger">{errors.month}</small>
+                                                    ) : null} */}
                                             </div>
                                             <div className="form-group col-md-6">
                                                 <label>Type</label>
@@ -338,9 +362,9 @@ const CourseListing = () => {
                                                     <option value="Day Release">Day Release</option>
                                                     <option value="Weekend">Weekend</option>
                                                 </select>
-                                                {touched.type && errors.type ? (
+                                                {/* {touched.type && errors.type ? (
                                                     <small className="text-danger">{errors.type}</small>
-                                                ) : null}
+                                                ) : null} */}
                                             </div>
                                         </div>
                                         <div className="form-row">
@@ -664,7 +688,7 @@ const CourseListing = () => {
                                                                             </div>
                                                                         ))}
 
-                                                                        {filteredCourses.length > 5 && (
+                                                                        {filteredCourses.length > 15 && (
                                                                             <div className="product d-flex justify-content-center">
                                                                                 <button
                                                                                     type="button"
@@ -693,13 +717,24 @@ const CourseListing = () => {
                 </section>) :
                 // ********************************************
                 (
-                    <section className="product_wrapper front_product_section columns-1 pb-25">
+                    <section className="product_wrapper front_product_section columns-1 pb-25 pt-0">
                         <div className="container">
                             <div className="row">
 
                                 <div className="col-md-12">
                                     <div className="product_accordian_wrap">
                                         <div className="accordion" id="ProductAccordion">
+
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <h4 className="text-center w-100 m-0 search-heading">Showing results for your search</h4>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm  btn-outline-danger  p-2 mr-3"
+                                                    //className="close-icon btn btn-link pr-2 text-dark" 
+                                                    onClick={handleClose}>
+                                                    X
+                                                </button>
+                                            </div>
 
                                             <div className="card">
                                                 <div className="card-header">
@@ -709,7 +744,7 @@ const CourseListing = () => {
                                                         // onClick={() => toggleAccordion(index)}
                                                         // aria-expanded={activeIndex === index}
                                                         >
-                                                            {searchMonth} {searchType}
+                                                            {searchMonth || ''} {searchType || ''}
                                                         </button>
                                                     </h2>
                                                 </div>
@@ -812,10 +847,6 @@ const CourseListing = () => {
                         </div>
                     </section>
                 )}
-
-
-
-
 
 
             <section className="front_section Container_wrapper pr_video_section">

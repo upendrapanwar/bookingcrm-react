@@ -7,7 +7,7 @@ import Loader from "../../components/common/Loader";
 
 const HeaderNavigation = () => {
     const cart = useSelector((state) => state.cart.cart || []);
-    const authInfo = JSON.parse(localStorage.getItem("authInfo"));
+    // const authInfo = JSON.parse(localStorage.getItem("authInfo"));
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
@@ -30,11 +30,11 @@ const HeaderNavigation = () => {
     // Yahan har item ki quantity ko total mein add kar rahe hain
     const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
 
-    const logout = (e) => {
-        localStorage.clear();
-        navigate("/login");
-        window.location.href = "/login";
-    }
+    // const logout = (e) => {
+    //     localStorage.clear();
+    //     navigate("/login");
+    //     window.location.href = "/login";
+    // }
 
 
     return (

@@ -24,6 +24,7 @@ import CourseDeliveryOptions from './components/common/CourseDeliveryOptions';
 import Order from './components/common/Order';
 import CheckoutForm from './components/common/CheckoutForm';
 import CompletePage from './components/common/CompletePage';
+import PaymentDone from './components/common/PaymentDone';
 
 
 
@@ -46,6 +47,8 @@ const CourseDetails = lazy(() => import('./components/common/courses/CourseDetai
 const AdminCoursesList = lazy(() => import('./containers/admin/courses/AdminCoursesList'));
 const AboutUs = lazy(() => import('./components/common/AboutUs'));
 const ContactUs = lazy(() => import('./components/common/ContactUs'));
+const AdminInstructorsList = lazy(() => import('./containers/admin/instructors/AdminInstructorsList'));
+const CreateInstructor = lazy(() => import('./containers/admin/instructors/CreateInstructor'));
 
 function App() {
 
@@ -94,7 +97,8 @@ export const PublicRoutes = () => {
         <Route path='/checkout' element={<Checkout />} />
         <Route path='/course-delivery-option' element={<CourseDeliveryOptions />} />
         <Route path='/checkout' element={<Checkout/>} />
-        <Route path='/complete' element={<CompletePage/>} />
+        <Route path='/payment-done' element={<PaymentDone/>} />
+        {/* <Route path='/complete' element={<CompletePage/>} /> */}
         {/* <Route path='/checkout-form' element={<CheckoutForm/>} /> */}
 
         
@@ -183,6 +187,16 @@ export const AdminRoutes = () => {
         <Route path='admin-EditCategory' element={
           <PrivateRoute>
             <EditCategories />
+          </PrivateRoute>
+        } />
+        <Route path='instructors/instructors-list/' element={
+          <PrivateRoute>
+            <AdminInstructorsList />
+          </PrivateRoute>
+        } />
+        <Route path='admin-CreateInstructor' element={
+          <PrivateRoute>
+            <CreateInstructor />
           </PrivateRoute>
         } />
       </Routes>

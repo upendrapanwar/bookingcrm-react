@@ -132,13 +132,13 @@ const CreateCourse = () => {
     /***********************************************************************/
     /***********************************************************************/
 
-    const formatDate = (date) => {
-        const d = new Date(date);
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const year = d.getFullYear();
-        return `${day}-${month}-${year}`; // dd-mm-yyyy format with hyphens
-    };
+    // const formatDate = (date) => {
+    //     const d = new Date(date);
+    //     const day = String(d.getDate()).padStart(2, '0');
+    //     const month = String(d.getMonth() + 1).padStart(2, '0');
+    //     const year = d.getFullYear();
+    //     return `${day}-${month}-${year}`; // dd-mm-yyyy format with hyphens
+    // };
 
     /***********************************************************************/
 
@@ -207,8 +207,6 @@ const CreateCourse = () => {
                 course_image: imageData.secure_url,
                 image_id: imageData.public_id,
             }),
-            start_date: formatDate(values.start_date),
-            end_date: formatDate(values.end_date),
             course_information: courseInformationValue,
             courseScheduleDates: courseScheduleDates,
         };
