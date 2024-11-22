@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import checkoutValidation from '../../validation-schemas/CheckoutSchema'
 import { useSelector } from 'react-redux';
-import { useDispatch } from "react-redux";
 import Loader from "../../components/common/Loader";
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
@@ -19,49 +17,37 @@ const Checkout = () => {
 
     const cart = useSelector((state) => state.cart.cart || []);
     const totalPrice = cart.reduce((total, item) => total + item.regular_price * item.quantity, 0);
-    const authInfo = JSON.parse(localStorage.getItem('authInfo'));
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
     const [dpmCheckerLink, setDpmCheckerLink] = useState("");
+    const [formvalues, setFormvalues] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
 
     useEffect(() => {
-        handleCheckoutStripe();
-    }, []);
+        console.log("formvalues--#####--", formvalues);
+    }, [formvalues]);
 
-    const handleCheckoutStripe = async () => {
+
+    const handleCheckoutStripe = async (firstName, lastName, email) => {
         setLoading(true);
+
         try {
-            console.log("use Effect function run");
             const total = (totalPrice * 1.1).toFixed(2);
             let reqBody = {
+                name: `${firstName} ${lastName}`,
+                email: email,
                 'amount': Number(total) * 100,
             };
 
-            console.log("total", total);
-            console.log("reqBody", reqBody);
-
-            const response = await axios.post("user/checkoutSession/", reqBody, {
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json;charset=UTF-8",
-                },
-            });
-
-            console.log("response", response);
-            console.log("url", response.data.data.url);
+            const response = await axios.post("user/checkoutSession/", reqBody);
 
             if (response.data.status === true) {
                 const Data = response.data.data;
-                console.log("Data", Data);
                 setClientSecret(Data.client_secret);
                 setDpmCheckerLink(`https://dashboard.stripe.com/settings/payment_methods/review?transaction_id=${Data.id}`);
-
-            }
-        } catch (error) {
+            }} catch (error) {
             setLoading(false);
             if (error.response && error.response.data.status === false) {
                 toast.error(error.response.data.message);
@@ -79,116 +65,102 @@ const Checkout = () => {
     const appearance = {
         theme: 'stripe',
     };
+
+
     const loader = 'auto';
 
-
-    const submitOrder = async (values) => {
-        try {
-            const formData = {
-                ...values,
-                userId: authInfo.id
-            }
-            console.log("formData", formData);
-            const response = await axios.post(`/placedOrder`, { formData }, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json; charset=UTF-8',
-                    'Authorization': `Bearer ${authInfo.token}`
-                }
-            });
-            console.log("response", response);
-        } catch (error) {
-
-        } finally {
-
-        }
-    };
+    const FormObserver = () => {
+        const { values } = useFormikContext();
+        useEffect(() => {
+            setFormvalues(values);
+        }, [values]);
+        return null;
+    }
 
     return (
         <>
             {loading === true ? <Loader /> : ''}
             <Header />
-            <div className="font-sans bg-white p-4">
-                <div className="max-w-4xl mx-auto">
-                    <div className="text-center">
-                        <h2 className="text-3xl font-extrabold text-gray-800 inline-block border-b-[3px] border-gray-800 pb-1">Checkout</h2>
-                    </div>
-
-                    <div className="mt-12">
-                        <div className="grid md:grid-cols-3 gap-4">
+            <div className="p-4 sv__checkout_wrapper">
+                <div className="text-center py-4">
+                    <h2 className="text-3xl font-extrabold text-gray-800 inline-block border-b-[3px] border-gray-800 pb-1">Checkout</h2>
+                </div>
+                <div className="container mt-4">
+                    <div className="row">
+                        <div className="col-md-8 order-md-2 mb-4">
                             <div className="mt-12">
-                                <Formik
-                                    initialValues={{
-                                        firstName: '',
-                                        lastName: '',
-                                        companyName: '',
-                                        country: '',
-                                        streetAddress: '',
-                                        flat: '',
-                                        city: '',
-                                        county: '',
-                                        postcode: '',
-                                        email: '',
-                                        phoneNumber: '',
-                                        acknowledge: false,
-                                        
-                                    }}
-                                    validationSchema={checkoutValidation}
-                                    onSubmit={async (values, { resetForm }) => {
-                                        // Submit the form values here
-                                        console.log(values);
-                                        await submitOrder(values);
-                                        resetForm();
-                                    }}
-                                >
-                                    {({
-                                        values,
-                                        errors,
-                                        touched,
-                                        handleChange,
-                                        handleBlur,
-                                        handleSubmit,
-                                        isSubmitting,
-                                        validateForm,
-                                        isValid,
-                                        setTouched,
-                                        dirty
-                                    }) => (
-                                        <form onSubmit={handleSubmit}>
-                                            <div className="grid md:grid-cols-3 gap-4">
-                                                <div>
-                                                    <h3 className="text-xl font-bold text-gray-800 mt-1">Billing Details</h3>
-                                                </div>
-
-                                                <div className="md:col-span-2">
-                                                    <div className="grid sm:grid-cols-2 gap-4">
-                                                        <div>
-                                                            <input
-                                                                type="text"
-                                                                name="firstName"
-                                                                placeholder="First name"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.firstName}
-                                                            />
-                                                            {errors.firstName && touched.firstName && <small className="text-red-500">{errors.firstName}</small>}
+                                <div className="grid md:grid-cols-3 gap-4">
+                                    <div className="mt-12">
+                                        <Formik
+                                            initialValues={{
+                                                firstName: '',
+                                                lastName: '',
+                                                companyName: '',
+                                                country: '',
+                                                streetAddress: '',
+                                                flat: '',
+                                                city: '',
+                                                county: '',
+                                                postcode: '',
+                                                email: '',
+                                                phoneNumber: '',
+                                                acknowledge: false,
+                                            }}
+                                            validationSchema={checkoutValidation}
+                                            onSubmit={async (values, { resetForm }) => {
+                                                console.log(values);
+                                            }}
+                                        >
+                                            {({
+                                                values,
+                                                errors,
+                                                touched,
+                                                handleChange,
+                                                handleBlur,
+                                                handleSubmit,
+                                                isSubmitting,
+                                                validateForm,
+                                                isValid,
+                                                setTouched,
+                                                dirty
+                                            }) => (
+                                                <form onSubmit={handleSubmit}>
+                                                    <FormObserver />
+                                                    <div className="grid md:grid-cols-3 gap-4">
+                                                        <div className='form-head'>
+                                                            <h4 className="text-xl font-bold text-gray-800 mt-1">Billing Details</h4>
+                                                        </div>
+                                                        <div className="form-row">
+                                                            <div className="form-group col-md-6">
+                                                                <label>First name</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="firstName"
+                                                                    placeholder="First name"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.firstName}
+                                                                />
+                                                                {errors.firstName && touched.firstName && <small className="text-red-500">{errors.firstName}</small>}
+                                                            </div>
+                                                            <div className="form-group col-md-6">
+                                                                <label>Last name</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="lastName"
+                                                                    placeholder="Last name"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.lastName}
+                                                                />
+                                                                {errors.lastName && touched.lastName && <small className="text-red-500">{errors.lastName}</small>}
+                                                            </div>
                                                         </div>
 
-                                                        <div>
-                                                            <input
-                                                                type="text"
-                                                                name="lastName"
-                                                                placeholder="Last name"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.lastName}
-                                                            />
-                                                            {errors.lastName && touched.lastName && <small className="text-red-500">{errors.lastName}</small>}
-                                                        </div>
-
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>Company name (optional)</label>
                                                             <input
                                                                 type="text"
                                                                 name="companyName"
@@ -198,9 +170,11 @@ const Checkout = () => {
                                                                 onBlur={handleBlur}
                                                                 value={values.companyName}
                                                             />
+
                                                         </div>
 
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>Country/Region</label>
                                                             <input
                                                                 type="text"
                                                                 name="country"
@@ -213,7 +187,8 @@ const Checkout = () => {
                                                             {errors.country && touched.country && <small className="text-red-500">{errors.country}</small>}
                                                         </div>
 
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>Street address</label>
                                                             <input
                                                                 type="text"
                                                                 name="streetAddress"
@@ -225,8 +200,8 @@ const Checkout = () => {
                                                             />
                                                             {errors.streetAddress && touched.streetAddress && <small className="text-red-500">{errors.streetAddress}</small>}
                                                         </div>
-
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>Flat, suite, unit, etc. (optional)</label>
                                                             <input
                                                                 type="text"
                                                                 name="flat"
@@ -237,8 +212,8 @@ const Checkout = () => {
                                                                 value={values.flat}
                                                             />
                                                         </div>
-
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>Town / City</label>
                                                             <input
                                                                 type="text"
                                                                 name="city"
@@ -250,8 +225,8 @@ const Checkout = () => {
                                                             />
                                                             {errors.city && touched.city && <small className="text-red-500">{errors.city}</small>}
                                                         </div>
-
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>County (optional)</label>
                                                             <input
                                                                 type="text"
                                                                 name="county"
@@ -262,8 +237,8 @@ const Checkout = () => {
                                                                 value={values.county}
                                                             />
                                                         </div>
-
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>Postcode</label>
                                                             <input
                                                                 type="text"
                                                                 name="postcode"
@@ -276,7 +251,8 @@ const Checkout = () => {
                                                             {errors.postcode && touched.postcode && <small className="text-red-500">{errors.postcode}</small>}
                                                         </div>
 
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>Email address</label>
                                                             <input
                                                                 type="email"
                                                                 name="email"
@@ -288,8 +264,8 @@ const Checkout = () => {
                                                             />
                                                             {errors.email && touched.email && <small className="text-red-500">{errors.email}</small>}
                                                         </div>
-
-                                                        <div>
+                                                        <div className="form-group">
+                                                            <label>Phone number</label>
                                                             <input
                                                                 type="number"
                                                                 name="phoneNumber"
@@ -302,80 +278,116 @@ const Checkout = () => {
                                                             {errors.phoneNumber && touched.phoneNumber && <small className="text-red-500">{errors.phoneNumber}</small>}
                                                         </div>
 
-                                                        <div className="my-4">
-                                                            <label className="flex items-start space-x-2">
-                                                                <input
-                                                                    type="checkbox"
-                                                                    name="acknowledge"
-                                                                    className="form-checkbox mt-1 h-5 w-5 text-blue-600"
-                                                                    onChange={handleChange}
-                                                                    onBlur={handleBlur}
-                                                                    checked={values.acknowledge}
-                                                                />
-                                                                <span>
-                                                                    I acknowledge that by downloading/accessing the [GE700, XA6, GE706, GT700, PRINCE2 MANUAL or any other related resources] within 14 days from the date of the Course Acceptance Confirmation, I lose the right to change my mind under the Consumer Contract Regulations. *
-                                                                </span>
-                                                            </label>
-                                                            {errors.acknowledge && touched.acknowledge && <small className="text-red-500">{errors.acknowledge}</small>}
-                                                        </div>
-
-                                                        <div>
-                                                            <h3 className="text-xl font-bold text-gray-800">Your Order</h3>
-                                                            <div class="grid gap-4 sm:grid-cols-2">
-                                                                <div class="flex items-center">
-                                                                    <div class="grid grid-cols-2 gap-4">
-                                                                        <p className="font-semibold text-gray-800">Coures Name</p>
-                                                                        {cart.map((item, index) => (
-                                                                            <div key={index} className="flex items-center">
-                                                                                <div className="grid grid-cols-2 gap-4 w-full">
-                                                                                    <div>
-                                                                                        <p className="text-gray-700">
-                                                                                            {item.course_title} × {item.quantity}
-                                                                                        </p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        ))}
-
-                                                                        <div>
-                                                                            <div class="flex justify-between">
-                                                                                <span class="font-semibold text-gray-800">Subtotal</span>
-                                                                                <span class="text-gray-700"><span>£{totalPrice.toFixed(2)}</span></span>
-                                                                            </div>
-                                                                            <div class="flex justify-between mt-1">
-                                                                                <span class="font-semibold text-gray-800">VAT</span>
-                                                                                <span class="text-gray-700">£{(totalPrice * 0.1).toFixed(2)}</span>
-                                                                            </div>
-                                                                            <div class="flex justify-between mt-1 font-semibold text-gray-800">
-                                                                                <span>Total</span>
-                                                                                <span>£{(totalPrice * 1.1).toFixed(2)}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                        <div className="form-group">
+                                                            <div className="form-check">
+                                                                <label className="flex items-start space-x-2">
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        name="acknowledge"
+                                                                        className="form-checkbox mt-1 h-5 w-5 text-blue-600"
+                                                                        onChange={(e) => {
+                                                                            handleChange(e);
+                                                                            if (
+                                                                                values.firstName.trim() !== "" &&
+                                                                                values.lastName.trim() !== "" &&
+                                                                                values.email.trim() !== "" &&
+                                                                                e.target.checked
+                                                                            ) {
+                                                                                handleCheckoutStripe(values.firstName, values.lastName, values.email);
+                                                                            }
+                                                                        }}
+                                                                        onBlur={handleBlur}
+                                                                        checked={values.acknowledge}
+                                                                    />
+                                                                    <span>
+                                                                        I acknowledge that by downloading/accessing the [GE700, XA6, GE706, GT700, PRINCE2 MANUAL or any other related resources] within 14 days from the date of the Course Acceptance Confirmation, I lose the right to change my mind under the Consumer Contract Regulations. *
+                                                                    </span>
+                                                                </label>
+                                                                {errors.acknowledge && touched.acknowledge && <small className="text-red-500">{errors.acknowledge}</small>}
                                                             </div>
                                                         </div>
 
-                                                        {clientSecret && (
-                                                            <Elements options={{ clientSecret, appearance, loader }} stripe={stripePromise} >
+                                                      
+                                                        {/* Modal Component */}
+                                                        {isModalOpen && (
+                                                            <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                                                                <div className="modal-dialog" role="document">
+                                                                    <div className="modal-content">
+                                                                        <div className="modal-header">
+                                                                            {loading === true ? <Loader /> : ''}
+                                                                            <h5 className="modal-title" id="paymentModalLabel">Payment Method</h5>
+                                                                            <button type="button" className="close" onClick={() => setIsModalOpen(false)} aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div className="modal-body">
+                                                                            {clientSecret && (
+                                                                                <Elements options={{ clientSecret, appearance, loader }} stripe={stripePromise}>
+                                                                                    <CheckoutForm
+                                                                                        formvalues={formvalues}
+                                                                                        dpmCheckerLink={dpmCheckerLink}
+                                                                                        isFormValid={isValid}
+                                                                                        isDirty={dirty}
+                                                                                        triggerValidation={() => validateForm().then((formErrors) => {
+                                                                                            setTouched(Object.keys(formErrors).reduce((acc, field) => ({ ...acc, [field]: true }), {}));
+                                                                                            return formErrors;
+                                                                                        })}
+                                                                                    />
+                                                                                </Elements>
+                                                                            )}
+                                                                        </div>
 
-                                                                <CheckoutForm
-                                                                    dpmCheckerLink={dpmCheckerLink}
-                                                                    isFormValid={isValid}
-                                                                    isDirty={dirty}
-                                                                    triggerValidation={() => validateForm().then((formErrors) => {
-                                                                        setTouched(Object.keys(formErrors).reduce((acc, field) => ({ ...acc, [field]: true }), {}));
-                                                                        return formErrors;
-                                                                    })}
-                                                                />
-                                                            </Elements>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         )}
+
+                                                        <button
+                                                            className="bg-blue text-white font-bold w-100 py-3 px-4 rounded w-full my-3"
+                                                            onClick={() => setIsModalOpen(true)}
+                                                            disabled={!values.acknowledge}
+                                                        >
+                                                            Next
+                                                        </button>
                                                     </div>
-                                                </div>
+                                                </form>
+                                            )}
+                                        </Formik>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-4 order-md-2 mb-4">
+                            <div className="bg-white rounded-lg shadow-md p-6 sc__cart_sidebar">
+                                <h2 className="text-md font-semibold mb-4">Your Order</h2>
+
+                                <div className="row mb-2">
+                                    <h6 className="font-semibold text-gray-800 mb-4">Coures Name</h6>
+                                    {cart.map((item, index) => (
+                                        <div key={index} className="checkout_course_listing flex items-center">
+                                            <div className="checkout_course_item">
+                                                <p className="text-gray-700">
+                                                    {item.course_title} × {item.quantity}
+                                                </p>
                                             </div>
-                                        </form>
-                                    )}
-                                </Formik>
+                                        </div>
+                                    ))}
+                                </div>
+                                <hr className="my-3" />
+                                <div className="flex justify-between mb-2">
+                                    <span>Subtotal</span>
+                                    <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between mb-2">
+                                    <span>VAT</span>
+                                    <span><b>£&nbsp;</b>{(totalPrice * 0.1).toFixed(2)}</span>
+                                </div>
+                                <hr className="my-3" />
+                                <div className="flex justify-between mb-2">
+                                    <span className="font-semibold">Total</span>
+                                    <span className="font-semibold"><b>£&nbsp;</b>{(totalPrice * 1.1).toFixed(2)}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -387,3 +399,4 @@ const Checkout = () => {
 }
 
 export default Checkout
+
