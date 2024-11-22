@@ -9,4 +9,4 @@ export default Yup.object().shape({
     // address: Yup.string().required('Complete Address is required'),
     //phone_number: Yup.string().required('Contact Number is required'),
     //gender: Yup.string().required('Gender is required'),
-});
+}); 

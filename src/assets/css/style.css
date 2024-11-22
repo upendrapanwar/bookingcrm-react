@@ -1200,3 +1200,10 @@ textarea.form-control {
 }
 
 
+/* CART PAGE STYLE START */
+
+.sc__cart_wrapper {}
+.sc__cart_tableView {}
+.sc__cart_sidebar h2 { font-size: 24px;}
+
+.sv__tankyou_orderDetails .card-header { background-color: #1d245f; color: #FFF;}

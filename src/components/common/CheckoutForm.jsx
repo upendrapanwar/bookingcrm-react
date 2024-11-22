@@ -1,54 +1,214 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import Loader from "../../components/common/Loader";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function CheckoutForm({ dpmCheckerLink, isFormValid, triggerValidation, isDirty }) {
+export default function CheckoutForm({ formvalues, triggerValidation, isDirty }) {
     const stripe = useStripe();
     const elements = useElements();
+    const navigate = useNavigate();
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [localFormValues, setLocalFormValues] = useState({});
+
+    useEffect(() => {
+        setLocalFormValues(formvalues);
+    }, [formvalues]);
+
+    console.log('Updated localFormValues:', localFormValues); 
+
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     const formErrors = await triggerValidation();
+
+    //     if (Object.keys(formErrors).length > 0 && isDirty) {
+    //         setMessage("Please fill out the required fields correctly.");
+    //         setLoading(false);
+    //         return;
+    //     }
+
+    //     setMessage(null);
+
+    //     if (!stripe || !elements) {
+    //         setLoading(false);
+    //         return;
+    //     }
+
+    //     setIsLoading(true);
+
+    //     const {paymentIntent, error } = await stripe.confirmPayment({
+    //         elements,
+    //         confirmParams: {
+    //             return_url: "http://localhost:3000/payment-done",
+    //             // return_url: "https://bookinglive.fullstacksmsts.co.uk/payment-done",
+    //         },
+            
+    //     });
+    //     console.log("Payment succeeded:", paymentIntent);
+
+
+    //     if (error) {
+    //         setMessage(error.message || "An unexpected error occurred.");
+    //     }
+
+    //     setIsLoading(false);
+    //     // setLoading(false);
+
+    // };
+
+
+    // const paymentElementOptions = {
+    //     layout: "tabs",
+    // };
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const formErrors = await triggerValidation();
-        console.log(formErrors);
-
         if (Object.keys(formErrors).length > 0 && isDirty) {
             setMessage("Please fill out the required fields correctly.");
             setLoading(false);
             return;
         }
-
+    
         setMessage(null);
-
+    
         if (!stripe || !elements) {
             setLoading(false);
             return;
         }
-
+    
         setIsLoading(true);
-
-        const { error } = await stripe.confirmPayment({
-            elements,
-            confirmParams: {
-                return_url: "http://localhost:3000/payment-done",
-            },
-        });
-
-        if (error) {
-            setMessage(error.message || "An unexpected error occurred.");
+    
+        try {
+            // Step 1: Confirm payment without automatic redirection
+            const { error, paymentIntent } = await stripe.confirmPayment({
+                elements,
+                confirmParams: {},
+                redirect: "if_required", 
+            });
+    
+            if (error) {
+                setMessage(error.message || "An unexpected error occurred.");
+                setIsLoading(false);
+                setLoading(false);
+                return;
+            }
+    
+            // Step 2: Check if payment was successful
+            if (paymentIntent && paymentIntent.status === "succeeded") {
+                try {
+                    // Step 3: Send email and save order details sequentially
+                    await sendWellcomeEmail(localFormValues);
+                    await sendEmail(localFormValues, paymentIntent);
+                    await saveOrderDetails(localFormValues, paymentIntent);
+                    await sendEmailToAdmin(localFormValues, paymentIntent);
+                    
+    
+                    setMessage("Payment successful, email sent, and order details saved!");
+    
+                    // Step 4: Redirect after email and order details are processed
+                   // window.location.href = "http://localhost:3000/payment-done";
+                   navigate("/payment-done");
+                } catch (processError) {
+                    // Handle email or order details saving failure
+                    setMessage(
+                        "Payment successful but failed to complete all processes. Redirecting..."
+                    );
+                    console.error("Process error:", processError);
+    
+                    // Redirect even if additional steps fail
+                    //window.location.href = "http://localhost:3000/payment-done";
+                    navigate("/payment-done");
+                }
+    
+    
+            } else {
+                setMessage("Payment failed or is incomplete.");
+            }
+        } catch (err) {
+            console.error("Error during payment or email sending:", err);
+            setMessage("An unexpected error occurred.");
+        } finally {
+            setIsLoading(false);
+            setLoading(false);
         }
-
-        setIsLoading(false);
-        setLoading(false);
     };
+    
+    
+    /******************************************************************************************* */
+    
+        const paymentElementOptions = {
+            layout: "tabs",
+        };
+    /******************************************************************************************* */
+    
+        const sendEmail = async (formvalues, paymentIntent) => {
+            console.log('formvalues----inemail send function', formvalues )
+            try {
+               const response = await axios.post('user/send-payment-email', {
+                    paymentIntent: paymentIntent.id,
+                    amount: paymentIntent.amount,
+                    email: formvalues.email,
+                    name: formvalues.firstName,
+                });
+                console.log('Email sent successfully:', response.data);
+                //window.location.href = "http://localhost:3000/complete";
+            } catch (emailError) {
+                console.error('Failed to send email:', emailError.response?.data || emailError);
+               // window.location.href = "http://localhost:3000/complete";
+            }
+        }
+    
+        /*********************************************************************************************** */
+        const saveOrderDetails = async (formvalues, paymentIntent) => {
+            console.log('formvalues----SaveOrderDetails', formvalues )
+            try {
+               const response = await axios.post('user/save-order-details', {
+                    paymentIntent: paymentIntent,
+                    formvalues: formvalues
+                });
+                console.log('Order details save successfully:', response.data);
+                //window.location.href = "http://localhost:3000/complete";
+            } catch (error) {
+                console.error('Failed to save order details:', error.response?.data || error);
+               // window.location.href = "http://localhost:3000/complete";
+            }
+        }
+        /*********************************************************************************************** */
+        
+         const sendWellcomeEmail = async (formvalues) => {
+            try {
+               const response = await axios.post('user/send-wellcome-email', {
+                    formvalues: formvalues
+                });
+                console.log('Wellcome email send successfully:', response.data);
+            } catch (error) {
+                console.error('Failed to send wellcome email :', error.response?.data || error);
+            }
+        }
+        /*********************************************************************************************** */
+        
+        const sendEmailToAdmin = async (formvalues, paymentIntent) => {
+            try {
+               const response = await axios.post('user/send-student-enrolled-email', {
+                    formvalues: formvalues,
+                    paymentIntent: paymentIntent
+                });
+                console.log('Student enrolled email send successfully:', response.data);
+            } catch (error) {
+                console.error('Failed to send student enrolled email :', error.response?.data || error);
+            }
+        }
+    /*********************************************************************************************** */
+    /*********************************************************************************************** */
+     
 
-    const paymentElementOptions = {
-        layout: "tabs",
-    };
 
     return (
         <>
@@ -65,9 +225,9 @@ export default function CheckoutForm({ dpmCheckerLink, isFormValid, triggerValid
                 type="button"
                 disabled={isLoading || !stripe || !elements}
                 id="submit"
-                className="bg-blue text-white font-bold w-100 py-2 px-4 rounded w-full my-3"
+                className="bg-blue text-white font-bold w-100 py-3 px-4 rounded w-full my-3"
             >
-                {isLoading ? <div class="spinner-border spinner-border-sm" id="spinner"></div> : "Pay now"}
+                {isLoading ? <div className="spinner-border spinner-border-sm" id="spinner"></div> : "Pay now"}
             </button>
 
             {message && <p className="text-red-500 mt-2">{message}</p>}
@@ -75,3 +235,4 @@ export default function CheckoutForm({ dpmCheckerLink, isFormValid, triggerValid
         </>
     );
 }
+
