@@ -1,24 +1,32 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from "axios";
 import Header from './Header';
 import Footer from './Footer';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { clearCart } from '../../store/reducers/cart-reducer'
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 const PaymentDone = () => {
 
     const dispatch = useDispatch();
-    
+    const location = useLocation();
+    const orderDetails = location.state?.orderDetails;
+
     const [message, setMessage] = useState("Verifying payment...");
     const [paymentStatus, setPaymentStatus] = useState(null);
+    
+    const [orderDetailsData, setOrderDetailsData] = useState({courses: []});
+    const totalPrice = orderDetailsData.courses.reduce((total, item) => total + item.regular_price * item.quantity, 0);
+    
 
-
+  // console.log("orderDetails", orderDetails)
     useEffect(() => {
         // createInvoice();
         // verifyPayment();
         handleClearCart();
+        getOrderDetails(orderDetails);
     }, [])
 
 
@@ -41,7 +49,7 @@ const PaymentDone = () => {
     //     //       }
     //     //     }
     //     //   );
-      
+
     //     //   // If the request is successful
     //     //   console.log("Invoice created successfully:", response);
     //     // } catch (err) {
@@ -85,13 +93,29 @@ const PaymentDone = () => {
     //     }
     // };
 
-
-
     const handleClearCart = () => {
         dispatch(clearCart());
     };
 
 
+    const getOrderDetails = (orderDetails) => {
+        axios.get(`user/get-order-details?id=${orderDetails.id}`)
+        .then(response => {
+            toast.dismiss();
+            if (response.data) {
+             //   console.log('orderDetails---response',response)
+                    setOrderDetailsData(response.data.data);
+                
+            }
+        }).catch(error => {
+            toast.dismiss();
+            if (error.response) {
+                toast.error('Data is not available', { position: "top-center", autoClose: 3000 });
+            }
+        });
+    };
+
+    console.log('orderDetailsData',orderDetailsData)
     return (
         <>
             <Header />
@@ -117,21 +141,22 @@ const PaymentDone = () => {
                             <div className="row">
                                 <div className="col-md-6">
                                     <h6>Order ID:</h6>
-                                    <p>#12345</p>
+                                    <p>{orderDetailsData.id}</p>
                                 </div>
                                 <div className="col-md-6">
                                     <h6>Order Date:</h6>
-                                    <p>November 13, 2024</p>
+                                  {/* //  <p>{orderDetails.createdAt}</p> */}
+                                    <p>{new Date(orderDetailsData.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                 </div>
                             </div>
                             <div className="row">
                                 <div className="col-md-6">
                                     <h6>Customer Name:</h6>
-                                    <p>John Doe</p>
+                                    <p>{orderDetailsData.firstName}</p>
                                 </div>
                                 <div className="col-md-6">
                                     <h6>Email:</h6>
-                                    <p>johndoe@example.com</p>
+                                    <p>{orderDetailsData.email}</p>
                                 </div>
                             </div>
                             <hr />
@@ -146,7 +171,7 @@ const PaymentDone = () => {
                                             <th>Price</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    {/* <tbody>
                                         <tr>
                                             <td>1</td>
                                             <td>Product A</td>
@@ -159,11 +184,37 @@ const PaymentDone = () => {
                                             <td>1</td>
                                             <td>$20</td>
                                         </tr>
+                                    </tbody> */}
+                                    <tbody>
+                                        {orderDetailsData.courses.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{index + 1}</td>
+                                                <td>{item.course_title}</td>
+                                                <td>{item.quantity}</td>
+                                        
+                                                <td>£{item.regular_price * item.quantity}</td>
+                                            </tr>
+                                        ))}
                                     </tbody>
                                     <tfoot>
-                                        <tr>
+                                        {/* <tr>
                                             <td colSpan="3" className="text-end"><strong>Total:</strong></td>
                                             <td><strong>$60</strong></td>
+                                        </tr> */}
+                                        <tr>
+                                        <td colSpan="3" className="text-end"><strong>Subtotal:</strong></td>
+                                        {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                        <td><strong><b>£&nbsp;</b>{totalPrice.toFixed(2)}</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td colSpan="3" className="text-end"><strong>VAT:</strong></td>
+                                        {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                        <td><strong><b>£&nbsp;</b>{(totalPrice * 0.1).toFixed(2)}</strong></td>
+                                        </tr>
+                                        <tr>
+                                        <td colSpan="3" className="text-end"><strong>Total:</strong></td>
+                                        {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                        <td><strong><b>£&nbsp;</b>{(totalPrice * 1.1).toFixed(2)}</strong></td>
                                         </tr>
                                     </tfoot>
                                 </table>

@@ -19,7 +19,7 @@ const AdminInstructorsList = () => {
     const [loading, setLoading] = useState([false]);
     const [columns, setColumns] = useState([]);
     const [orderDataSet, setOrderDataSet] = useState([]);
-    const [courses,setAllCourses] = useState([]);
+    const [instructors,setInstructors] = useState([]);
     const customStyles = {
         pagination: {
             style: {
@@ -58,7 +58,7 @@ const AdminInstructorsList = () => {
     };
     useEffect(() => {
         //dispatch(getLeadsContent());
-        getAllCourses();
+        getAllInstructors();
     }, []);
 
     /***********************************************************************/
@@ -129,7 +129,7 @@ const AdminInstructorsList = () => {
                 if (response.data.status) {
                     console.log('Deleted Course-----', response)
                     toast.success(response.data.message, { autoClose: 3000 });
-                    getAllCourses();
+                    getAllInstructors();
                 } else {
                     toast.error(response.data.message, { autoClose: 3000 });
                 }
@@ -153,89 +153,88 @@ const AdminInstructorsList = () => {
      * Get  courses list
      * 
      */
-    const getAllCourses = () => {
-        axios.get('admin/get_course').then(response => {
+    const getAllInstructors = () => {
+        axios.get('admin/get_instructors').then(response => {
             toast.dismiss();
 
             if (response.data) {
                 console.log(response.data)
-                if (response.data.status) {
-                    setAllCourses(response.data.data);
+                    setInstructors(response.data.data);
                     console.log(response.data.data)
-                    var coursesData = response.data.data;
-                    let coursesDataArray = [];
-                    coursesData.forEach(function (value) {
-                        const isActiveStatus = Boolean(value.isActive);
-                        coursesDataArray.push({
-                            course_id: String(value.id || ''),
-                            course_title: String(value.course_title || ''),
-                            category: String(value.category || ''),
-                            course_format: String(value.course_format || ''),
-                            course_image: value.course_image || EmptyImage,
-                            isActiveString: isActiveStatus ? 'Active' : 'Inactive',
-                            createdby: (value.instructor && value.instructor.first_name) ? value.instructor.first_name : '',
+                    var instructorsData = response.data.data;
+                    let instructorsDataArray = [];
+                    instructorsData.forEach(function (value) {
+                        // const isActiveStatus = Boolean(value.isActive);
+                        instructorsDataArray.push({
+                            instructor_id: String(value.id || ''),
+                            instructor_name: String(value.first_name || ''),
+                            instructor_email: String(value.email || ''),
+                            instructor_phone: String(value.phone || ''),
+                            instructor_image: value.instructor_image || EmptyImage,
+                            // isActiveString: isActiveStatus ? 'Active' : 'Inactive',
+                            createdby: (value.createdBy && value.createdBy.first_name) ? value.createdBy.first_name : '',
                             createdAt: String(value.createdAt || ''),
                         });
                     });
                     var columnsData = [
                         {
                             name: "",
-                            selector: (row, i) => row.course_image,
+                            selector: (row, i) => row.instructor_image,
                             cell: (row) => (
                                 <img
-                                    src={row.course_image ? row.course_image : EmptyImage}
-                                    alt="Course image"
+                                    src={row.instructor_image ? row.instructor_image : EmptyImage}
+                                    alt="Instructor image"
                                     style={{ width: '50px', height: '50px', objectFit: 'cover' }}
                                 />
                             ),
                             sortable: false,
                         },
                         {
-                            name: "Course Title",
-                            selector: (row, i) => row.course_title,
-                            cell: (row) => <span>{row.course_title}</span>,
-                            sortable: true,
-                        },
-                        {
-                            name: "category",
-                            selector: (row, i) => row.category,
-                            cell: (row) => <span>{row.category}</span>,
-                            sortable: true,
-                        },
-                        {
-                            name: "Mode",
-                            selector: (row, i) => row.course_format,
-                            cell: (row) => <span>{row.course_format}</span>,
-                            sortable: true,
-                        },
-                        {
-                            name: "Status",
-                            selector: (row) => row.isActiveString,
-                            cell: (row) => row.isActiveString === 'Active' ? (
-                                <div className="flex items-center">
-                                    <div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div>
-                                    <span>Active</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center">
-                                    <div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></div>
-                                    <span>Inactive</span>
-                                </div>
-                            ),
+                            name: "Name",
+                            selector: (row, i) => row.instructor_name,
+                            cell: (row) => <span>{row.instructor_name}</span>,
                             sortable: true,
                         },
                         // {
-                        //     name: "Author",
-                        //     selector: (row, i) => row.createdby,
-                        //     cell: (row) => row.createdby,
+                        //     name: "category",
+                        //     selector: (row, i) => row.category,
+                        //     cell: (row) => <span>{row.category}</span>,
+                        //     sortable: true,
+                        // },
+                        // {
+                        //     name: "Mode",
+                        //     selector: (row, i) => row.course_format,
+                        //     cell: (row) => <span>{row.course_format}</span>,
+                        //     sortable: true,
+                        // },
+                        // {
+                        //     name: "Status",
+                        //     selector: (row) => row.isActiveString,
+                        //     cell: (row) => row.isActiveString === 'Active' ? (
+                        //         <div className="flex items-center">
+                        //             <div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div>
+                        //             <span>Active</span>
+                        //         </div>
+                        //     ) : (
+                        //         <div className="flex items-center">
+                        //             <div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></div>
+                        //             <span>Inactive</span>
+                        //         </div>
+                        //     ),
                         //     sortable: true,
                         // },
                         {
-                                name: "Author",
-                                selector: (row, i) => row.createdby,
-                                cell: (row) =><span>Admin</span>,
-                                sortable: true,
-                            },
+                            name: "Author",
+                            selector: (row, i) => row.createdby,
+                            cell: (row) => row.createdby,
+                            sortable: true,
+                        },
+                        // {
+                        //         name: "Author",
+                        //         selector: (row, i) => row.createdby,
+                        //         cell: (row) =><span>Admin</span>,
+                        //         sortable: true,
+                        //     },
                         {
                             name: "Created At",
                             selector: (row, i) => row.createdAt,
@@ -273,10 +272,9 @@ const AdminInstructorsList = () => {
 
                     ];
                     setColumns(columnsData);
-                    setOrderDataSet(coursesDataArray);
+                    setOrderDataSet(instructorsDataArray);
                 }
-
-            }
+            
         }).catch(error => {
             toast.dismiss();
             if (error.response) {
