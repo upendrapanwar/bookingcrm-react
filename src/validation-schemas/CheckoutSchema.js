@@ -3,18 +3,18 @@ import * as Yup from 'yup';
 export default Yup.object().shape({
     firstName: Yup.string().required('First name is required'),
     lastName: Yup.string().required('Last name is required'),
-    companyName: Yup.string(),
+    // companyName: Yup.string(),
     country: Yup.string().required('Country/Region is required'),
     streetAddress: Yup.string().required('Street address is required'),
     flat: Yup.string(),
     city: Yup.string().required('City is required'),
-    county: Yup.string(),
+    county: Yup.string().required('county is required'),
     postcode: Yup.string().required('Postcode is required'),
     email: Yup.string().email('Invalid email address').required('Email is required'),
     phoneNumber: Yup.string().required('Phone number is required'),
     acknowledge: Yup.boolean().oneOf([true], 'You must acknowledge the terms'),
-    state: Yup.string().required('State is required'),
-    gender: Yup.string().required('Please select your gender'),
+    // state: Yup.string().required('State is required'),
+    // gender: Yup.string().required('Please select your gender'),
     // cardNumber: Yup.string()
     // .matches(/^\d{13,19}$/, 'Card number must be between 13 and 19 digits') 
     // .required('Card number is required'),    expiryDate: Yup.string()

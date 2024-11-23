@@ -523,56 +523,81 @@ p {
     padding-top: 45px;
 }
 
-.product_wrapper div.products div.product {
-    float: left;
-    margin: 0 3.8% 2.992em 0;
-    padding: 0;
-    position: relative;
-    width: 100%;
-    margin-left: 0;
+.products_row_listing { display: flex; }
+.products_row_listing  div.product {
+    flex: 0 0 33.33%; 
+    width: 33.33%;
+    padding: 12px;
+
+    
+}
+.products_row_listing  div.product .product_list_rows:hover {
+    filter: drop-shadow(8px 8px 0px #CAC9D6);
+    
 }
 
 .product_wrapper div.products div.product .product_list_rows {
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
 
-    background-color: rgba(29, 36, 95, 1);
-    border: 2px solid rgba(29, 37, 96, 0.3);
+    /* background-color: rgba(29, 36, 95, 1); */
+    color: #000;
+    padding: 20px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -o-border-radius: 10px;
+    -ms-border-radius: 10px;
     border-radius: 10px;
-    -webkit-box-shadow: 6px 6px 0px 0px rgba(29, 37, 96, 0.3);
-    -moz-box-shadow: 6px 6px 0px 0px rgba(29, 37, 96, 0.3);
-    box-shadow: 6px 6px 0px 0px rgba(29, 37, 96, 0.3);
-    color: #FFF;
+    border: 1px solid #B5B5C3;
+    -webkit-transition: all .2s ease-out 0s;
+    -moz-transition: all .2s ease-out 0s;
+    -ms-transition: all .2s ease-out 0s;
+    -o-transition: all .2s ease-out 0s;
+    transition: all .2s ease-out 0s;
+    overflow: hidden;
+    background-color: #FFF;
 }
 
-.product_wrapper div.products div.product .product_list_rows .pr_col {
+/* .product_wrapper div.products div.product .product_list_rows .pr_col {
     flex: 0 0 18%;
     padding: 35px 15px;
-}
+} */
 
-.product_wrapper div.products div.product .product_list_rows .pr_col {
+/* .product_wrapper div.products div.product .product_list_rows .pr_col {
     flex: 0 0 20%;
     padding: 35px 15px;
+} */
+
+.products_row_listing  div.product .product_list_rows .product-logo .relative { width: 100%!important;
+overflow: hidden; border-radius: 5px; height: 220px!important; }
+.products_row_listing  div.product .product_list_rows .product-logo .relative img { object-fit: cover; object-position: center center; width: 100%; height: 100%; transition: 0.4s; }
+.products_row_listing  div.product:hover .product_list_rows .product-logo .relative img{
+    transform: scale(1.03);
 }
 
+
 .product_wrapper div.products div.product .product_list_rows .product-info {
-    flex: 0 0 42%;
-    width: 42%;
+    /* flex: 0 0 42%;
+    width: 42%; */
+    padding: 15px 0px;
+    height: 250px;
 }
 
 .product_wrapper div.products div.product .product_list_rows .product-info h2 {
-    font-size: 24px;
-    margin-bottom: 5px;
-    color: #FFF;
+    font-size: 20px;
+    margin-bottom: 10px!important;
+    color: #1d245f;
+    line-height: 1.4;
 }
 
 .product_wrapper div.products div.product .product_list_rows .product-info h3 {
-    font-size: 22px;
+    font-size: 20px;
     padding-top: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 10px!important;
     color: #eb8107;
 }
-
+.product_wrapper div.products div.product .product_list_rows .pr-btns { display: flex; justify-content: space-between; gap: 15px;}
 .product_wrapper div.products div.product .product_list_rows a.btns {
     color: #FFF;
     background-color: #eb8107;
@@ -719,7 +744,6 @@ p {
     border: 1px solid #1d245f;
     height: 46px;
 }
-
 textarea.form-control {
     height: 200px;
 }
@@ -736,11 +760,17 @@ textarea.form-control {
 .pr_filter_section .btn {
     padding: .375rem 1rem;
 }
+.pr_filter_section .btn-primary {
+    color: #fff;
+    background-color: #eb8107;
+    border-color: #eb8107;
+}
 .pr_filter_section .btn-orange:active {
     background-color: #fb5607;
     border-color: #fb5607;
     color: #FFF;
 }
+
 
 /* ACCOURDIAN STYLE */
 
@@ -761,20 +791,25 @@ textarea.form-control {
     border: 1px solid #fb5607 !important;
 
 }
-.product_accordian_wrap .card h2,
-.product_accordian_wrap .card h3 { color: #FFF!important; margin-bottom: 5px!important;}
 .product_accordian_wrap .card .card-body {
     padding: 25px 35px;
     display: inline-block;
     width: 100%;
-    color: #FFF;
+    color: #000;
 }
 
 .product_accordian_wrap .card .course-heading{
     background-color:  #FFF!important;
-    color: #ff8900!important;
+    color: #1d245f!important;
     font-size: 22px;
+    display: block;
+    clear: both;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    text-align: center;
 }
+
+
 
 .product_accordian_wrap .card-header {
     background-color: #fb5607;
@@ -820,6 +855,8 @@ textarea.form-control {
     text-decoration: none;
     color: #FFF;
 }
+
+
 
 .product_accordian_wrap .card div.products div.product {
     margin: 1em 0 1em 0;
@@ -1220,3 +1257,4 @@ textarea.form-control {
 .sc__cart_sidebar h2 { font-size: 24px;}
 
 .sv__tankyou_orderDetails .card-header { background-color: #1d245f; color: #FFF;}
+

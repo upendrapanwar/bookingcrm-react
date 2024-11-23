@@ -29,8 +29,8 @@ const Cart = () => {
                 <div className="container mx-auto px-4  mb-8">
                     {/* <h1 className="text-2xl font-semibold my-4">Shopping Cart</h1> */}
                     {cart.length > 0 ? (
-                        <div className="flex flex-col md:flex-row gap-2">
-                            <div className="col-md-8">
+                        <div className="flex flex-col md:flex-column gap-2">
+                            <div className="col-md-12">
                                 <div className="bg-white rounded-lg shadow-md p-6 mb-4 mt-5 mb-5 sc__cart_tableView">
                                     <div className="table-responsive">
                                         <table className="w-full text-left border-collapse border">
@@ -90,7 +90,7 @@ const Cart = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-md-4 mt-5 mb-5">
+                            <div className="col-md-12 mt-5 mb-5">
                                 <div className="bg-white rounded-lg shadow-md p-6 sc__cart_sidebar">
                                     <h2 className="text-md font-semibold mb-4">Basket totals</h2>
                                     <div className="flex justify-between mb-2">
