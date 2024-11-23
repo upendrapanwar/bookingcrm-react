@@ -12,7 +12,7 @@ const HeaderNavigation = () => {
     const [loading, setLoading] = useState(false);
 
     const handleNavigation = async (path) => {
-        setLoading(true);
+        // setLoading(true);
 
         // Simulate a brief loading time
         await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
@@ -39,7 +39,7 @@ const HeaderNavigation = () => {
 
     return (
         <>
-            {loading === true ? <Loader /> : ''}
+            {/* {loading === true ? <Loader /> : ''} */}
             <div className="loading-overlay">
                 <div className="spinner-border text-primary" role="status">
                     <span className="visually-hidden">Loading...</span>
