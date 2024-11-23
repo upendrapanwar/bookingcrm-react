@@ -330,6 +330,7 @@ const Checkout = () => {
                                                         </div>
 
                                                         <div className="form-group">
+                                                            
                                                             <div className="form-check">
                                                                 <label className="flex items-start space-x-2">
                                                                     <input
