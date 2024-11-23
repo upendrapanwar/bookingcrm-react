@@ -13,6 +13,8 @@ export default Yup.object().shape({
     email: Yup.string().email('Invalid email address').required('Email is required'),
     phoneNumber: Yup.string().required('Phone number is required'),
     acknowledge: Yup.boolean().oneOf([true], 'You must acknowledge the terms'),
+    state: Yup.string().required('State is required'),
+    gender: Yup.string().required('Please select your gender'),
     // cardNumber: Yup.string()
     // .matches(/^\d{13,19}$/, 'Card number must be between 13 and 19 digits') 
     // .required('Card number is required'),    expiryDate: Yup.string()

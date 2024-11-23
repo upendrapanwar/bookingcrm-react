@@ -17,55 +17,6 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty })
         setLocalFormValues(formvalues);
     }, [formvalues]);
 
-    console.log('Updated localFormValues:', localFormValues); 
-
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-
-    //     const formErrors = await triggerValidation();
-
-    //     if (Object.keys(formErrors).length > 0 && isDirty) {
-    //         setMessage("Please fill out the required fields correctly.");
-    //         setLoading(false);
-    //         return;
-    //     }
-
-    //     setMessage(null);
-
-    //     if (!stripe || !elements) {
-    //         setLoading(false);
-    //         return;
-    //     }
-
-    //     setIsLoading(true);
-
-    //     const {paymentIntent, error } = await stripe.confirmPayment({
-    //         elements,
-    //         confirmParams: {
-    //             return_url: "http://localhost:3000/payment-done",
-    //             // return_url: "https://bookinglive.fullstacksmsts.co.uk/payment-done",
-    //         },
-            
-    //     });
-    //     console.log("Payment succeeded:", paymentIntent);
-
-
-    //     if (error) {
-    //         setMessage(error.message || "An unexpected error occurred.");
-    //     }
-
-    //     setIsLoading(false);
-    //     // setLoading(false);
-
-    // };
-
-
-    // const paymentElementOptions = {
-    //     layout: "tabs",
-    // };
-
-
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -104,6 +55,7 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty })
             if (paymentIntent && paymentIntent.status === "succeeded") {
                 try {
                     // Step 3: Send email and save order details sequentially
+                    await studentRegister(localFormValues);
                     await sendWellcomeEmail(localFormValues);
                     await sendEmail(localFormValues, paymentIntent);
                     await saveOrderDetails(localFormValues, paymentIntent);
@@ -147,7 +99,17 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty })
             layout: "tabs",
         };
     /******************************************************************************************* */
-    
+    const studentRegister = async (formvalues) => {
+        console.log('formvalues----SaveOrderDetails', formvalues )
+        try {
+           const response = await axios.post('user/studentRegister', 
+            {formvalues: formvalues});
+            console.log('Student register successfully:', response.data);
+        } catch (error) {
+            console.error('Failed to Student register:', error.response?.data || error);
+        }
+    }
+    /******************************************************************************************* */
         const sendEmail = async (formvalues, paymentIntent) => {
             console.log('formvalues----inemail send function', formvalues )
             try {

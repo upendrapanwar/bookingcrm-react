@@ -39,7 +39,6 @@ const CourseListing = () => {
     /***********************************************************************/
     /***********************************************************************/
 
-    console.log('categories-----', categories)
     /**
      * Handle to get next 6 Months
      * 
@@ -91,7 +90,6 @@ const CourseListing = () => {
             .then((response) => {
                 toast.dismiss();
                 if (response.data.status) {
-                    console.log('Courses-----', response)
                     setCourses(response.data.data);
                     // setLoading(false);
                 } else {

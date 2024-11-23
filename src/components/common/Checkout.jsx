@@ -30,7 +30,7 @@ const Checkout = () => {
     }, [formvalues]);
 
 
-    const handleCheckoutStripe = async (firstName, lastName, email) => {
+    const handleCheckoutStripe = async (firstName, lastName, email, phoneNumber, county) => {
         setLoading(true);
 
         try {
@@ -38,7 +38,10 @@ const Checkout = () => {
             let reqBody = {
                 name: `${firstName} ${lastName}`,
                 email: email,
+                Phone: phoneNumber,
+                Country : county,
                 'amount': Number(total) * 100,
+                cart : "cart",
             };
 
             const response = await axios.post("user/checkoutSession/", reqBody);
@@ -47,7 +50,8 @@ const Checkout = () => {
                 const Data = response.data.data;
                 setClientSecret(Data.client_secret);
                 setDpmCheckerLink(`https://dashboard.stripe.com/settings/payment_methods/review?transaction_id=${Data.id}`);
-            }} catch (error) {
+            }
+        } catch (error) {
             setLoading(false);
             if (error.response && error.response.data.status === false) {
                 toast.error(error.response.data.message);
@@ -105,6 +109,8 @@ const Checkout = () => {
                                                 email: '',
                                                 phoneNumber: '',
                                                 acknowledge: false,
+                                                state: '',
+                                                gender: '',
                                             }}
                                             validationSchema={checkoutValidation}
                                             onSubmit={async (values, { resetForm }) => {
@@ -160,6 +166,37 @@ const Checkout = () => {
                                                         </div>
 
                                                         <div className="form-group">
+                                                            <label>Gender</label>
+                                                            <div className="flex items-center gap-4">
+                                                                <label className="flex items-center">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name="gender"
+                                                                        value="male"
+                                                                        className="mr-2"
+                                                                        onChange={handleChange}
+                                                                        onBlur={handleBlur}
+                                                                        checked={values.gender === "male"}
+                                                                    />
+                                                                    Male
+                                                                </label>
+                                                                <label className="flex items-center">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name="gender"
+                                                                        value="female"
+                                                                        className="mr-2"
+                                                                        onChange={handleChange}
+                                                                        onBlur={handleBlur}
+                                                                        checked={values.gender === "female"}
+                                                                    />
+                                                                    Female
+                                                                </label>
+                                                            </div>
+                                                            {errors.gender && touched.gender && <small className="text-red-500">{errors.gender}</small>}
+                                                        </div>
+
+                                                        <div className="form-group">
                                                             <label>Company name (optional)</label>
                                                             <input
                                                                 type="text"
@@ -185,6 +222,20 @@ const Checkout = () => {
                                                                 value={values.country}
                                                             />
                                                             {errors.country && touched.country && <small className="text-red-500">{errors.country}</small>}
+                                                        </div>
+
+                                                        <div className="form-group">
+                                                            <label>State</label>
+                                                            <input
+                                                                type="text"
+                                                                name="state"
+                                                                placeholder="State"
+                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                onChange={handleChange}
+                                                                onBlur={handleBlur}
+                                                                value={values.state}
+                                                            />
+                                                            {errors.state && touched.state && <small className="text-red-500">{errors.state}</small>}
                                                         </div>
 
                                                         <div className="form-group">
@@ -291,9 +342,11 @@ const Checkout = () => {
                                                                                 values.firstName.trim() !== "" &&
                                                                                 values.lastName.trim() !== "" &&
                                                                                 values.email.trim() !== "" &&
+                                                                                String(values.phoneNumber).trim() !== "" &&
+                                                                                values.county.trim() !== "" &&
                                                                                 e.target.checked
                                                                             ) {
-                                                                                handleCheckoutStripe(values.firstName, values.lastName, values.email);
+                                                                                handleCheckoutStripe(values.firstName, values.lastName, values.email, values.phoneNumber, values.county);
                                                                             }
                                                                         }}
                                                                         onBlur={handleBlur}
@@ -307,7 +360,7 @@ const Checkout = () => {
                                                             </div>
                                                         </div>
 
-                                                      
+
                                                         {/* Modal Component */}
                                                         {isModalOpen && (
                                                             <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
@@ -372,6 +425,7 @@ const Checkout = () => {
                                                 </p>
                                             </div>
                                         </div>
+
                                     ))}
                                 </div>
                                 <hr className="my-3" />
