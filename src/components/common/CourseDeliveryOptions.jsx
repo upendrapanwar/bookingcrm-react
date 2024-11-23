@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import bannerBg from '../../assets/images/page-banner-bg.jpg';
-
+import Loader from "../../components/common/Loader";
 
 const CourseDeliveryOptions = () => {
 
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         console.log("test----")
@@ -13,6 +15,7 @@ const CourseDeliveryOptions = () => {
 
     return (
         <>
+            {loading && <Loader />}
             <Header />
             <section className="page_banner_wrapper pb-25">
                 <div className="banner-bg">
@@ -44,47 +47,28 @@ const CourseDeliveryOptions = () => {
                             >
                                 <div className="inside-article">
                                     <div className="entry-content" itemProp="text">
-                                        <section
-                                            id="gm0ad570b"
-                                            className="wp-block-gutentor-m3 alignfull section-gm0ad570b gutentor-module gutentor-container-cover has-color-bg has-custom-bg"
-                                        >
+                                        <section className="wp-block-gutentor-m3 alignfull section-gm0ad570b gutentor-module gutentor-container-cover has-color-bg has-custom-bg">
                                             <div className="grid-container">
-                                                <section
-                                                    id="gm2d2b920"
-                                                    className="wp-block-gutentor-m4 section-gm2d2b920 gutentor-module gutentor-advanced-columns"
-                                                >
-                                                    <div className="grid-container">
-                                                        <div className="grid-row">
+                                                <div className="grid-row">
+                                                    <div className="gutentor-single-column grid-lg-12 grid-md-12 grid-12">
+                                                        <div className="gutentor-col-wrap">
                                                             <div
-                                                                id="col-gmb82251"
-                                                                className="wp-block-gutentor-m4-col col-gmb82251 gutentor-single-column  grid-lg-12 grid-md-12 grid-12"
+                                                                className="gutentor-element gutentor-element-button button-align-center-mobile popmake-547 pum-trigger"
+                                                                style={{ cursor: "pointer" }}
                                                             >
-                                                                <div
-                                                                    id="section-gmb82251"
-                                                                    className="section-gmb82251 gutentor-col-wrap"
-                                                                >
-                                                                    <div
-                                                                        id="section-g1ccbe8"
-                                                                        className="wp-block-gutentor-e2 section-g1ccbe8 gutentor-element gutentor-element-button button-align-center-mobile popmake-547 pum-trigger"
-                                                                        style={{ cursor: "pointer" }}
-                                                                    >
-                                                                        <span className="gutentor-button-wrap">
-                                                                            <a
-                                                                                className="gutentor-button gutentor-block-button gutentor-icon-after"
-                                                                                href="#"
-                                                                            >
-                                                                                <i className="gutentor-button-icon fas fa-arrow-right" />
-                                                                                <span>Six E-Books: Just £39.99</span>
-                                                                            </a>
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
+                                                                <span className="gutentor-button-wrap">
+                                                                    <Link className="gutentor-button gutentor-block-button gutentor-icon-after" to="#">
+                                                                        <i className="gutentor-button-icon fas fa-arrow-right" />
+                                                                        <span>Six E-Books: Just £39.99</span>
+                                                                    </Link>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </section>
+                                                </div>
                                             </div>
                                         </section>
+
                                         <section
                                             id="gmcc4d399"
                                             className="wp-block-gutentor-m3 section-gmcc4d399 gutentor-module gutentor-container-cover"
@@ -109,10 +93,10 @@ const CourseDeliveryOptions = () => {
                                                                         className="wp-block-gutentor-e1 section-g63a303 gutentor-element gutentor-element-advanced-text"
                                                                     >
                                                                         <div className="gutentor-text-wrap">
-                                                                            <h2 className="gutentor-text">
+                                                                            <h3 className="gutentor-text">
                                                                                 Mastering the SMSTS Online Course: A
                                                                                 Comprehensive Guide
-                                                                            </h2>
+                                                                            </h3>
                                                                         </div>
                                                                     </div>
                                                                     <div
@@ -518,7 +502,7 @@ const CourseDeliveryOptions = () => {
                                                 </section>
                                             </div>
                                         </section>
-                                        <section
+                                        {/* <section
                                             id="gm8a8211f"
                                             className="wp-block-gutentor-m3 alignfull section-gm8a8211f gutentor-module gutentor-container-cover has-color-bg has-custom-bg"
                                         >
@@ -577,7 +561,8 @@ const CourseDeliveryOptions = () => {
                                                     </div>
                                                 </section>
                                             </div>
-                                        </section>
+                                        </section> */}
+
                                     </div>
                                 </div>
                             </article>
@@ -585,6 +570,24 @@ const CourseDeliveryOptions = () => {
                     </div>
                 </div>
             </div>
+
+            <section className="front_section bg-orange needhelp_section">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-lg-10 offset-lg-1 pb-25">
+                            <div className="section-title text-center pb-30">
+                                <h2 className="pb-10">Need help?</h2>
+                                <p className="pb-20">
+                                    Call us to discuss, ask questions, or book your course in person.
+                                </p>
+                                <a className="btn btn-md btn-white" href="#">
+                                    Get in touch
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <Footer />
         </>

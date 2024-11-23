@@ -10,18 +10,16 @@ import EmptyImage from "../../../assets/images/EmptyImage.png";
 import bannerBg from '../../../assets/images/page-banner-bg.jpg';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../store/reducers/cart-reducer';
-import FindCourseSchema from '../../../validation-schemas/FindCourseSchema';
 
 const CourseListing = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const accordionRefs = useRef([]);
-    const authInfo = JSON.parse(localStorage.getItem('authInfo'));
 
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState([false]);
-    const [selectedCourse, setSelectedCourse] = useState(null);
+    // const [selectedCourse, setSelectedCourse] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const [categories, setCategories] = useState([]);
     const [searchCourses, setSearchCourses] = useState([]);
@@ -162,7 +160,7 @@ const CourseListing = () => {
      */
     const handleMoreInfoClick = (course) => {
         console.log('-------', course)
-        setSelectedCourse(course);
+        // setSelectedCourse(course);
         navigate("/course-listing/course-details", { state: { course } });
     };
     /***********************************************************************/
@@ -172,89 +170,39 @@ const CourseListing = () => {
      * Handle More info
      * 
      */
-    // const handleSubmit = (values, { resetForm }) => {
-    //     console.log("Selected Month:", values.month);
-    //     console.log("Selected Type:", values.type);
-    //     setSearchMonth(values.month);
-    //     setSearchType(values.type);
-
-    //     try {
-    //         const inputDate = new Date(values.month);
-    //         const inputMonth = inputDate.getMonth();
-    //         const inputYear = inputDate.getFullYear();
-
-    //         console.log("Filtering for month/year:", inputMonth, inputYear);
-
-    //         const searchCourses = courses.filter(course => {
-
-    //             if (!course) return false;
-
-    //             const typeMatch = course.course_type?.toLowerCase() === values.type.toLowerCase();
-
-    //             let monthMatch = false;
-    //             if (course.start_date) {
-    //                 try {
-    //                     const [day, month, year] = course.start_date.split('-');
-    //                     const courseDate = new Date(year, month - 1, day);
-
-    //                     if (!isNaN(courseDate.getTime())) {
-    //                         monthMatch = courseDate.getMonth() === inputMonth &&
-    //                             courseDate.getFullYear() === inputYear;
-
-    //                         console.log("Course date comparison:", {
-    //                             course: course.course_title,
-    //                             courseMonth: courseDate.getMonth(),
-    //                             courseYear: courseDate.getFullYear(),
-    //                             inputMonth,
-    //                             inputYear,
-    //                             monthMatch,
-    //                             typeMatch
-    //                         });
-    //                     }
-    //                 } catch (error) {
-    //                     console.log("Error processing course date:", error);
-    //                 }
-    //             }
-
-    //             // If either type matches OR date matches, include the course
-    //             return typeMatch && monthMatch;
-    //         });
-    //         setSearchCourses(searchCourses);
-    //         setIsSearch(true)
-    //         console.log("Search Courses:", searchCourses);
-    //         resetForm();
-    //     } catch (error) {
-    //         console.error("Error in handleSubmit:", error);
-    //     }
-    // };
-
-
     const handleSubmit = (values, { resetForm }) => {
         console.log("Selected Month:", values.month);
         console.log("Selected Type:", values.type);
-        setSearchMonth(values.month);
-        setSearchType(values.type);
+
+        // Set search criteria in state
+        setSearchMonth(values.month || null);
+        setSearchType(values.type || null);
 
         try {
-            const inputDate = new Date(values.month);
+            // Get the current date if month is not provided
+            const currentDate = new Date();
+            const inputDate = values.month ? new Date(values.month) : currentDate;
             const inputMonth = inputDate.getMonth();
             const inputYear = inputDate.getFullYear();
 
             console.log("Filtering for month/year:", inputMonth, inputYear);
 
+            // Filter the courses based on provided inputs
             const searchCourses = courses.filter(course => {
                 if (!course) return false;
 
-                const typeMatch = course.course_type?.toLowerCase() === values.type.toLowerCase();
+                const typeMatch = values.type
+                    ? course.course_type?.toLowerCase() === values.type.toLowerCase()
+                    : true;
 
                 let monthMatch = false;
                 if (course.course_schedule_dates && course.course_schedule_dates.length > 0) {
                     try {
-                        // Convert the first date in course_schedule_dates to a Date object
                         const courseDate = new Date(course.course_schedule_dates[0]);
 
                         if (!isNaN(courseDate.getTime())) {
-                            monthMatch = courseDate.getMonth() === inputMonth &&
+                            monthMatch =
+                                courseDate.getMonth() === inputMonth &&
                                 courseDate.getFullYear() === inputYear;
 
                             console.log("Course date comparison:", {
@@ -272,18 +220,31 @@ const CourseListing = () => {
                     }
                 }
 
-                // Both type and month should match to include the course
-                return typeMatch && monthMatch;
+                // Determine final match logic based on provided inputs
+                if (values.type && values.month) {
+                    return typeMatch && monthMatch;
+                } else if (values.type) {
+                    return typeMatch;
+                } else if (values.month) {
+                    return monthMatch;
+                }
+                return false;
             });
 
+            // Update state with the filtered courses
             setSearchCourses(searchCourses);
             setIsSearch(true);
+
             console.log("Search Courses:", searchCourses);
+
+            // Reset the form after the search
             resetForm();
         } catch (error) {
             console.error("Error in handleSubmit:", error);
         }
     };
+
+
 
 
     /***********************************************************************/
@@ -300,9 +261,16 @@ const CourseListing = () => {
     /***********************************************************************/
 
     const handleViewMore = () => {
-        navigate('/all-courses'); // Replace with the actual route
+        navigate('#');
     };
+    /***********************************************************************/
+    /***********************************************************************/
 
+    const handleClose = () => {
+        setIsSearch(false);
+    };
+    /***********************************************************************/
+    /***********************************************************************/
     // console.log('selectedCourse----', selectedCourse)
     return (
         <>
@@ -344,7 +312,6 @@ const CourseListing = () => {
                                     type: "",
                                 }}
                                 onSubmit={handleSubmit}
-                                validationSchema={FindCourseSchema}
                             >
                                 {({
                                     values,
@@ -375,9 +342,9 @@ const CourseListing = () => {
                                                         </option>
                                                     ))}
                                                 </select>
-                                                {touched.month && errors.month ? (
-                                                    <small className="text-danger">{errors.month}</small>
-                                                ) : null}
+                                                {/* {touched.month && errors.month ? (
+                                                        <small className="text-danger">{errors.month}</small>
+                                                    ) : null} */}
                                             </div>
                                             <div className="form-group col-md-6">
                                                 <label>Type</label>
@@ -393,9 +360,9 @@ const CourseListing = () => {
                                                     <option value="Day Release">Day Release</option>
                                                     <option value="Weekend">Weekend</option>
                                                 </select>
-                                                {touched.type && errors.type ? (
+                                                {/* {touched.type && errors.type ? (
                                                     <small className="text-danger">{errors.type}</small>
-                                                ) : null}
+                                                ) : null} */}
                                             </div>
                                         </div>
                                         <div className="form-row">
@@ -464,7 +431,10 @@ const CourseListing = () => {
 
                                                                 return (
                                                                     <>
-                                                                        {filteredCourses.slice(0, 5).map((course, itemIndex) => (
+                                                                        {filteredCourses.some(course => course.course_type === "Monday to Friday") && (
+                                                                            <h2 className="course-heading">{item.title} Monday to Friday</h2>
+                                                                        )}
+                                                                        {filteredCourses.filter(course => course.course_type === "Monday to Friday").slice(0, 5).map((course, itemIndex) => (
                                                                             <div className="product" key={itemIndex}>
                                                                                 <div className="product_list_rows">
                                                                                     <div className="pr_col product-logo">
@@ -546,7 +516,177 @@ const CourseListing = () => {
                                                                             </div>
                                                                         ))}
 
-                                                                        {filteredCourses.length > 5 && (
+                                                                        {filteredCourses.some(course => course.course_type === "Day Release") && (
+                                                                            <h2 className="course-heading ">{item.title} Day Release</h2>
+                                                                        )}
+                                                                        {filteredCourses.filter(course => course.course_type === "Day Release").slice(0, 5).map((course, itemIndex) => (
+                                                                            <div className="product" key={itemIndex}>
+                                                                                <div className="product_list_rows">
+                                                                                    <div className="pr_col product-logo">
+                                                                                        <div className="relative" style={{ width: '300px', height: '250px' }}>
+                                                                                            <img
+                                                                                                src={course.course_image || EmptyImage}
+                                                                                                alt="Course"
+                                                                                                className="w-full h-full object-cover"
+                                                                                                decoding="async"
+                                                                                                fetchpriority="high"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="pr_col product-info">
+                                                                                        {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
+                                                                                        <h2>
+                                                                                            {course.course_title} | {
+                                                                                                course.course_schedule_dates
+                                                                                                    .map(dateString => new Date(dateString))
+                                                                                                    .find(date => date >= today)
+                                                                                                    ?.toLocaleDateString('en-GB')
+                                                                                                    .split('/')
+                                                                                                    .join('-') || 'No upcoming date available'
+                                                                                            } | {course.course_format}
+                                                                                        </h2>
+                                                                                        <h3>
+                                                                                            {course.sale_price ? (
+                                                                                                <>
+                                                                                                    <bdi>
+                                                                                                        <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                        <span style={{ textDecoration: 'line-through' }}>{course.regular_price}</span>
+                                                                                                    </bdi>
+                                                                                                    <bdi className="ml-2">
+                                                                                                        <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                        {course.sale_price}
+                                                                                                    </bdi>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <bdi>
+                                                                                                    <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                    {course.regular_price}
+                                                                                                </bdi>
+                                                                                            )}
+                                                                                            <small className="woocommerce-price-suffix"> +{course.vat || 0}% VAT</small>
+                                                                                        </h3>
+                                                                                        <div className="product-other-detail">
+                                                                                            <ul>
+                                                                                                <li className='pt-2'>{course.course_type}</li>
+                                                                                                {/* <li>Weekend</li> */}
+                                                                                                {/* <li className='pt-2'>{course.course_time}</li> */}
+                                                                                                <ul>
+                                                                                                    {course.course_time.map((time, index) => (
+                                                                                                        <li key={index} className='pt-2'>
+                                                                                                            {time.start} - {time.end}
+                                                                                                        </li>
+                                                                                                    ))}
+                                                                                                </ul>
+                                                                                                {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="pr_col product-btns">
+                                                                                        <div className="pr-btns">
+                                                                                            <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link>
+                                                                                            {/* <a href="#" className="btns more-info">More info</a> */}
+                                                                                            <Link
+                                                                                                to="#"
+                                                                                                onClick={(e) => {
+                                                                                                    e.preventDefault();
+                                                                                                    handleMoreInfoClick(course);
+                                                                                                }}
+                                                                                                className="btns more-info"
+                                                                                            >
+                                                                                                More Info
+                                                                                            </Link>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+
+                                                                        {filteredCourses.some(course => course.course_type === "Weekend") && (
+                                                                            <h2 className="course-heading">{item.title} Weekend</h2>
+                                                                        )}
+                                                                        {filteredCourses.filter(course => course.course_type === "Weekend").slice(0, 5).map((course, itemIndex) => (
+                                                                            <div className="product" key={itemIndex}>
+                                                                                <div className="product_list_rows">
+                                                                                    <div className="pr_col product-logo">
+                                                                                        <div className="relative" style={{ width: '300px', height: '250px' }}>
+                                                                                            <img
+                                                                                                src={course.course_image || EmptyImage}
+                                                                                                alt="Course"
+                                                                                                className="w-full h-full object-cover"
+                                                                                                decoding="async"
+                                                                                                fetchpriority="high"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="pr_col product-info">
+                                                                                        {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
+                                                                                        <h2>
+                                                                                            {course.course_title} | {
+                                                                                                course.course_schedule_dates
+                                                                                                    .map(dateString => new Date(dateString))
+                                                                                                    .find(date => date >= today)
+                                                                                                    ?.toLocaleDateString('en-GB')
+                                                                                                    .split('/')
+                                                                                                    .join('-') || 'No upcoming date available'
+                                                                                            } | {course.course_format}
+                                                                                        </h2>
+                                                                                        <h3>
+                                                                                            {course.sale_price ? (
+                                                                                                <>
+                                                                                                    <bdi>
+                                                                                                        <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                        <span style={{ textDecoration: 'line-through' }}>{course.regular_price}</span>
+                                                                                                    </bdi>
+                                                                                                    <bdi className="ml-2">
+                                                                                                        <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                        {course.sale_price}
+                                                                                                    </bdi>
+                                                                                                </>
+                                                                                            ) : (
+                                                                                                <bdi>
+                                                                                                    <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                    {course.regular_price}
+                                                                                                </bdi>
+                                                                                            )}
+                                                                                            <small className="woocommerce-price-suffix"> +{course.vat || 0}% VAT</small>
+                                                                                        </h3>
+                                                                                        <div className="product-other-detail">
+                                                                                            <ul>
+                                                                                                <li className='pt-2'>{course.course_type}</li>
+                                                                                                {/* <li>Weekend</li> */}
+                                                                                                {/* <li className='pt-2'>{course.course_time}</li> */}
+                                                                                                <ul>
+                                                                                                    {course.course_time.map((time, index) => (
+                                                                                                        <li key={index} className='pt-2'>
+                                                                                                            {time.start} - {time.end}
+                                                                                                        </li>
+                                                                                                    ))}
+                                                                                                </ul>
+                                                                                                {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="pr_col product-btns">
+                                                                                        <div className="pr-btns">
+                                                                                            <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link>
+                                                                                            {/* <a href="#" className="btns more-info">More info</a> */}
+                                                                                            <Link
+                                                                                                to="#"
+                                                                                                onClick={(e) => {
+                                                                                                    e.preventDefault();
+                                                                                                    handleMoreInfoClick(course);
+                                                                                                }}
+                                                                                                className="btns more-info"
+                                                                                            >
+                                                                                                More Info
+                                                                                            </Link>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+
+                                                                        {filteredCourses.length > 15 && (
                                                                             <div className="product d-flex justify-content-center">
                                                                                 <button
                                                                                     type="button"
@@ -575,13 +715,24 @@ const CourseListing = () => {
                 </section>) :
                 // ********************************************
                 (
-                    <section className="product_wrapper front_product_section columns-1 pb-25">
+                    <section className="product_wrapper front_product_section columns-1 pb-25 pt-0">
                         <div className="container">
                             <div className="row">
 
                                 <div className="col-md-12">
                                     <div className="product_accordian_wrap">
                                         <div className="accordion" id="ProductAccordion">
+
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <h4 className="text-center w-100 m-0 search-heading">Showing results for your search</h4>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm  btn-outline-danger  p-2 mr-3"
+                                                    //className="close-icon btn btn-link pr-2 text-dark" 
+                                                    onClick={handleClose}>
+                                                    X
+                                                </button>
+                                            </div>
 
                                             <div className="card">
                                                 <div className="card-header">
@@ -591,7 +742,7 @@ const CourseListing = () => {
                                                         // onClick={() => toggleAccordion(index)}
                                                         // aria-expanded={activeIndex === index}
                                                         >
-                                                            {searchMonth} {searchType}
+                                                            {searchMonth || ''} {searchType || ''}
                                                         </button>
                                                     </h2>
                                                 </div>
@@ -694,10 +845,6 @@ const CourseListing = () => {
                         </div>
                     </section>
                 )}
-
-
-
-
 
 
             <section className="front_section Container_wrapper pr_video_section">

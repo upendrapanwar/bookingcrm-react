@@ -4,7 +4,7 @@ import Loader from "../../components/common/Loader";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export default function CheckoutForm({ formvalues, triggerValidation, isDirty }) {
+export default function CheckoutForm({ formvalues, triggerValidation, isDirty, cart }) {
     const stripe = useStripe();
     const elements = useElements();
     const navigate = useNavigate();
@@ -58,15 +58,17 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty })
                     await studentRegister(localFormValues);
                     await sendWellcomeEmail(localFormValues);
                     await sendEmail(localFormValues, paymentIntent);
-                    await saveOrderDetails(localFormValues, paymentIntent);
-                    await sendEmailToAdmin(localFormValues, paymentIntent);
+                   const orderDetails = await saveOrderDetails(localFormValues, paymentIntent, cart);
+                    await sendEmailToAdmin(localFormValues, paymentIntent, orderDetails);
                     
     
                     setMessage("Payment successful, email sent, and order details saved!");
     
                     // Step 4: Redirect after email and order details are processed
                    // window.location.href = "http://localhost:3000/payment-done";
-                   navigate("/payment-done");
+                //    navigate("/payment-done");
+                console.log("orderDetails",orderDetails)
+                navigate("/payment-done", { state: { orderDetails } });
                 } catch (processError) {
                     // Handle email or order details saving failure
                     setMessage(
@@ -128,14 +130,26 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty })
         }
     
         /*********************************************************************************************** */
-        const saveOrderDetails = async (formvalues, paymentIntent) => {
+        const saveOrderDetails = async (formvalues, paymentIntent, cart) => {
             console.log('formvalues----SaveOrderDetails', formvalues )
             try {
+                const coursesData = cart.map(course => ({
+                    id: course._id,
+                    quantity: course.quantity,
+                    course_title: course.course_title,
+                    regular_price: course.regular_price,
+                    course_image: course.course_image,
+                    vat: course.vat,
+                    
+                }));
+
                const response = await axios.post('user/save-order-details', {
                     paymentIntent: paymentIntent,
-                    formvalues: formvalues
+                    formvalues: formvalues,
+                    coursesData: coursesData
                 });
                 console.log('Order details save successfully:', response.data);
+                return response.data.data;
                 //window.location.href = "http://localhost:3000/complete";
             } catch (error) {
                 console.error('Failed to save order details:', error.response?.data || error);

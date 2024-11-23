@@ -17,7 +17,7 @@ const Checkout = () => {
 
     const cart = useSelector((state) => state.cart.cart || []);
     const totalPrice = cart.reduce((total, item) => total + item.regular_price * item.quantity, 0);
-
+    console.log('cart----', cart);
     const [loading, setLoading] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
     const [dpmCheckerLink, setDpmCheckerLink] = useState("");
@@ -377,6 +377,7 @@ const Checkout = () => {
                                                                             {clientSecret && (
                                                                                 <Elements options={{ clientSecret, appearance, loader }} stripe={stripePromise}>
                                                                                     <CheckoutForm
+                                                                                        cart={cart}
                                                                                         formvalues={formvalues}
                                                                                         dpmCheckerLink={dpmCheckerLink}
                                                                                         isFormValid={isValid}

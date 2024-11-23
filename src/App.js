@@ -47,6 +47,8 @@ const CourseDetails = lazy(() => import('./components/common/courses/CourseDetai
 const AdminCoursesList = lazy(() => import('./containers/admin/courses/AdminCoursesList'));
 const AboutUs = lazy(() => import('./components/common/AboutUs'));
 const ContactUs = lazy(() => import('./components/common/ContactUs'));
+const AdminInstructorsList = lazy(() => import('./containers/admin/instructors/AdminInstructorsList'));
+const CreateInstructor = lazy(() => import('./containers/admin/instructors/CreateInstructor'));
 
 function App() {
 
@@ -185,6 +187,16 @@ export const AdminRoutes = () => {
         <Route path='admin-EditCategory' element={
           <PrivateRoute>
             <EditCategories />
+          </PrivateRoute>
+        } />
+        <Route path='instructors/instructors-list/' element={
+          <PrivateRoute>
+            <AdminInstructorsList />
+          </PrivateRoute>
+        } />
+        <Route path='admin-CreateInstructor' element={
+          <PrivateRoute>
+            <CreateInstructor />
           </PrivateRoute>
         } />
       </Routes>
