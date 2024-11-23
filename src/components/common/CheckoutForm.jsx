@@ -55,12 +55,12 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty, c
             if (paymentIntent && paymentIntent.status === "succeeded") {
                 try {
                     // Step 3: Send email and save order details sequentially
-                    await studentRegister(localFormValues);
+                    const studentRegisterResponse = await studentRegister(localFormValues);
                     await sendWellcomeEmail(localFormValues);
                     await sendEmail(localFormValues, paymentIntent);
                    const orderDetails = await saveOrderDetails(localFormValues, paymentIntent, cart);
                     await sendEmailToAdmin(localFormValues, paymentIntent, orderDetails);
-                    
+                    await savePaymentDetails(studentRegisterResponse, paymentIntent, orderDetails, cart);
     
                     setMessage("Payment successful, email sent, and order details saved!");
     
@@ -107,6 +107,7 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty, c
            const response = await axios.post('user/studentRegister', 
             {formvalues: formvalues});
             console.log('Student register successfully:', response.data);
+            return response.data;
         } catch (error) {
             console.error('Failed to Student register:', error.response?.data || error);
         }
@@ -181,6 +182,35 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty, c
                 console.error('Failed to send student enrolled email :', error.response?.data || error);
             }
         }
+        /*********************************************************************************************** */
+        const savePaymentDetails = async (studentRegisterResponse, paymentIntent, orderDetails, cart ) => {
+            console.log('studentRegisterResponse----SavePaymentDetails', studentRegisterResponse )
+            try {
+                const coursesData = cart.map(course => ({
+                    id: course._id,
+                    quantity: course.quantity,
+                    course_title: course.course_title,
+                    regular_price: course.regular_price,
+                    course_image: course.course_image,
+                    vat: course.vat,
+                    
+                }));
+
+               const response = await axios.post('user/save-payment-details', {
+                    studentRegisterResponse: studentRegisterResponse,
+                    paymentIntent: paymentIntent,
+                    orderDetails: orderDetails,
+                    coursesData: coursesData
+                });
+                console.log('Order details save successfully:', response.data);
+                return response.data.data;
+                //window.location.href = "http://localhost:3000/complete";
+            } catch (error) {
+                console.error('Failed to save order details:', error.response?.data || error);
+               // window.location.href = "http://localhost:3000/complete";
+            }
+        }
+        /*********************************************************************************************** */
     /*********************************************************************************************** */
     /*********************************************************************************************** */
      

@@ -155,7 +155,9 @@ const CourseDetails = () => {
                                             </div>
                                             <ul className="class_date">
                                                 {course && course.course_schedule_dates && course.course_schedule_dates.length > 0 ? (
-                                                    course.course_schedule_dates.map((date, index) => {
+                                                    course.course_schedule_dates
+                                                    .sort((a, b) => new Date(a) - new Date(b))
+                                                    .map((date, index) => {
                                                         return (
                                                             <li key={index}>
                                                                 <span>Day {index + 1} </span>
