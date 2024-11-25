@@ -523,7 +523,7 @@ p {
     padding-top: 45px;
 }
 
-.products_row_listing { display: flex; }
+.products_row_listing { display: flex; flex-wrap: wrap;}
 .products_row_listing  div.product {
     flex: 0 0 33.33%; 
     width: 33.33%;

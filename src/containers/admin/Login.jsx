@@ -32,7 +32,7 @@ const AdminLogin = () => {
                     expTime: response.data.data.expTime,
                     id: response.data.data['_id'],
                     token: response.data.data.token,
-                    name: response.data.data.firstname +' '+response.data.data.surname,
+                    name: response.data.data.first_name +' '+response.data.data.last_name,
                     email: response.data.data.email,
                     role: response.data.data.role,
                 };

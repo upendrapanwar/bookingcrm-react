@@ -548,7 +548,7 @@ const CreateCourse = () => {
                                                             </div>
 
                                                             {/* Enrollment Capacity */}
-                                                            <div className="form-group mb-4 col-md-6">
+                                                            {/* <div className="form-group mb-4 col-md-6">
                                                                 <label htmlFor="enrollment_capacity">Student Enrollment Capacity</label>
                                                                 <input
                                                                     type="number"
@@ -563,7 +563,60 @@ const CreateCourse = () => {
                                                                 {formikProps.touched.enrollment_capacity && formikProps.errors.enrollment_capacity ? (
                                                                     <small className="text-danger">{formikProps.errors.enrollment_capacity}</small>
                                                                 ) : null}
-                                                            </div>
+                                                            </div> */}
+
+
+                                                            {/* <div className="form-group mb-4 col-md-6">
+  <label htmlFor="enrollment_capacity">Student Enrollment Capacity</label>
+  <select
+    name="enrollment_capacity"
+    className="form-control"
+    id="enrollmentCapacity"
+    onChange={formikProps.handleChange}
+    onBlur={formikProps.handleBlur}
+    value={formikProps.values.enrollment_capacity}
+  >
+    <option value="" disabled>
+      Select enrollment capacity
+    </option>
+    {[...Array(7)].map((_, i) => (
+      <option key={i} value={i + 6}>
+        {i + 6}
+      </option>
+    ))}
+  </select>
+  {formikProps.touched.enrollment_capacity && formikProps.errors.enrollment_capacity ? (
+    <small className="text-danger">{formikProps.errors.enrollment_capacity}</small>
+  ) : null}
+</div> */}
+
+<div className="form-group mb-4 col-md-6">
+  <label>Student Enrollment Capacity</label>
+  <div>
+    {[...Array(7)].map((_, i) => (
+      <div key={i} className="form-check form-check-inline">
+        <input
+          type="radio"
+          name="enrollment_capacity"
+          className="form-check-input"
+          id={`capacity${i + 6}`}
+          value={i + 6}
+          onChange={formikProps.handleChange}
+          onBlur={formikProps.handleBlur}
+          checked={formikProps.values.enrollment_capacity == i + 6}
+        />
+        <label className="form-check-label" htmlFor={`capacity${i + 6}`}>
+          {i + 6}
+        </label>
+      </div>
+    ))}
+  </div>
+  {formikProps.touched.enrollment_capacity && formikProps.errors.enrollment_capacity ? (
+    <small className="text-danger">{formikProps.errors.enrollment_capacity}</small>
+  ) : null}
+</div>
+
+
 
                                                             {/* Course Time */}
                                                             <div className="form-group mb-4 col-md-6">
