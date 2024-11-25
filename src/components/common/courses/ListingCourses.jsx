@@ -10,6 +10,7 @@ import EmptyImage from "../../../assets/images/EmptyImage.png";
 import bannerBg from '../../../assets/images/page-banner-bg.jpg';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../store/reducers/cart-reducer';
+import $ from "jquery";
 
 const CourseListing = () => {
 
@@ -28,6 +29,32 @@ const CourseListing = () => {
     const [searchType, setSearchType] = useState(null);
     const today = new Date();
 
+
+    const heroImageRef = useRef(null); // Create a ref for the hero image
+
+    const setTranslate = (xPos, yPos, el) => {
+        if (el) {
+            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+        }
+    };
+
+    const scrollLoop = () => {
+        const yScrollPosition = window.scrollY;
+        setTranslate(0, yScrollPosition * -0.4, heroImageRef.current);
+        requestAnimationFrame(scrollLoop); // Keep looping for a smooth effect
+    };
+
+    useEffect(() => {
+        // Start the scroll loop when the component mounts
+        scrollLoop();
+
+        // Clean up the animation frame on unmount
+        return () => {
+            cancelAnimationFrame(scrollLoop);
+        };
+    }, []);
+    /***********************************************************************/
+    /***********************************************************************/
 
     //  console.log('selectedCourse---', selectedCourse);
     useEffect(() => {
@@ -277,24 +304,57 @@ const CourseListing = () => {
     return (
         <>
             <Header />
-            {/* {loading === true ? <Loader /> : ''} */}
 
-            <section className="page_banner_wrapper pb-25">
-                <div className="banner-bg">
-                    <img src={bannerBg} alt="" />
-                </div>
-                <div className="container">
+
+            <section className="hero-treatment">
+            <div className="container">
                     <div className="row">
                         <div className="col-lg-12 pt-40">
-                            <div className="pb-25">
-                                <h1 className="pb-15">CITB SMSTS Online Courses</h1>
-                                <p>Online Monday to Friday, Day Release &amp; Weekend Courses Are Available</p>
-                                <p>Or View Our Classroom Courses Here - Site Management Safety Training Scheme</p>
-                            </div>
+                            <h1 className="pb-15">CITB SMSTS Online Courses</h1>
+                            <p>Online Monday to Friday, Day Release &amp; Weekend Courses Are Available</p>
+                            <p>Or View Our Classroom Courses Here - Site Management Safety Training Scheme</p>
                         </div>
                     </div>
                 </div>
+                <div
+                    className="hero-image"
+                    ref={heroImageRef} // Attach the ref to this div
+                    style={{
+                        backgroundImage: `url(${bannerBg})`,
+                        backgroundSize: "cover",
+                        backgroundAttachment: "fixed",
+                        height: "500px",
+                        transform: "translate3d(0, 0, 0)", // Initial transform value
+                    }}
+                ></div>
             </section>
+
+
+            {/* <div class="front_parallax_header">
+                <div class="front_parallax_panal front_parallax_spacer">
+                    
+                </div>
+                <div className='front_para_container'>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-lg-12 pt-40">
+                            <h1 className="pb-15">CITB SMSTS Online Courses</h1>
+                            <p>Online Monday to Friday, Day Release &amp; Weekend Courses Are Available</p>
+                            <p>Or View Our Classroom Courses Here - Site Management Safety Training Scheme</p>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div> */}
+
+            {/* {loading === true ? <Loader /> : ''} */}
+            {/* <section  className="page_banner_wrapper pb-25">
+                <div className="banner-bg">
+                    <img src={bannerBg} alt="" />
+                </div>
+                
+                
+            </section> */}
 
             <section className="front_section bg-low-light-blue Container_wrapper pr_filter_section">
                 <div className="container">
@@ -926,7 +986,7 @@ export default CourseListing;
 // import { useDispatch } from 'react-redux';
 // import { addToCart } from '../../../store/reducers/cart-reducer';
 
-// const 
+// const
 
 // CourseListing = () => {
 
@@ -956,7 +1016,7 @@ export default CourseListing;
 
 //     /**
 //      * Handle to get next 6 Months
-//      * 
+//      *
 //      */
 //     const getNextSixMonths = () => {
 //         const months = [];
@@ -976,7 +1036,7 @@ export default CourseListing;
 
 //     /**
 //     * Handle to toggleAccordion
-//     * 
+//     *
 //     */
 //     const toggleAccordion = (index) => {
 //         setActiveIndex(activeIndex === index ? -1 : index);
@@ -996,7 +1056,7 @@ export default CourseListing;
 
 //     /**
 //      * Handle to get courses
-//      * 
+//      *
 //      */
 //     const getCourses = () => {
 //         setLoading(true);
@@ -1028,7 +1088,7 @@ export default CourseListing;
 
 //     /**
 //      * Handle to get categories
-//      * 
+//      *
 //      */
 //     const getCategories = () => {
 //         setLoading(true);
@@ -1058,9 +1118,9 @@ export default CourseListing;
 //     /***********************************************************************/
 //     /***********************************************************************/
 
-//     /** 
-//      * Handle AddToCart 
-//      * 
+//     /**
+//      * Handle AddToCart
+//      *
 //      */
 //     const AddToCart = async (cart) => {
 //         console.log("cart checking here", cart);
@@ -1070,9 +1130,9 @@ export default CourseListing;
 //     /***********************************************************************/
 //     /***********************************************************************/
 
-//     /** 
+//     /**
 //      * Handle More info
-//      * 
+//      *
 //      */
 //     const handleMoreInfoClick = (course) => {
 //         console.log('-------', course)
@@ -1082,9 +1142,9 @@ export default CourseListing;
 //     /***********************************************************************/
 //     /***********************************************************************/
 
-//     /** 
+//     /**
 //      * Handle More info
-//      * 
+//      *
 //      */
 //     const handleSubmit = (values, { resetForm }) => {
 //         console.log("Selected Month:", values.month);
@@ -1644,7 +1704,7 @@ export default CourseListing;
 //                                                 <button
 //                                                     type="button"
 //                                                     className="btn btn-sm  btn-outline-danger  p-2 mr-3"
-//                                                     //className="close-icon btn btn-link pr-2 text-dark" 
+//                                                     //className="close-icon btn btn-link pr-2 text-dark"
 //                                                     onClick={handleClose}>
 //                                                     X
 //                                                 </button>

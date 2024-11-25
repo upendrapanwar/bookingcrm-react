@@ -521,9 +521,10 @@ p {
 
 .product_wrapper {
     padding-top: 45px;
+    background-color: #FFF;
 }
 
-.products_row_listing { display: flex; }
+.products_row_listing { display: flex; flex-wrap: wrap; }
 .products_row_listing  div.product {
     flex: 0 0 33.33%; 
     width: 33.33%;
@@ -1210,15 +1211,55 @@ textarea.form-control {
     padding-left: 25px;
 }
 
-.page-banner-content h3::before {
+.hero-treatment {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    width: 100%;
+    height: calc(80vh - 170px);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  
+  .hero-treatment:before {
     content: '';
+    z-index: 1;
     position: absolute;
-    width: 5px;
+    width: 100%;
     height: 100%;
-    background-color: #2e4db9;
-    top: 0;
     left: 0;
+    top: 0;
+    background: rgb(255, 137, 0);
+    background: linear-gradient(0deg, rgba(255, 137, 0, 0.8939950980392157) 0%, rgba(255, 137, 0, 0) 63%);
 }
+  .hero-treatment .hero-image {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    z-index: -1;
+    overflow: hidden;
+  }
+  
+  .hero-treatment .container  { position: relative; z-index: 9; }
+  .hero-treatment h1 {
+    color: #FFF!important;
+    position: relative;
+    z-index: 99;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+    margin-top: 250px;
+
+}
+.hero-treatment p {
+    font-size: 18px;
+    color: #FFF;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+}
+
 
 @media (min-width: 640px) {
     .sm\:text-sm {

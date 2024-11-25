@@ -39,9 +39,9 @@ const Checkout = () => {
                 name: `${firstName} ${lastName}`,
                 email: email,
                 Phone: phoneNumber,
-                Country : county,
+                Country: county,
                 'amount': Number(total) * 100,
-                cart : "cart",
+                cart: "cart",
             };
 
             const response = await axios.post("user/checkoutSession/", reqBody);
@@ -99,7 +99,6 @@ const Checkout = () => {
                                             initialValues={{
                                                 firstName: '',
                                                 lastName: '',
-                                                // companyName: '',
                                                 country: '',
                                                 streetAddress: '',
                                                 flat: '',
@@ -108,9 +107,7 @@ const Checkout = () => {
                                                 postcode: '',
                                                 email: '',
                                                 phoneNumber: '',
-                                                acknowledge: false,
-                                                // state: '',
-                                                // gender: '',
+                                                acknowledge: false,                                  
                                             }}
                                             validationSchema={checkoutValidation}
                                             onSubmit={async (values, { resetForm }) => {
@@ -165,177 +162,126 @@ const Checkout = () => {
                                                             </div>
                                                         </div>
 
-                                                        <div className="form-group">
-                                                            <label>Email address*</label>
-                                                            <input
-                                                                type="email"
-                                                                name="email"
-                                                                placeholder="Email address*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.email}
-                                                            />
-                                                            {errors.email && touched.email && <small className="text-red-500">{errors.email}</small>}
-                                                        </div>
-                                                        <div className="form-group">
-                                                            <label>Phone number*</label>
-                                                            <input
-                                                                type="text"
-                                                                name="phoneNumber"
-                                                                placeholder="Phone number*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.phoneNumber}
-                                                            />
-                                                            {errors.phoneNumber && touched.phoneNumber && <small className="text-red-500">{errors.phoneNumber}</small>}
-                                                        </div>
-
-                                                        {/* <div className="form-group">
-                                                            <label>Gender</label>
-                                                            <div className="flex items-center gap-4">
-                                                                <label className="flex items-center">
-                                                                    <input
-                                                                        type="radio"
-                                                                        name="gender"
-                                                                        value="male"
-                                                                        className="mr-2"
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                        checked={values.gender === "male"}
-                                                                    />
-                                                                    Male
-                                                                </label>
-                                                                <label className="flex items-center">
-                                                                    <input
-                                                                        type="radio"
-                                                                        name="gender"
-                                                                        value="female"
-                                                                        className="mr-2"
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                        checked={values.gender === "female"}
-                                                                    />
-                                                                    Female
-                                                                </label>
+                                                        <div className="form-row">
+                                                            <div className="form-group col-md-6">
+                                                                <label>Email address*</label>
+                                                                <input
+                                                                    type="email"
+                                                                    name="email"
+                                                                    placeholder="Email address*"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.email}
+                                                                />
+                                                                {errors.email && touched.email && <small className="text-red-500">{errors.email}</small>}
                                                             </div>
-                                                            {errors.gender && touched.gender && <small className="text-red-500">{errors.gender}</small>}
-                                                        </div> */}
+                                                            <div className="form-group col-md-6">
+                                                                <label>Phone number*</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="phoneNumber"
+                                                                    placeholder="Phone number*"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.phoneNumber}
+                                                                />
+                                                                {errors.phoneNumber && touched.phoneNumber && <small className="text-red-500">{errors.phoneNumber}</small>}
+                                                            </div>
+                                                        </div>
+                                                      
+                                                        <div className="form-row">
+                                                            <div className="form-group col-md-6">
+                                                                <label>Flat, suite, unit*</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="flat"
+                                                                    placeholder="Flat, suite, unit*"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.flat}
+                                                                />
+                                                            </div>
 
-                                                        {/* <div className="form-group">
-                                                            <label>Company name</label>
-                                                            <input
-                                                                type="text"
-                                                                name="companyName"
-                                                                placeholder="Company name*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.companyName}
-                                                            />
-
-                                                        </div> */}
-
-                                                        <div className="form-group">
-                                                            <label>Country/Region*</label>
-                                                            <input
-                                                                type="text"
-                                                                name="country"
-                                                                placeholder="Country/Region*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.country}
-                                                            />
-                                                            {errors.country && touched.country && <small className="text-red-500">{errors.country}</small>}
+                                                            <div className="form-group col-md-6">
+                                                                <label>Street address*</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="streetAddress"
+                                                                    placeholder="Street address*"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.streetAddress}
+                                                                />
+                                                                {errors.streetAddress && touched.streetAddress && <small className="text-red-500">{errors.streetAddress}</small>}
+                                                            </div>
                                                         </div>
 
-                                                        {/* <div className="form-group">
-                                                            <label>State</label>
-                                                            <input
-                                                                type="text"
-                                                                name="state"
-                                                                placeholder="State"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.state}
-                                                            />
-                                                            {errors.state && touched.state && <small className="text-red-500">{errors.state}</small>}
-                                                        </div> */}
+                                                        <div className="form-row">
+                                                            <div className="form-group col-md-6">
+                                                                <label>Town / City*</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="city"
+                                                                    placeholder="Town / City*"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.city}
+                                                                />
+                                                                {errors.city && touched.city && <small className="text-red-500">{errors.city}</small>}
+                                                            </div>
 
-                                                        <div className="form-group">
-                                                            <label>Street address*</label>
-                                                            <input
-                                                                type="text"
-                                                                name="streetAddress"
-                                                                placeholder="Street address*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.streetAddress}
-                                                            />
-                                                            {errors.streetAddress && touched.streetAddress && <small className="text-red-500">{errors.streetAddress}</small>}
-                                                        </div>
-                                                        <div className="form-group">
-                                                            <label>Flat, suite, unit*</label>
-                                                            <input
-                                                                type="text"
-                                                                name="flat"
-                                                                placeholder="Flat, suite, unit*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.flat}
-                                                            />
+                                                            <div className="form-group col-md-6">
+                                                                <label>Postcode*</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="postcode"
+                                                                    placeholder="Postcode*"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.postcode}
+                                                                />
+                                                                {errors.postcode && touched.postcode && <small className="text-red-500">{errors.postcode}</small>}
+                                                            </div>
                                                         </div>
 
-                                                        <div className="form-group">
-                                                            <label>Postcode*</label>
-                                                            <input
-                                                                type="text"
-                                                                name="postcode"
-                                                                placeholder="Postcode*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.postcode}
-                                                            />
-                                                            {errors.postcode && touched.postcode && <small className="text-red-500">{errors.postcode}</small>}
+                                                        <div className="form-row">
+                                                            <div className="form-group col-md-6">
+                                                                <label>County*</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="county"
+                                                                    placeholder="County*"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.county}
+                                                                />
+                                                            </div>
+
+                                                            <div className="form-group col-md-6">
+                                                                <label>Country/Region*</label>
+                                                                <input
+                                                                    type="text"
+                                                                    name="country"
+                                                                    placeholder="Country/Region*"
+                                                                    className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                    value={values.country}
+                                                                />
+                                                                {errors.country && touched.country && <small className="text-red-500">{errors.country}</small>}
+                                                            </div>
                                                         </div>
 
 
                                                         <div className="form-group">
-                                                            <label>Town / City*</label>
-                                                            <input
-                                                                type="text"
-                                                                name="city"
-                                                                placeholder="Town / City*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.city}
-                                                            />
-                                                            {errors.city && touched.city && <small className="text-red-500">{errors.city}</small>}
-                                                        </div>
-                                                        <div className="form-group">
-                                                            <label>County*</label>
-                                                            <input
-                                                                type="text"
-                                                                name="county"
-                                                                placeholder="County*"
-                                                                className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                                value={values.county}
-                                                            />
-                                                        </div>
-                                                       
-                                                       
 
-                                                        <div className="form-group">
-                                                            
                                                             <div className="form-check">
                                                                 <label className="flex items-start space-x-2">
                                                                     <input

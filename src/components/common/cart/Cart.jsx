@@ -40,7 +40,7 @@ const Cart = () => {
                                                     <th className="p-3 border">Course</th>
                                                     <th className="p-3 border">Price</th>
                                                     <th className="p-3 border">Quantity</th>
-                                                    <th className="p-3 border">Total</th>
+                                                    <th className="p-3 border">Sub-total</th>
                                                     <th className="p-3 border">Action</th>
                                                 </tr>
                                             </thead>
@@ -77,11 +77,25 @@ const Cart = () => {
                                                         <td className="p-3"><b>£&nbsp;</b>{(item.regular_price * item.quantity).toFixed(2)}</td>
                                                         <td className="p-3">
                                                             <button
-                                                                className="btn p-2  btn-danger"
+                                                                className="btn p-2  btn-danger mx-1"
                                                                 onClick={() => dispatch(removeItem(item.id))}
                                                             >
                                                                 <i className="bi bi-trash"></i>
                                                             </button>
+
+                                                            {/* <button
+                                                                className="bg-blue text-white py-2 px-1 rounded mx-1"
+                                                                // onClick={() => dispatch(removeItem(item.id))}
+                                                            >
+                                                                Buy Now
+                                                            </button>
+
+                                                            <button
+                                                                className="bg-blue text-white py-2 px-1 rounded mx-1"
+                                                                // onClick={() => dispatch(removeItem(item.id))}
+                                                            >
+                                                                Pay Deposite
+                                                            </button> */}
                                                         </td>
                                                     </tr>
                                                 ))}
