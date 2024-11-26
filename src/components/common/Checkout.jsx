@@ -107,7 +107,7 @@ const Checkout = () => {
                                 <div className="grid md:grid-cols-3 gap-4">
                                     <div className="mt-12">
                                         {/* Conditionally render the appropriate Formik form */}
-                                        {isBuyNowSelected ? (
+                                        {/* {isBuyNowSelected ? ( */}
                                             <Formik
                                                 initialValues={{
                                                     firstName: '',
@@ -372,8 +372,8 @@ const Checkout = () => {
                                                     </form>
                                                 )}
                                             </Formik>
-                                        ) : (
-                                            <Formik
+                                        {/* ) : ( */}
+                                            {/* <Formik
                                                 initialValues={{
                                                     firstName: '',
                                                     lastName: '',
@@ -481,9 +481,9 @@ const Checkout = () => {
                                                                         onBlur={handleBlur}
                                                                         value={values.flat}
                                                                     />
-                                                                </div>
+                                                                </div> */}
 
-                                                                <div className="form-group col-md-6">
+                                                                {/* <div className="form-group col-md-6">
                                                                     <label>Street address*</label>
                                                                     <input
                                                                         type="text"
@@ -586,9 +586,9 @@ const Checkout = () => {
                                                                     />
                                                                     {errors.futurepay && touched.futurepay && <small className="text-red-500">{errors.futurepay}</small>}
                                                                 </div>
-                                                            </div>
+                                                            </div> */}
 
-                                                            <div className="form-group">
+                                                            {/* <div className="form-group">
 
                                                                 <div className="form-check">
                                                                     <label className="flex items-start space-x-2">
@@ -618,11 +618,11 @@ const Checkout = () => {
                                                                     </label>
                                                                     {errors.acknowledge && touched.acknowledge && <small className="text-red-500">{errors.acknowledge}</small>}
                                                                 </div>
-                                                            </div>
+                                                            </div> */}
 
 
                                                             {/* Modal Component */}
-                                                            {isModalOpen && (
+                                                            {/* {isModalOpen && (
                                                                 <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
                                                                     <div className="modal-dialog" role="document">
                                                                         <div className="modal-content">
@@ -654,9 +654,9 @@ const Checkout = () => {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            )}
+                                                            )} */}
 
-                                                            <button
+                                                            {/* <button
                                                                 className="bg-blue text-white font-bold w-100 py-3 px-4 rounded w-full my-3"
                                                                 onClick={() => setIsModalOpen(true)}
                                                                 disabled={!values.acknowledge}
@@ -666,8 +666,8 @@ const Checkout = () => {
                                                         </div>
                                                     </form>
                                                 )}
-                                            </Formik>
-                                        )}
+                                            </Formik> */}
+                                        {/* )} */}
                                     </div>
                                 </div>
                             </div>
@@ -677,15 +677,15 @@ const Checkout = () => {
                         <div className="col-md-4 order-md-2 mb-4">
 
 
-                            <button className="bg-blue text-white py-2 px-1 rounded m-2" onClick={handleBuyNowClick} >
+                            {/* <button className="bg-blue text-white py-2 px-1 rounded m-2" onClick={handleBuyNowClick} >
                                 Buy Now
                             </button>
 
                             <button className="bg-blue text-white py-2 px-1 rounded m-2" onClick={handlePayDepositClick}>
                                 Pay Deposite
-                            </button>
+                            </button> */}
 
-                            {isBuyNowSelected ? (
+                            {/* {isBuyNowSelected ? ( */}
                                 <div className="bg-white rounded-lg shadow-md p-6 sc__cart_sidebar">
                                     <h2 className="text-md font-semibold mb-4">Your Order</h2>
 
@@ -717,8 +717,8 @@ const Checkout = () => {
                                         <span className="font-semibold"><b>£&nbsp;</b>{(totalPrice * 1.1).toFixed(2)}</span>
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="bg-white rounded-lg shadow-md p-6 sc__cart_sidebar">
+                            {/* ) : ( */}
+                                {/* <div className="bg-white rounded-lg shadow-md p-6 sc__cart_sidebar">
                                     <h2 className="text-md font-semibold mb-4">Your Order</h2>
 
                                     <div className="row mb-2">
@@ -731,6 +731,7 @@ const Checkout = () => {
                                                     </p>
                                                 </div>
                                             </div>
+
                                         ))}
                                     </div>
                                     <hr className="my-3" />
@@ -756,7 +757,7 @@ const Checkout = () => {
                                         <span className="font-semibold"><b>£&nbsp;</b>852225</span>
                                     </div>
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </div>

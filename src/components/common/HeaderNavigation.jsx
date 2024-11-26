@@ -65,7 +65,12 @@ const HeaderNavigation = () => {
                                 <div className="navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                                     <ul className="navbar-nav ml-auto">
                                         <li className="nav-item">
-                                            <Link to={"/"} className="active">Home</Link>
+                                            <Link to={"/"}
+                                                className="active"
+                                            state={{ isSearch: false }}
+                                            >
+                                            Home
+                                            </Link>
                                         </li>
                                         {/* <li className="nav-item">
                                             <Link to={"#"}>Course Schedules</Link>
@@ -317,7 +322,7 @@ const HeaderNavigation = () => {
                                                         <li className="li"><Link to={"/course-listing"} onClick={() => handleNavigation('/course-listing')} >Construction</Link> </li>
                                                         <li className="li"><Link to={"/course-listing"} onClick={() => handleNavigation('/course-listing')}>Hospitality</Link> </li>
                                                         <li className="li"><Link to={"/course-listing"} onClick={() => handleNavigation('/course-listing')}>Business</Link> </li>
-                                                        <li className="li"><Link to={"/course-listing"}onClick={() => handleNavigation('/course-listing')}>Social & Care</Link> </li>
+                                                        <li className="li"><Link to={"/course-listing"} onClick={() => handleNavigation('/course-listing')}>Social & Care</Link> </li>
                                                     </ul>
                                                 </li>
                                                 <li className="li"><Link to={"/course-listing"} onClick={() => handleNavigation('/course-listing')}>In House Training</Link></li>

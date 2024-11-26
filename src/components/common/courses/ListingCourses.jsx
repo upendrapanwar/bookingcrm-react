@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux';
 import { addToCart } from '../../../store/reducers/cart-reducer';
 import $ from "jquery";
 
-const CourseListing = () => {
+const CourseListing = (passedData) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -62,6 +62,13 @@ const CourseListing = () => {
         getCourses();
         // getCategories();
     }, []);
+
+    useEffect(() => {
+        // Check if we need to reset from navigation
+        if (passedData.passedData === false) {
+            setIsSearch(false);
+        }
+    }, [passedData]);
     /***********************************************************************/
     /***********************************************************************/
     /**
@@ -195,7 +202,7 @@ const CourseListing = () => {
      * Handle More info
      * 
      */
-    const handleSubmit = (values, { resetForm }) => {
+    const handleSubmit = (values, { resetForm }) => { 
         console.log("Selected Month:", values.month);
         console.log("Selected Type:", values.type);
 
@@ -298,6 +305,11 @@ const CourseListing = () => {
     const handleTabClick = (index) => {
         setActiveTab(index);
     };
+
+    const handleReset = (e) => {
+        e.preventDefault();
+        setIsSearch(false)
+    }
 
     /***********************************************************************/
     /***********************************************************************/
@@ -402,9 +414,12 @@ const CourseListing = () => {
                                             </div>
                                         </div>
                                         <div className="form-row">
-                                            <div className="form-group col-md-12 text-center">
+                                            {(isSearch===false)?(<div className="form-group col-md-12 text-center">
                                                 <button type="submit" className="btn btn-primary">SEARCH</button>
-                                            </div>
+                                            </div>):(
+                                            <div className="form-group col-md-12 text-center">
+                                                <button type="button" onClick={handleReset} className="btn btn-primary">RESET</button>
+                                            </div>)}
                                         </div>
                                     </form>
                                 )}
@@ -592,17 +607,17 @@ const CourseListing = () => {
 
                                             <div className="d-flex justify-content-between align-items-center">
                                                 <h4 className="text-center w-100 m-0 search-heading">Showing results for your search</h4>
-                                                <button
+                                                {/* <button
                                                     type="button"
                                                     className="btn btn-sm  btn-outline-danger  p-2 mr-3"
                                                     //className="close-icon btn btn-link pr-2 text-dark" 
                                                     onClick={handleClose}>
                                                     X
-                                                </button>
+                                                </button> */}
                                             </div>
-
-                                            <div className="card">
+                                            <div className="tab-buttons d-flex flex-wrap">
                                                 <div className="card-header">
+
                                                     <h2 className="mb-0">
                                                         <button
                                                             className="btn btn-link btn-block text-left collapsed d-inline-block"
@@ -612,7 +627,23 @@ const CourseListing = () => {
                                                             {searchMonth || ''} {searchType || ''}
                                                         </button>
                                                     </h2>
-                                                </div>
+
+                                                </div></div>
+                                            <div className="card mt-3">
+
+                                                {/* <div className="card-header">
+                                                
+                                                    <h2 className="mb-0">
+                                                        <button
+                                                            className="btn btn-link btn-block text-left collapsed d-inline-block"
+                                                        // onClick={() => toggleAccordion(index)}
+                                                        // aria-expanded={activeIndex === index}
+                                                        >
+                                                            {searchMonth || ''} {searchType || ''}
+                                                        </button>
+                                                    </h2>
+                                                
+                                                </div> */}
                                                 {/* {activeIndex === index && ( */}
                                                 <div className="card-body">
                                                     <div className="products columns-1">
@@ -705,6 +736,7 @@ const CourseListing = () => {
                                                 </div>
                                                 {/* )} */}
                                             </div>
+
 
                                         </div>
                                     </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from 'react-toastify';
 import axios from "axios";
 // import Loader from "../components/common/Loader";
@@ -9,14 +9,19 @@ import axios from "axios";
 // import bannerBg from '../assets/images/page-banner-bg.jpg'
 // import EmptyImage from "../assets/images/EmptyImage.png";
 import { useDispatch } from "react-redux";
-import { addToCart } from '../store/reducers/cart-reducer';
+// import { addToCart } from '../store/reducers/cart-reducer';
 import CourseListing from '../components/common/courses/ListingCourses';
+
 
 
 const Home = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const location = useLocation();
+    const passedData = location.state?.isSearch || false ;
+
     const authInfo = JSON.parse(localStorage.getItem('authInfo'));
     //console.log('authINFO',authInfo)
     const [courses, setCourses] = useState([]);
@@ -65,12 +70,12 @@ const Home = () => {
      * Handle to AddToCart 
      * 
      */
-    const handleAddToCart = async (course) => {
-        const cart = course;
-        console.log("add to cart- cart:", cart);
-        dispatch(addToCart(cart));
-        toast.success(`${cart.course_title} added to cart!`);
-    }
+    // const handleAddToCart = async (course) => {
+    //     const cart = course;
+    //     console.log("add to cart- cart:", cart);
+    //     dispatch(addToCart(cart));
+    //     toast.success(`${cart.course_title} added to cart!`);
+    // }
     /***********************************************************************/
     /***********************************************************************/
 
@@ -93,7 +98,7 @@ const Home = () => {
 
     return (
            <>
-        <CourseListing />
+        <CourseListing passedData={passedData}/>
         </>
     );
 }
