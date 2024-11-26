@@ -19,6 +19,6 @@ export default Yup.object().shape({
 
     instructor_image: Yup.string().nullable(),
 
-    instructor_unavailable_dates: Yup.array().nullable(),
+    // instructor_unavailable_dates: Yup.array().nullable(),
 
 });
