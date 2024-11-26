@@ -44,7 +44,8 @@ export default Yup.object().shape({
 
 
     enrollment_capacity: Yup.number()
-        .min(1, 'Enrollment capacity must be at least 1')
+    .min(6, 'Enrollment capacity must be at least 6')
+    .max(12, 'Enrollment capacity cannot exceed 12')
         .required('Enrollment capacity is required'),
 
     course_information: Yup.string()

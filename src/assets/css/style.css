@@ -1260,6 +1260,10 @@ textarea.form-control {
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
 }
 
+.site,
+.bgWhite{
+    background-color: #fff;
+}
 
 @media (min-width: 640px) {
     .sm\:text-sm {

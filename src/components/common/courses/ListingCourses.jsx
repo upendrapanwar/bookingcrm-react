@@ -17,10 +17,10 @@ const CourseListing = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const accordionRefs = useRef([]);
+    const heroImageRef = useRef(null);
 
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState([false]);
-    // const [selectedCourse, setSelectedCourse] = useState(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const [categories, setCategories] = useState([]);
     const [searchCourses, setSearchCourses] = useState([]);
@@ -28,10 +28,12 @@ const CourseListing = () => {
     const [searchMonth, setSearchMonth] = useState(null);
     const [searchType, setSearchType] = useState(null);
     const today = new Date();
+    const [activeTab, setActiveTab] = useState(0);
 
 
-    const heroImageRef = useRef(null); // Create a ref for the hero image
-
+    /***********************************************************************/
+    /***********************************************************************/
+    // parallax image display 
     const setTranslate = (xPos, yPos, el) => {
         if (el) {
             el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
@@ -41,18 +43,17 @@ const CourseListing = () => {
     const scrollLoop = () => {
         const yScrollPosition = window.scrollY;
         setTranslate(0, yScrollPosition * -0.4, heroImageRef.current);
-        requestAnimationFrame(scrollLoop); // Keep looping for a smooth effect
+        requestAnimationFrame(scrollLoop);
     };
 
     useEffect(() => {
-        // Start the scroll loop when the component mounts
         scrollLoop();
-
-        // Clean up the animation frame on unmount
         return () => {
             cancelAnimationFrame(scrollLoop);
         };
     }, []);
+
+    // parallax image display 
     /***********************************************************************/
     /***********************************************************************/
 
@@ -63,7 +64,6 @@ const CourseListing = () => {
     }, []);
     /***********************************************************************/
     /***********************************************************************/
-
     /**
      * Handle to get next 6 Months
      * 
@@ -73,14 +73,12 @@ const CourseListing = () => {
         const currentDate = new Date();
         for (let i = 0; i < 6; i++) {
             const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
-            // Get the full month name with the year (e.g., "October 2024")
             months.push({ title: nextMonth.toLocaleString('default', { month: 'long', year: 'numeric' }) });
         }
         return months;
     };
 
     const items = getNextSixMonths();
-    //console.log('items---', items)
     /***********************************************************************/
     /***********************************************************************/
 
@@ -297,6 +295,9 @@ const CourseListing = () => {
         setIsSearch(false);
     };
 
+    const handleTabClick = (index) => {
+        setActiveTab(index);
+    };
 
     /***********************************************************************/
     /***********************************************************************/
@@ -307,7 +308,7 @@ const CourseListing = () => {
 
 
             <section className="hero-treatment">
-            <div className="container">
+                <div className="container">
                     <div className="row">
                         <div className="col-lg-12 pt-40">
                             <h1 className="pb-15">CITB SMSTS Online Courses</h1>
@@ -328,33 +329,6 @@ const CourseListing = () => {
                     }}
                 ></div>
             </section>
-
-
-            {/* <div class="front_parallax_header">
-                <div class="front_parallax_panal front_parallax_spacer">
-                    
-                </div>
-                <div className='front_para_container'>
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-12 pt-40">
-                            <h1 className="pb-15">CITB SMSTS Online Courses</h1>
-                            <p>Online Monday to Friday, Day Release &amp; Weekend Courses Are Available</p>
-                            <p>Or View Our Classroom Courses Here - Site Management Safety Training Scheme</p>
-                        </div>
-                    </div>
-                </div>
-                </div>
-            </div> */}
-
-            {/* {loading === true ? <Loader /> : ''} */}
-            {/* <section  className="page_banner_wrapper pb-25">
-                <div className="banner-bg">
-                    <img src={bannerBg} alt="" />
-                </div>
-                
-                
-            </section> */}
 
             <section className="front_section bg-low-light-blue Container_wrapper pr_filter_section">
                 <div className="container">
@@ -449,327 +423,152 @@ const CourseListing = () => {
                             <div className="col-md-12">
                                 <div className="product_accordian_wrap">
                                     <div className="accordion" id="ProductAccordion">
-                                        {items.slice(0, 3).map((item, index) => (
-                                            <div className="card" key={index}>
-                                                <div className="card-header" ref={(el) => (accordionRefs.current[index] = el)}>
-                                                    <h2 className="mb-0">
-                                                        <button
-                                                            className="btn btn-link btn-block text-left collapsed"
-                                                            onClick={() => toggleAccordion(index)}
-                                                            aria-expanded={activeIndex === index}
-                                                        >
-                                                            {item.title}
-                                                        </button>
-                                                    </h2>
+                                        <div className="tab-buttons d-flex flex-wrap">
+                                            {items.slice(0, 3).map((item, index) => (
+                                                <div className="card w-25 mr-2">
+                                                    <div className="card-header">
+                                                        <h2 className="mb-0">
+                                                            <button
+                                                                key={index}
+                                                                className={`tab-button btn btn-link btn-block text-left collapsed w-100 ${activeTab === index ? 'active' : ''}`}
+                                                                onClick={() => handleTabClick(index)}
+                                                            >
+                                                                {item.title}
+                                                            </button>
+                                                        </h2>
+                                                    </div>
                                                 </div>
-                                                {activeIndex === index && (
-                                                    <div className="card-body">
-                                                        <div className="products columns-1">
-                                                            {(() => {
-                                                                const today = new Date();
+                                            ))}
+                                        </div>
+                                        {items.map((item, index) => (
+                                            <div className={`tab-content ${activeTab === index ? 'active' : ''}`} key={index}>
+                                                {activeTab === index && (
+                                                    <div className="card">
+                                                        {/* <div className="card-header" ref={(el) => (accordionRefs.current[index] = el)}>
+                                                            <h2 className="mb-0">
+                                                                <button
+                                                                    className="btn btn-link btn-block text-left collapsed"
+                                                                    onClick={() => toggleAccordion(index)}
+                                                                    aria-expanded={activeIndex === index}
+                                                                >
+                                                                    {item.title}
+                                                                </button>
 
-                                                                // const filteredCourses = courses.filter(course => {
-                                                                //     const startDateParts = course.start_date.split('-');
-                                                                //     const courseDate = new Date(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}`);
+                                                            </h2>
+                                                        </div> */}
+                                                        {/* {activeIndex === index && ( */}
+                                                        <div className="card-body">
+                                                            <div className="products columns-1">
+                                                                {(() => {
+                                                                    const today = new Date();
 
-                                                                //     const courseMonth = courseDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-                                                                //     return courseMonth === item.title && courseDate >= today;
-                                                                // });
+                                                                    const filteredCourses = courses.filter(course => {
+                                                                        const upcomingDate = course.course_schedule_dates
+                                                                            .map(dateString => new Date(dateString))
+                                                                            .find(date => date >= today);
 
-                                                                const filteredCourses = courses.filter(course => {
-                                                                    const upcomingDate = course.course_schedule_dates
-                                                                        .map(dateString => new Date(dateString))
-                                                                        .find(date => date >= today);
+                                                                        if (!upcomingDate) return false;
 
-                                                                    if (!upcomingDate) return false;
+                                                                        const courseMonth = upcomingDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                                                                        return courseMonth === item.title;
+                                                                    });
 
-                                                                    const courseMonth = upcomingDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-                                                                    return courseMonth === item.title;
-                                                                });
+                                                                    if (filteredCourses.length === 0) {
+                                                                        return <p>No upcoming courses available for {item.title}.</p>;
+                                                                    }
 
-                                                                if (filteredCourses.length === 0) {
-                                                                    return <p>No upcoming courses available for {item.title}.</p>;
-                                                                }
-
-                                                                return (
-                                                                    <>
-                                                                        {filteredCourses.some(course => course.course_type === "Monday to Friday") && (
-                                                                            <h2 className="course-heading">{item.title} Monday to Friday</h2>
-                                                                        )}
-                                                                        <div className="products_row_listing">
-                                                                            {filteredCourses.filter(course => course.course_type === "Monday to Friday").slice(0, 5).map((course, itemIndex) => (
-                                                                                <div className="product" key={itemIndex}>
-                                                                                    <div className="product_list_rows">
-                                                                                        <div className="pr_col product-logo">
-                                                                                            <div className="relative" style={{ width: '300px', height: '250px' }}>
-                                                                                                <img
-                                                                                                    src={course.course_image || EmptyImage}
-                                                                                                    alt="Course"
-                                                                                                    className="w-full h-full object-cover"
-                                                                                                    decoding="async"
-                                                                                                    fetchpriority="high"
-                                                                                                />
+                                                                    return (
+                                                                        <>
+                                                                            <div className="products_row_listing">
+                                                                                {filteredCourses.map((course, itemIndex) => (
+                                                                                    <div className="product" key={itemIndex}>
+                                                                                        <div className="product_list_rows">
+                                                                                            <div className="pr_col product-logo">
+                                                                                                <div className="relative" style={{ width: '300px', height: '250px' }}>
+                                                                                                    <img
+                                                                                                        src={course.course_image || EmptyImage}
+                                                                                                        alt="Course"
+                                                                                                        className="w-full h-full object-cover"
+                                                                                                        decoding="async"
+                                                                                                        fetchpriority="high"
+                                                                                                    />
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                        <div className="pr_col product-info">
-                                                                                            {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
-                                                                                            <h2>
-                                                                                                {course.course_title} | {
-                                                                                                    course.course_schedule_dates
-                                                                                                        .map(dateString => new Date(dateString))
-                                                                                                        .find(date => date >= today)
-                                                                                                        ?.toLocaleDateString('en-GB')
-                                                                                                        .split('/')
-                                                                                                        .join('-') || 'No upcoming date available'
-                                                                                                } | {course.course_format}
-                                                                                            </h2>
-                                                                                            <h3>
-                                                                                                {course.sale_price ? (
-                                                                                                    <>
+                                                                                            <div className="pr_col product-info">
+                                                                                                {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
+                                                                                                <h2>
+                                                                                                    {course.course_title} | {
+                                                                                                        course.course_schedule_dates
+                                                                                                            .map(dateString => new Date(dateString))
+                                                                                                            .find(date => date >= today)
+                                                                                                            ?.toLocaleDateString('en-GB')
+                                                                                                            .split('/')
+                                                                                                            .join('-') || 'No upcoming date available'
+                                                                                                    } | {course.course_format}
+                                                                                                </h2>
+                                                                                                <h3>
+                                                                                                    {course.sale_price ? (
+                                                                                                        <>
+                                                                                                            <bdi>
+                                                                                                                <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                                <span style={{ textDecoration: 'line-through' }}>{course.regular_price}</span>
+                                                                                                            </bdi>
+                                                                                                            <bdi className="ml-2">
+                                                                                                                <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                                {course.sale_price}
+                                                                                                            </bdi>
+                                                                                                        </>
+                                                                                                    ) : (
                                                                                                         <bdi>
                                                                                                             <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                            <span style={{ textDecoration: 'line-through' }}>{course.regular_price}</span>
+                                                                                                            {course.regular_price}
                                                                                                         </bdi>
-                                                                                                        <bdi className="ml-2">
-                                                                                                            <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                            {course.sale_price}
-                                                                                                        </bdi>
-                                                                                                    </>
-                                                                                                ) : (
-                                                                                                    <bdi>
-                                                                                                        <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                        {course.regular_price}
-                                                                                                    </bdi>
-                                                                                                )}
-                                                                                                <small className="woocommerce-price-suffix"> +{course.vat || 0}% VAT</small>
-                                                                                            </h3>
-                                                                                            <div className="product-other-detail">
-                                                                                                <ul>
-                                                                                                    <li className='pt-2'>{course.course_type}</li>
-                                                                                                    {/* <li>Weekend</li> */}
-                                                                                                    {/* <li className='pt-2'>{course.course_time}</li> */}
+                                                                                                    )}
+                                                                                                    <small className="woocommerce-price-suffix"> +{course.vat || 0}% VAT</small>
+                                                                                                </h3>
+                                                                                                <div className="product-other-detail">
                                                                                                     <ul>
-                                                                                                        {course.course_time.map((time, index) => (
-                                                                                                            <li key={index} className='pt-2'>
-                                                                                                                {time.start} - {time.end}
-                                                                                                            </li>
-                                                                                                        ))}
+                                                                                                        <li className='pt-2'>{course.course_type}</li>
+                                                                                                        {/* <li>Weekend</li> */}
+                                                                                                        {/* <li className='pt-2'>{course.course_time}</li> */}
+                                                                                                        <ul>
+                                                                                                            {course.course_time.map((time, index) => (
+                                                                                                                <li key={index} className='pt-2'>
+                                                                                                                    {time.start} - {time.end}
+                                                                                                                </li>
+                                                                                                            ))}
+                                                                                                        </ul>
+                                                                                                        {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
                                                                                                     </ul>
-                                                                                                    {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
-                                                                                                </ul>
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                        <div className="pr_col product-btns">
-                                                                                            <div className="pr-btns">
-                                                                                                <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link>
-                                                                                                {/* <a href="#" className="btns more-info">More info</a> */}
-                                                                                                <Link
-                                                                                                    to="#"
-                                                                                                    onClick={(e) => {
-                                                                                                        e.preventDefault();
-                                                                                                        handleMoreInfoClick(course);
-                                                                                                    }}
-                                                                                                    className="btns more-info"
-                                                                                                >
-                                                                                                    More Info
-                                                                                                </Link>
+                                                                                            <div className="pr_col product-btns">
+                                                                                                <div className="pr-btns">
+                                                                                                    <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link>
+                                                                                                    {/* <a href="#" className="btns more-info">More info</a> */}
+                                                                                                    <Link
+                                                                                                        to="#"
+                                                                                                        onClick={(e) => {
+                                                                                                            e.preventDefault();
+                                                                                                            handleMoreInfoClick(course);
+                                                                                                        }}
+                                                                                                        className="btns more-info"
+                                                                                                    >
+                                                                                                        More Info
+                                                                                                    </Link>
+                                                                                                </div>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-
-                                                                        {filteredCourses.some(course => course.course_type === "Day Release") && (
-                                                                            <h2 className="course-heading ">{item.title} Day Release</h2>
-                                                                        )}
-                                                                        <div className="products_row_listing">
-                                                                            {filteredCourses.filter(course => course.course_type === "Day Release").slice(0, 5).map((course, itemIndex) => (
-                                                                                <div className="product" key={itemIndex}>
-                                                                                    <div className="product_list_rows">
-                                                                                        <div className="pr_col product-logo">
-                                                                                            <div className="relative" style={{ width: '300px', height: '250px' }}>
-                                                                                                <img
-                                                                                                    src={course.course_image || EmptyImage}
-                                                                                                    alt="Course"
-                                                                                                    className="w-full h-full object-cover"
-                                                                                                    decoding="async"
-                                                                                                    fetchpriority="high"
-                                                                                                />
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div className="pr_col product-info">
-                                                                                            {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
-                                                                                            <h2>
-                                                                                                {course.course_title} | {
-                                                                                                    course.course_schedule_dates
-                                                                                                        .map(dateString => new Date(dateString))
-                                                                                                        .find(date => date >= today)
-                                                                                                        ?.toLocaleDateString('en-GB')
-                                                                                                        .split('/')
-                                                                                                        .join('-') || 'No upcoming date available'
-                                                                                                } | {course.course_format}
-                                                                                            </h2>
-                                                                                            <h3>
-                                                                                                {course.sale_price ? (
-                                                                                                    <>
-                                                                                                        <bdi>
-                                                                                                            <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                            <span style={{ textDecoration: 'line-through' }}>{course.regular_price}</span>
-                                                                                                        </bdi>
-                                                                                                        <bdi className="ml-2">
-                                                                                                            <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                            {course.sale_price}
-                                                                                                        </bdi>
-                                                                                                    </>
-                                                                                                ) : (
-                                                                                                    <bdi>
-                                                                                                        <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                        {course.regular_price}
-                                                                                                    </bdi>
-                                                                                                )}
-                                                                                                <small className="woocommerce-price-suffix"> +{course.vat || 0}% VAT</small>
-                                                                                            </h3>
-                                                                                            <div className="product-other-detail">
-                                                                                                <ul>
-                                                                                                    <li className='pt-2'>{course.course_type}</li>
-                                                                                                    {/* <li>Weekend</li> */}
-                                                                                                    {/* <li className='pt-2'>{course.course_time}</li> */}
-                                                                                                    <ul>
-                                                                                                        {course.course_time.map((time, index) => (
-                                                                                                            <li key={index} className='pt-2'>
-                                                                                                                {time.start} - {time.end}
-                                                                                                            </li>
-                                                                                                        ))}
-                                                                                                    </ul>
-                                                                                                    {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
-                                                                                                </ul>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div className="pr_col product-btns">
-                                                                                            <div className="pr-btns">
-                                                                                                <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link>
-                                                                                                {/* <a href="#" className="btns more-info">More info</a> */}
-                                                                                                <Link
-                                                                                                    to="#"
-                                                                                                    onClick={(e) => {
-                                                                                                        e.preventDefault();
-                                                                                                        handleMoreInfoClick(course);
-                                                                                                    }}
-                                                                                                    className="btns more-info"
-                                                                                                >
-                                                                                                    More Info
-                                                                                                </Link>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-
-                                                                        {filteredCourses.some(course => course.course_type === "Weekend") && (
-                                                                            <h2 className="course-heading">{item.title} Weekend</h2>
-                                                                        )}
-                                                                        <div className="products_row_listing">
-                                                                            {filteredCourses.filter(course => course.course_type === "Weekend").slice(0, 5).map((course, itemIndex) => (
-                                                                                <div className="product" key={itemIndex}>
-                                                                                    <div className="product_list_rows">
-                                                                                        <div className="pr_col product-logo">
-                                                                                            <div className="relative" style={{ width: '300px', height: '250px' }}>
-                                                                                                <img
-                                                                                                    src={course.course_image || EmptyImage}
-                                                                                                    alt="Course"
-                                                                                                    className="w-full h-full object-cover"
-                                                                                                    decoding="async"
-                                                                                                    fetchpriority="high"
-                                                                                                />
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div className="pr_col product-info">
-                                                                                            {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
-                                                                                            <h2>
-                                                                                                {course.course_title} | {
-                                                                                                    course.course_schedule_dates
-                                                                                                        .map(dateString => new Date(dateString))
-                                                                                                        .find(date => date >= today)
-                                                                                                        ?.toLocaleDateString('en-GB')
-                                                                                                        .split('/')
-                                                                                                        .join('-') || 'No upcoming date available'
-                                                                                                } | {course.course_format}
-                                                                                            </h2>
-                                                                                            <h3>
-                                                                                                {course.sale_price ? (
-                                                                                                    <>
-                                                                                                        <bdi>
-                                                                                                            <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                            <span style={{ textDecoration: 'line-through' }}>{course.regular_price}</span>
-                                                                                                        </bdi>
-                                                                                                        <bdi className="ml-2">
-                                                                                                            <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                            {course.sale_price}
-                                                                                                        </bdi>
-                                                                                                    </>
-                                                                                                ) : (
-                                                                                                    <bdi>
-                                                                                                        <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                                        {course.regular_price}
-                                                                                                    </bdi>
-                                                                                                )}
-                                                                                                <small className="woocommerce-price-suffix"> +{course.vat || 0}% VAT</small>
-                                                                                            </h3>
-                                                                                            <div className="product-other-detail">
-                                                                                                <ul>
-                                                                                                    <li className='pt-2'>{course.course_type}</li>
-                                                                                                    {/* <li>Weekend</li> */}
-                                                                                                    {/* <li className='pt-2'>{course.course_time}</li> */}
-                                                                                                    <ul>
-                                                                                                        {course.course_time.map((time, index) => (
-                                                                                                            <li key={index} className='pt-2'>
-                                                                                                                {time.start} - {time.end}
-                                                                                                            </li>
-                                                                                                        ))}
-                                                                                                    </ul>
-                                                                                                    {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
-                                                                                                </ul>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div className="pr_col product-btns">
-                                                                                            <div className="pr-btns">
-                                                                                                <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link>
-                                                                                                {/* <a href="#" className="btns more-info">More info</a> */}
-                                                                                                <Link
-                                                                                                    to="#"
-                                                                                                    onClick={(e) => {
-                                                                                                        e.preventDefault();
-                                                                                                        handleMoreInfoClick(course);
-                                                                                                    }}
-                                                                                                    className="btns more-info"
-                                                                                                >
-                                                                                                    More Info
-                                                                                                </Link>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
-
-                                                                        {filteredCourses.length > 15 && (
-                                                                            <div className="product d-flex justify-content-center">
-                                                                                <button
-                                                                                    type="button"
-                                                                                    className="btn btn-primary"
-                                                                                    onClick={handleViewMore}
-                                                                                >
-                                                                                    View More
-                                                                                </button>
+                                                                                ))}
                                                                             </div>
-                                                                        )}
-                                                                    </>
-                                                                );
+                                                                        </>
+                                                                    );
 
-                                                            })()}
+                                                                })()}
+                                                            </div>
                                                         </div>
+                                                        {/* )} */}
                                                     </div>
                                                 )}
                                             </div>
@@ -806,7 +605,7 @@ const CourseListing = () => {
                                                 <div className="card-header">
                                                     <h2 className="mb-0">
                                                         <button
-                                                            className="btn btn-link btn-block text-left collapsed"
+                                                            className="btn btn-link btn-block text-left collapsed d-inline-block"
                                                         // onClick={() => toggleAccordion(index)}
                                                         // aria-expanded={activeIndex === index}
                                                         >
@@ -817,89 +616,91 @@ const CourseListing = () => {
                                                 {/* {activeIndex === index && ( */}
                                                 <div className="card-body">
                                                     <div className="products columns-1">
-                                                        {searchCourses.length > 0 ? (
-                                                            searchCourses.map((course, itemIndex) => (
-                                                                <div className="product" key={itemIndex}>
-                                                                    <div className="product_list_rows">
-                                                                        <div className="pr_col product-logo">
-                                                                            <div className="relative" style={{ width: '300px', height: '250px' }}>
-                                                                                <img
-                                                                                    src={course.course_image || EmptyImage}
-                                                                                    alt="Course"
-                                                                                    className="w-full h-full object-cover"
-                                                                                    decoding="async"
-                                                                                    fetchpriority="high"
-                                                                                />
+                                                        <div className="products_row_listing">
+                                                            {searchCourses.length > 0 ? (
+                                                                searchCourses.map((course, itemIndex) => (
+                                                                    <div className="product" key={itemIndex}>
+                                                                        <div className="product_list_rows">
+                                                                            <div className="pr_col product-logo">
+                                                                                <div className="relative" style={{ width: '300px', height: '250px' }}>
+                                                                                    <img
+                                                                                        src={course.course_image || EmptyImage}
+                                                                                        alt="Course"
+                                                                                        className="w-full h-full object-cover"
+                                                                                        decoding="async"
+                                                                                        fetchpriority="high"
+                                                                                    />
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div className="pr_col product-info">
-                                                                            {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
-                                                                            <h2>
-                                                                                {course.course_title} | {
-                                                                                    course.course_schedule_dates
-                                                                                        .map(dateString => new Date(dateString))
-                                                                                        .find(date => date >= today)
-                                                                                        ?.toLocaleDateString('en-GB')
-                                                                                        .split('/')
-                                                                                        .join('-') || 'No upcoming date available'
-                                                                                } | {course.course_format}
-                                                                            </h2>
-                                                                            <h3>
-                                                                                {course.sale_price ? (
-                                                                                    <>
+                                                                            <div className="pr_col product-info">
+                                                                                {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
+                                                                                <h2>
+                                                                                    {course.course_title} | {
+                                                                                        course.course_schedule_dates
+                                                                                            .map(dateString => new Date(dateString))
+                                                                                            .find(date => date >= today)
+                                                                                            ?.toLocaleDateString('en-GB')
+                                                                                            .split('/')
+                                                                                            .join('-') || 'No upcoming date available'
+                                                                                    } | {course.course_format}
+                                                                                </h2>
+                                                                                <h3>
+                                                                                    {course.sale_price ? (
+                                                                                        <>
+                                                                                            <bdi>
+                                                                                                <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                <span style={{ textDecoration: 'line-through' }}>{course.regular_price}</span>
+                                                                                            </bdi>
+                                                                                            <bdi className="ml-2">
+                                                                                                <span className="woocommerce-Price-currencySymbol">£</span>
+                                                                                                {course.sale_price}
+                                                                                            </bdi>
+                                                                                        </>
+                                                                                    ) : (
                                                                                         <bdi>
                                                                                             <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                            <span style={{ textDecoration: 'line-through' }}>{course.regular_price}</span>
+                                                                                            {course.regular_price}
                                                                                         </bdi>
-                                                                                        <bdi className="ml-2">
-                                                                                            <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                            {course.sale_price}
-                                                                                        </bdi>
-                                                                                    </>
-                                                                                ) : (
-                                                                                    <bdi>
-                                                                                        <span className="woocommerce-Price-currencySymbol">£</span>
-                                                                                        {course.regular_price}
-                                                                                    </bdi>
-                                                                                )}
-                                                                                <small className="woocommerce-price-suffix"> +{course.vat || 0}% VAT</small>
-                                                                            </h3>
-                                                                            <div className="product-other-detail">
-                                                                                <ul>
-                                                                                    <li className='pt-2'>{course.course_type}</li>
-                                                                                    {/* <li>Weekend</li> */}
-                                                                                    {/* <li className='pt-2'>{course.course_time}</li> */}
+                                                                                    )}
+                                                                                    <small className="woocommerce-price-suffix"> +{course.vat || 0}% VAT</small>
+                                                                                </h3>
+                                                                                <div className="product-other-detail">
                                                                                     <ul>
-                                                                                        {course.course_time.map((time, index) => (
-                                                                                            <li key={index} className='pt-2'>
-                                                                                                {time.start} - {time.end}
-                                                                                            </li>
-                                                                                        ))}
+                                                                                        <li className='pt-2'>{course.course_type}</li>
+                                                                                        {/* <li>Weekend</li> */}
+                                                                                        {/* <li className='pt-2'>{course.course_time}</li> */}
+                                                                                        <ul>
+                                                                                            {course.course_time.map((time, index) => (
+                                                                                                <li key={index} className='pt-2'>
+                                                                                                    {time.start} - {time.end}
+                                                                                                </li>
+                                                                                            ))}
+                                                                                        </ul>
+                                                                                        {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
                                                                                     </ul>
-                                                                                    {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
-                                                                                </ul>
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <div className="pr_col product-btns">
-                                                                            <div className="pr-btns">
-                                                                                <Link to="#" className="btns add-to-cart" onClick={() => AddToCart(course)}>Add to cart</Link>
-                                                                                {/* <a href="#" className="btns more-info">More info</a> */}
-                                                                                <Link
-                                                                                    to="#"
-                                                                                    onClick={(e) => {
-                                                                                        e.preventDefault();
-                                                                                        handleMoreInfoClick(course);
-                                                                                    }}
-                                                                                    className="btns more-info"
-                                                                                >
-                                                                                    More Info
-                                                                                </Link>
+                                                                            <div className="pr_col product-btns">
+                                                                                <div className="pr-btns">
+                                                                                    <Link to="#" className="btns add-to-cart" onClick={() => AddToCart(course)}>Add to cart</Link>
+                                                                                    {/* <a href="#" className="btns more-info">More info</a> */}
+                                                                                    <Link
+                                                                                        to="#"
+                                                                                        onClick={(e) => {
+                                                                                            e.preventDefault();
+                                                                                            handleMoreInfoClick(course);
+                                                                                        }}
+                                                                                        className="btns more-info"
+                                                                                    >
+                                                                                        More Info
+                                                                                    </Link>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            ))
-                                                        ) : (<p>No courses found matching your search criteria.</p>)}
+                                                                ))
+                                                            ) : (<p>No courses found matching your search criteria.</p>)}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 {/* )} */}
