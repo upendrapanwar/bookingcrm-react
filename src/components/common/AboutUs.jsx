@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
@@ -13,6 +13,31 @@ import architect from '../../assets/images/architect-3979490_1280.jpg';
 const AboutUs = () => {
     const navigate = useNavigate();
 
+
+    const heroImageRef = useRef(null); // Create a ref for the hero image
+
+    const setTranslate = (xPos, yPos, el) => {
+        if (el) {
+            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+        }
+    };
+
+    const scrollLoop = () => {
+        const yScrollPosition = window.scrollY;
+        setTranslate(0, yScrollPosition * -0.4, heroImageRef.current);
+        requestAnimationFrame(scrollLoop); // Keep looping for a smooth effect
+    };
+
+    useEffect(() => {
+        // Start the scroll loop when the component mounts
+        scrollLoop();
+
+        // Clean up the animation frame on unmount
+        return () => {
+            cancelAnimationFrame(scrollLoop);
+        };
+    }, []);
+
     useEffect(() => {
         console.log('test');
     }, []);
@@ -21,24 +46,30 @@ const AboutUs = () => {
         <>
             <Header />
 
-            <section className="front_banner_wrapper pb-20">
-                <div className="banner-bg">
-                    {/* <img src="assets/images/page-banner-bg.jpg" alt="" /> */}
-                    <img src={bannerBg} alt="SMSTS Online Course" />
-                </div>
-                <div className="container">
+            <section className="hero-treatment">
+            <div className="container">
                     <div className="row">
-                        <div className="col-lg-8">
-                            <div className="section-title pb-30">
-                                <h1 className="pb-15">SMSTS Online Course - 5 Days, <span>£360+VAT</span>, <span>98%</span> Success Rate</h1>
-                                <p>Complete Your SMSTS Online Course in Just 5 Days for £360 Plus VAT for real-time translation in any language and transcription services in our SMSTS courses.</p>
-                            </div>
+                        <div className="col-lg-12 pt-40">
+                            <h1 className="pb-15">CITB SMSTS Online Courses</h1>
+                            <p>Online Monday to Friday, Day Release &amp; Weekend Courses Are Available</p>
+                            <p>Or View Our Classroom Courses Here - Site Management Safety Training Scheme</p>
                         </div>
                     </div>
                 </div>
-            </section>
+                <div
+                    className="hero-image"
+                    ref={heroImageRef} // Attach the ref to this div
+                    style={{
+                        backgroundImage: `url(${bannerBg})`,
+                        backgroundSize: "cover",
+                        backgroundAttachment: "fixed",
+                        height: "500px",
+                        transform: "translate3d(0, 0, 0)", // Initial transform value
+                    }}
+                ></div>
+            </section>       
 
-            <section className="front_section Container_wrapper about_section">
+            <section className="front_section Container_wrapper about_section bgWhite">
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-6 pb-10">

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
 import Header from '../../components/common/Header';
@@ -9,12 +9,36 @@ import ContactFormSchema from '../../validation-schemas/ContactFormSchema';
 const AboutUs = () => {
     const navigate = useNavigate();
 
+    const heroImageRef = useRef(null); // Create a ref for the hero image
+
+    const setTranslate = (xPos, yPos, el) => {
+        if (el) {
+            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+        }
+    };
+
+    const scrollLoop = () => {
+        const yScrollPosition = window.scrollY;
+        setTranslate(0, yScrollPosition * -0.4, heroImageRef.current);
+        requestAnimationFrame(scrollLoop); // Keep looping for a smooth effect
+    };
+
+    useEffect(() => {
+        // Start the scroll loop when the component mounts
+        scrollLoop();
+
+        // Clean up the animation frame on unmount
+        return () => {
+            cancelAnimationFrame(scrollLoop);
+        };
+    }, []);
+
     useEffect(() => {
         console.log('test');
     }, []);
 
 
-    const handleSubmit = (values,{resetForm}) => {
+    const handleSubmit = (values, { resetForm }) => {
         console.log("Form data", values);
         resetForm();
     };
@@ -23,21 +47,29 @@ const AboutUs = () => {
         <>
             <Header />
             <>
-                <section className="page_banner_wrapper pb-25">
-                    <div className="banner-bg">
-                        <img src={bannerBg} alt="Banner background" />
-                    </div>
+
+                <section className="hero-treatment">
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-12 pt-40">
-                                <div className="section-title pb-45">
-                                    <h1 className="pb-15">Get In Touch Today!</h1>
-                                </div>
+                                <h1 className="pb-15">Get In Touch Today!</h1>
                             </div>
                         </div>
                     </div>
+                    <div
+                        className="hero-image"
+                        ref={heroImageRef} // Attach the ref to this div
+                        style={{
+                            backgroundImage: `url(${bannerBg})`,
+                            backgroundSize: "cover",
+                            backgroundAttachment: "fixed",
+                            height: "500px",
+                            transform: "translate3d(0, 0, 0)", // Initial transform value
+                        }}
+                    ></div>
                 </section>
-                <section className="page_section contact_form_section">
+
+                <section className="page_section contact_form_section bgWhite">
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-8 offset-lg-2 pb-25">
