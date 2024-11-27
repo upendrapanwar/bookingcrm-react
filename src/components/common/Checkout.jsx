@@ -603,10 +603,7 @@ const Checkout = () => {
                                                                     />
                                                                     {errors.futurepay && touched.futurepay && <small className="text-red-500">{errors.futurepay}</small>}
                                                                 </div>
-                                                            </div>
-
-
-                                                           
+                                                            </div>                                                        
 
                                                             <div className="form-group">
                                                                 <div className="form-check">

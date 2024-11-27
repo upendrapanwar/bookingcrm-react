@@ -104,7 +104,7 @@ const AdminInstructorsList = () => {
      * 
     */
     const handleEdit = (id) => {
-        navigate(`/admin/admin-EditCourse?id=${id}`);
+        navigate(`/admin/admin-EditInstructor?id=${id}`);
     }
     /***********************************************************************/
     /***********************************************************************/
@@ -117,17 +117,17 @@ const AdminInstructorsList = () => {
     */
     const handleDeleteSeletedData = (id) => {
         console.log('Update id: ', id);
-        let courseId = {
+        let instructorId = {
             id:id,
         }
         setLoading(true);
         
         axios
-            .put("admin/delete_course",courseId)
+            .put("admin/delete_instructor",instructorId)
             .then((response) => {
                 toast.dismiss();
                 if (response.data.status) {
-                    console.log('Deleted Course-----', response)
+                    console.log('Deleted Instructor-----', response)
                     toast.success(response.data.message, { autoClose: 3000 });
                     getAllInstructors();
                 } else {
@@ -164,14 +164,14 @@ const AdminInstructorsList = () => {
                     var instructorsData = response.data.data;
                     let instructorsDataArray = [];
                     instructorsData.forEach(function (value) {
-                        // const isActiveStatus = Boolean(value.isActive);
+                        const isActiveStatus = Boolean(value.isActive);
                         instructorsDataArray.push({
                             instructor_id: String(value.id || ''),
                             instructor_name: String(value.first_name || ''),
                             instructor_email: String(value.email || ''),
                             instructor_phone: String(value.phone || ''),
                             instructor_image: value.instructor_image || EmptyImage,
-                            // isActiveString: isActiveStatus ? 'Active' : 'Inactive',
+                            isActiveString: isActiveStatus ? 'Active' : 'Inactive',
                             createdby: (value.createdBy && value.createdBy.first_name) ? value.createdBy.first_name : '',
                             createdAt: String(value.createdAt || ''),
                         });
@@ -207,22 +207,6 @@ const AdminInstructorsList = () => {
                         //     cell: (row) => <span>{row.course_format}</span>,
                         //     sortable: true,
                         // },
-                        // {
-                        //     name: "Status",
-                        //     selector: (row) => row.isActiveString,
-                        //     cell: (row) => row.isActiveString === 'Active' ? (
-                        //         <div className="flex items-center">
-                        //             <div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div>
-                        //             <span>Active</span>
-                        //         </div>
-                        //     ) : (
-                        //         <div className="flex items-center">
-                        //             <div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></div>
-                        //             <span>Inactive</span>
-                        //         </div>
-                        //     ),
-                        //     sortable: true,
-                        // },
                         {
                             name: "Author",
                             selector: (row, i) => row.createdby,
@@ -249,11 +233,27 @@ const AdminInstructorsList = () => {
                             sortable: true,
                         },
                         {
+                            name: "Status",
+                            selector: (row) => row.isActiveString,
+                            cell: (row) => row.isActiveString === 'Active' ? (
+                                <div className="flex items-center">
+                                    <div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div>
+                                    <span>Active</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center">
+                                    <div className="h-2.5 w-2.5 rounded-full bg-red-500 mr-2"></div>
+                                    <span>Inactive</span>
+                                </div>
+                            ),
+                            sortable: true,
+                        },
+                        {
                             name: "Actions",
                             cell: (row) => (
                                 <>
                                     <button
-                                        // onClick={() => handleEdit(row.course_id)}
+                                        onClick={() => handleEdit(row.instructor_id)}
                                         className="mr-10 items-center px-3 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                                     >
                                         <svg class="svgclass w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd"></path></svg>
@@ -261,7 +261,7 @@ const AdminInstructorsList = () => {
                                     </button>
                                     <button
                                         className="items-center px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
-                                        // onClick={() => handleDeleteSeletedData(row.course_id)}
+                                        onClick={() => handleDeleteSeletedData(row.instructor_id)}
                                     >
                                         <svg class="svgclass w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path></svg>
                                         <span className="deleteBtn">Delete</span>
