@@ -606,13 +606,13 @@ const CourseDeliveryOptions = () => {
             <section className="front_section bg-orange needhelp_section">
                 <div className="container">
                     <div className="row">
-                        <div className="col-lg-10 offset-lg-1 pb-25">
-                            <div className="section-title text-center pb-30">
+                        <div className="col-lg-10 offset-lg-1">
+                            <div className="section-title text-center">
                                 <h2 className="pb-10">Need help?</h2>
                                 <p className="pb-20">
                                     Call us to discuss, ask questions, or book your course in person.
                                 </p>
-                                <a className="btn btn-md btn-white" href="#">
+                                <a className="btn btn-md btn-orange" href="#">
                                     Get in touch
                                 </a>
                             </div>

@@ -15,7 +15,10 @@ export default function CheckoutForm({ formvalues, triggerValidation, isDirty, c
 
     useEffect(() => {
         setLocalFormValues(formvalues);
+        console.log("Created formvalues",formvalues);
     }, [formvalues]);
+
+    console.log("Updated formvalues",formvalues);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

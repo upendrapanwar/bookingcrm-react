@@ -71,7 +71,7 @@ h5,
 h6 {
     font-family: 'Poppins', sans-serif!important;
     font-weight: 700!important;
-    color: #1d245f!important;
+    color: #27374D!important;
     margin: 0px!important;
 }
 
@@ -131,8 +131,10 @@ p {
 .btn-orange:active,
 .btn-orange:focus,
 .btn-orange:hover {
-    background-color: #ff8f00;
-    color: #FFF;
+    background-color: #FFD700;
+    color: #27374D;
+    font-weight: 600!important;
+
 }
 
 /*===== All Section title Style =====*/
@@ -183,7 +185,7 @@ p {
 /*===== HEADER TOP =====*/
 
 .header-top {
-    background-color: #ff8900;
+    background-color: #A5C9CA;
 
 }
 
@@ -207,7 +209,7 @@ p {
     left: 0;
     width: 100%;
     z-index: 999;
-    background-color: #1d245f;
+    background-color: #27374D;
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -377,7 +379,7 @@ p {
 }
 
 .navbar .navbar-nav .sub-menu a:hover {
-    background-color: #1d245f;
+    background-color: #526D82;
     /* Change background on hover */
     color: #FFF;
     /* Optional: Change text color on hover */
@@ -472,8 +474,8 @@ p {
     height: 100%;
     left: 0;
     top: 0;
-    background: rgb(255, 137, 0);
-    background: linear-gradient(0deg, rgba(255, 137, 0, 0.8939950980392157) 0%, rgba(255, 137, 0, 0) 63%);
+    background: rgb(39, 55, 77);
+    background: linear-gradient(0deg, rgba(39, 55, 77, 0.8939950980392157) 0%, rgba(39, 55, 77, 0) 70%);
 }
 
 .page_banner_wrapper .row {
@@ -559,7 +561,8 @@ p {
     overflow: hidden;
     background-color: #FFF;
 }
-
+.product_wrapper div.products div.product .product_list_rows .courseType_label { position: absolute; left: 15px; top: 15px; }
+.product_wrapper div.products div.product .product_list_rows .courseType_label span { background-color: #FFF; padding: 3px 10px; border-radius: 25px; font-size: 14px;}
 /* .product_wrapper div.products div.product .product_list_rows .pr_col {
     flex: 0 0 18%;
     padding: 35px 15px;
@@ -569,7 +572,7 @@ p {
     flex: 0 0 20%;
     padding: 35px 15px;
 } */
-
+.products_row_listing  div.product .product_list_rows .product-logo { position: relative;}
 .products_row_listing  div.product .product_list_rows .product-logo .relative { width: 100%!important;
 overflow: hidden; border-radius: 5px; height: 220px!important; }
 .products_row_listing  div.product .product_list_rows .product-logo .relative img { object-fit: cover; object-position: center center; width: 100%; height: 100%; transition: 0.4s; }
@@ -582,7 +585,7 @@ overflow: hidden; border-radius: 5px; height: 220px!important; }
     /* flex: 0 0 42%;
     width: 42%; */
     padding: 15px 0px;
-    height: 250px;
+    height: 220px;
 }
 
 .product_wrapper div.products div.product .product_list_rows .product-info h2 {
@@ -596,12 +599,12 @@ overflow: hidden; border-radius: 5px; height: 220px!important; }
     font-size: 20px;
     padding-top: 5px;
     margin-bottom: 10px!important;
-    color: #eb8107;
+    color: #27374D;
 }
 .product_wrapper div.products div.product .product_list_rows .pr-btns { display: flex; justify-content: space-between; gap: 15px;}
 .product_wrapper div.products div.product .product_list_rows a.btns {
-    color: #FFF;
-    background-color: #eb8107;
+    color: #27374D;
+    background-color: #FFD700;
     text-align: center;
     padding: 0.6em 1em;
     font-weight: 600;
@@ -617,23 +620,27 @@ overflow: hidden; border-radius: 5px; height: 220px!important; }
     align-items: center;
     justify-content: center;
 }
-
+.product_wrapper div.products div.product .product_list_rows a.btns:hover { text-decoration: none;}
+.product_wrapper div.products div.product .product_list_rows a.btns.more-info {
+        background-color: #395B64;
+        color: #FFF;
+}
 
 /* FRONT PAGE STYLE START */
 .bg-orange {
-    background-color: #ff8900;
+    background-color: #526D82;
 }
 
 .bg-blue {
-    background-color: #1d245f;
+    background-color: #27374D;
 }
 
 .bg-light-blue {
-    background-color: #a0a6c7;
+    background-color: #A5C9CA;
 }
 
 .bg-low-light-blue {
-    background-color: #e2e2ea;
+    background-color: #E7F6F2;
 }
 
 .page_section,
@@ -671,8 +678,10 @@ overflow: hidden; border-radius: 5px; height: 220px!important; }
 
 .certification_section figure {
     margin-bottom: 15px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
 }
-
 .certification_section figure img {
     max-height: 120px;
 }
@@ -695,6 +704,8 @@ overflow: hidden; border-radius: 5px; height: 220px!important; }
 
 .benefits_section figure {
     margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
 }
 
 .benefits_section figure img {
@@ -714,32 +725,44 @@ overflow: hidden; border-radius: 5px; height: 220px!important; }
 }
 
 .btn-white {
-    color: #ff8900;
+    color: #FFD700;
     background-color: #FFF;
 
 }
 
 .btn-primary {
-    color: #FFF;
-    background-color: #ff8900;
-    border-color: #ff8900;
+    color: #27374D;
+    background-color: #FFD700;
+    border-color: #FFD700;
 }
 
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {
-    color: #FFF;
-    background-color: #ff8900 !important;
-    border-color: #ff8900 !important;
+    color: #27374D!important;
+    background-color: #FFD700 !important;
+    border-color: #FFD700 !important;
 
 }
-
+.needhelp_section { background-image: url(../images/findus-bg.jpg); background-repeat: no-repeat; background-size: cover; background-position: center center; position: relative; }
+.needhelp_section:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0c1a2cd9;
+}
 .needhelp_section h2,
 .needhelp_section h3,
 .needhelp_section p {
-    color: #FFF;
+    color: #FFF!important;
 }
-
+.needhelp_section .btn {
+    height: auto;
+    padding: 10px 20px;
+}
 
 .form-control {
     border: 1px solid #1d245f;
@@ -753,6 +776,7 @@ textarea.form-control {
     padding-top: 35px;
     padding-bottom: 15px;
 }
+.pr_filter_section .form-row .form-group label { clear: both; display: block;}
 .pr_filter_section .form-control {
     border: 1px solid #1d245f;
     height: 46px;
@@ -760,16 +784,17 @@ textarea.form-control {
 
 .pr_filter_section .btn {
     padding: .375rem 1rem;
+    font-weight: 500;
 }
 .pr_filter_section .btn-primary {
-    color: #fff;
-    background-color: #eb8107;
-    border-color: #eb8107;
+    color: #27374D;
+    background-color: #FFD700;
+    border-color: #FFD700;
 }
 .pr_filter_section .btn-orange:active {
-    background-color: #fb5607;
-    border-color: #fb5607;
-    color: #FFF;
+    background-color: #FFD700;
+    border-color: #FFD700;
+    color: #27374D;
 }
 
 
@@ -788,15 +813,16 @@ textarea.form-control {
 }
 
 .product_accordian_wrap .card {
-    margin-bottom: 20px;
-    border: 1px solid #fb5607 !important;
+    margin-bottom: 15px;
+    border: 0px solid #fb5607 !important;
 
 }
 .product_accordian_wrap .card .card-body {
-    padding: 25px 35px;
+    padding: 25px;
     display: inline-block;
     width: 100%;
     color: #000;
+    background-color: #FFF;
 }
 
 .product_accordian_wrap .card .course-heading{
@@ -811,28 +837,33 @@ textarea.form-control {
 }
 
 
-
+.product_accordian_wrap .card { background-color: transparent;}
 .product_accordian_wrap .card-header {
-    background-color: #fb5607;
+    
     border-bottom: 0px solid rgba(0, 0, 0, .125);
     padding: 0px;
 }
+.product_accordian_wrap  .tab_btn_panel { padding: 15px 15px; border-radius: 50px; background-color: #1d245f;}
 
 .product_accordian_wrap .card-header .btn {
-    padding: 15px 15px;
-    color: #FFF;
+    padding: 15px 15px 12px 15px;
+    color: #27374D;
+    background-color: #A5C9CA;
     height: auto;
     text-decoration: none;
     font-weight: 600;
+    border: 1px solid #A5C9CA;
 }
 
+.product_accordian_wrap .card-header .btn.active { background-color: #FFF; color: #fb5607;}
+.product_accordian_wrap .card-header .btn.active:hover {  color: #fb5607; }
 .product_accordian_wrap .card-header .btn.collapsed:after {
     content: '\f107';
     font-family: 'FontAwesome';
     position: absolute;
-    right: 20px;
+    right: 15px;
     top: 12px;
-    font-size: 32px;
+    font-size: 22px;
     transform: rotate(0deg);
     line-height: normal;
 }
@@ -848,11 +879,26 @@ textarea.form-control {
 }
 
 
+.course_listing_wraps .card { border: 0px; padding-top: 15px;}
+.course_listing_wraps .card-body { padding: 0px; border: 0px;}
+.course_listing_wraps  .tab_btn_panel { padding: 15px 15px; border-radius: 50px; background-color: #395B64;}
+
+.course_listing_wraps .btn_filter_panel .btn {
+    padding: 6px 15px 6px 15px;
+    color: #27374D;
+    background-color: #FFD700;
+    height: auto;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 1px solid #FFD700;
+}
+
+.course_listing_wraps .btn_filter_panel .btn.active { background-color: #FFF; color: #27374D;}
+.course_listing_wraps .btn_filter_panel .btn.active:hover {  color: #27374D; }
 
 
-
-
-.product_accordian_wrap .card-header .btn:hover {
+.course_listing_wraps .btn_filter_panel .btn:hover {
     text-decoration: none;
     color: #FFF;
 }
@@ -880,7 +926,7 @@ textarea.form-control {
 
 .course_fullInfo_section ul.class_date li span {
     font-weight: 600;
-    background-color: #ffd166;
+    background-color: #E7F6F2;
     color: #1d245f;
     padding: 0px 5px;
     border-radius: 3px;
@@ -927,7 +973,7 @@ textarea.form-control {
 .course_detail_accordian {}
 
 .section-title-white h3 {
-    color: #FFF;
+    color: #FFF!important;
 }
 
 /*===========================
@@ -1066,7 +1112,7 @@ textarea.form-control {
        06.FOOTER css 
 ===========================*/
 .footer-wrapper {
-    background-color: #1d245f;
+    background-color: #1a2c44;
     color: #FFF;
     position: relative;
 }
@@ -1170,7 +1216,7 @@ textarea.form-control {
 .footer-address ul li .address p {}
 
 .copyright {
-    background-color: #11163c;
+    background-color: #1a2c44;
     border-top: 1px solid #58778f;
 
 }
@@ -1230,8 +1276,8 @@ textarea.form-control {
     height: 100%;
     left: 0;
     top: 0;
-    background: rgb(255, 137, 0);
-    background: linear-gradient(0deg, rgba(255, 137, 0, 0.8939950980392157) 0%, rgba(255, 137, 0, 0) 63%);
+    background: rgb(39, 55, 77);
+    background: linear-gradient(0deg, rgba(39, 55, 77, 0.8939950980392157) 0%, rgba(39, 55, 77, 0) 70%);
 }
   .hero-treatment .hero-image {
     background-position: center;

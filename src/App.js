@@ -12,6 +12,8 @@ import '../src/assets/css/responsive.css';
 import '../src/assets/css/slick.css';
 import 'font-awesome/css/font-awesome.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
+import '../src/assets/css/admin-main.css';
+
 
 // import './assets/fonts/font';
 import Loader from './components/common/Loader';

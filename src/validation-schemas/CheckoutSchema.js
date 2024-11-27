@@ -11,7 +11,7 @@ export default Yup.object().shape({
     county: Yup.string().required('county is required'),
     postcode: Yup.string().required('Postcode is required'),
     email: Yup.string().email('Invalid email address').required('Email is required'),
-    phoneNumber: Yup.string().required('Phone number is required'),
+    phoneNumber: Yup.string().matches(/^\d{10}$/, "Phone number must be exactly 10 digits").required('Phone number is required'),
     acknowledge: Yup.boolean().oneOf([true], 'You must acknowledge the terms'),
     // state: Yup.string().required('State is required'),
     // gender: Yup.string().required('Please select your gender'),

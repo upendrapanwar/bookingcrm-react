@@ -1,0 +1,54 @@
+.admin_header_nav {
+    background-color: #27374D;
+}
+
+.admin_sidebar {
+    background-color: #E7F6F2;
+}
+
+.admin_sidebar ul li button:hover,
+.admin_sidebar ul li a:hover {
+    background-color: #9DB2BF;
+    color: #27374D;
+    text-decoration: none;
+}
+
+.admin-main-container main nav {
+    margin-bottom: 20px !important;
+}
+
+.admin-main-container button {
+    background-color: #FFD700;
+    color: #27374D !important;
+}
+
+.admin-main-container button:hover {
+    background-color: #FFD700;
+    color: #27374D !important;
+}
+
+.admin-main-container .editBtn,
+.admin-main-container .deleteBtn {
+    top: -7px;
+}
+
+.admin-main-container .editBtn {
+    width: 42px;
+    left: 6px;
+}
+
+.admin-main-container .deleteBtn {
+    width: 55px;
+    left: 6px;
+}
+
+.admin-main-container #pagination-first-page,
+.admin-main-container #pagination-previous-page,
+.admin-main-container #pagination-next-page,
+.admin-main-container #pagination-last-page {
+    padding: 8px;
+}
+
+.admin-main-container label {
+    margin-top: 15px;
+}

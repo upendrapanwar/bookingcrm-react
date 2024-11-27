@@ -213,9 +213,14 @@
 
 
 
+@media only screen and (max-width: 991px) {
 
-
-
+    .products_row_listing div.product {
+        flex: 0 0 50%;
+        width: 50%;
+        padding: 12px;
+    }
+}
 
 
 
@@ -304,5 +309,30 @@
         width: 100%;
     }
 
+    .course_listing_wraps .tab_btn_panel {
+        padding: 15px 5px 5px 5px;
+        border-radius: 5px;
+    }
 
+    .course_listing_wraps .btn_filter_panel .btn {
+        margin-bottom: 12px;
+        font-size: 14px;
+    }
+
+    .products_row_listing div.product {
+        flex: 0 0 100%;
+        width: 100%;
+    }
+
+    .course_listing_wraps .card div.products div.product {
+        margin: 0.5em 0 0.5em 0;
+    }
+
+    .pr_filter_section .form-row .form-group {
+        margin-bottom: 5px;
+    }
+
+    .course_fullInfo_section .section-thumbnail {
+        margin-top: 25px;
+    }
 }

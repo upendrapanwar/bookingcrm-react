@@ -124,7 +124,7 @@ const CourseDetails = () => {
                             <div className="d-flex justify-content-end mb-3">
                                 <button
                                     type="button"
-                                    className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                                    className="inline-flex flex items-center px-3 py-2 text-sm font-medium  btn-orange rounded-lg"
                                     onClick={() => navigate(-1)}
                                 >
                                     <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -156,15 +156,15 @@ const CourseDetails = () => {
                                             <ul className="class_date">
                                                 {course && course.course_schedule_dates && course.course_schedule_dates.length > 0 ? (
                                                     course.course_schedule_dates
-                                                    .sort((a, b) => new Date(a) - new Date(b))
-                                                    .map((date, index) => {
-                                                        return (
-                                                            <li key={index}>
-                                                                <span>Day {index + 1} </span>
-                                                                {formatDate(date)}
-                                                            </li>
-                                                        );
-                                                    })
+                                                        .sort((a, b) => new Date(a) - new Date(b))
+                                                        .map((date, index) => {
+                                                            return (
+                                                                <li key={index}>
+                                                                    <span>Day {index + 1} </span>
+                                                                    {formatDate(date)}
+                                                                </li>
+                                                            );
+                                                        })
                                                 ) : (
                                                     <li>Dates for this course are coming soon. Please check back later.</li>
                                                 )}
@@ -211,7 +211,7 @@ const CourseDetails = () => {
                                     </div>
                                     <div className="col-lg-12">
                                         <button
-                                            className="btn btn-md btn-primary"
+                                            className="btn btn-md btn-orange px-4"
                                             onClick={(e) => handleAddToCart(course, e)}
                                         >
                                             Add to cart
@@ -222,10 +222,10 @@ const CourseDetails = () => {
                             <div className="col-lg-6 pb-10">
                                 <div className="section-thumbnail">
                                     {/* <img src={course.course_image || EmptyImage} alt="" /> */}
-                                    <img 
-                                        src={course.course_image || EmptyImage} 
-                                        alt="" 
-                                        style={{ width: '100%', height: 'auto', maxHeight: '300px', objectFit: 'cover' }} 
+                                    <img
+                                        src={course.course_image || EmptyImage}
+                                        alt=""
+                                        style={{ width: '100%', height: 'auto', maxHeight: '300px', objectFit: 'cover' }}
                                     />
                                 </div>{" "}
                             </div>
@@ -240,7 +240,7 @@ const CourseDetails = () => {
                                 <div className="section-title text-center pb-40 section-title-white">
                                     <h3>More Information About The Course</h3>
                                 </div>
-                                <div className="product_accordian_wrap">
+                                <div className="product_accordian_wrap ">
                                     <div className="accordion" id="ProductAccordion">
 
                                         <div>
@@ -257,7 +257,7 @@ const CourseDetails = () => {
                                                 </div>
                                                 {isOpen.courseInfo && (
                                                     <div className="card-body text-dark">
-                                                        <div dangerouslySetInnerHTML={{ __html: course.course_information}} />
+                                                        <div dangerouslySetInnerHTML={{ __html: course.course_information }} />
                                                     </div>
                                                 )}
                                             </div>
@@ -346,7 +346,7 @@ const CourseDetails = () => {
                                     <p className="pb-20">
                                         Call us to discuss, ask questions, or book your course in person.
                                     </p>
-                                    <Link className="btn btn-md btn-white" to="/contact-us">
+                                    <Link className="btn btn-md btn-orange" to="/contact-us">
                                         Get in touch
                                     </Link>
                                 </div>

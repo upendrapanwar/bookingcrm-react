@@ -10,7 +10,7 @@ import Loader from "../../components/common/Loader";
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 import { toast } from 'react-toastify';
-import { cards } from '../../assets/images/cards.png'
+import cardsImage from '../../assets/images/cards.png'
 
 const stripePromise = loadStripe("pk_test_51QKGTWCHTdQvfuyCjb1L0IIPZZrMyeB49Jg7kOdfbYo5C6vcAPM3ZiQNAnViMPpYRhDX0Mr81ThvXty30PXi6bkh00DbyB1Lgr");
 
@@ -18,7 +18,9 @@ const Checkout = () => {
 
     const cart = useSelector((state) => state.cart.cart || []);
     const totalPrice = cart.reduce((total, item) => total + item.regular_price * item.quantity, 0);
-    console.log('cart----', cart);
+    const toPayAmount = ((totalPrice * 1.1).toFixed(2) * 45) / 100;
+    const futurePayAmount = Math.floor((totalPrice * 1.1).toFixed(2)) - toPayAmount;
+
     const [loading, setLoading] = useState(false);
     const [clientSecret, setClientSecret] = useState("");
     const [dpmCheckerLink, setDpmCheckerLink] = useState("");
@@ -26,11 +28,11 @@ const Checkout = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isBuyNowSelected, setIsBuyNowSelected] = useState(true);
 
-
+    //update formvalue and send in the checkoutForm component
     useEffect(() => {
     }, [formvalues]);
 
-
+    // Handle Buy Now button click
     const handleBuyNowClick = () => {
         setIsBuyNowSelected(true); // Show Buy Now form
     };
@@ -43,9 +45,11 @@ const Checkout = () => {
 
     const handleCheckoutStripe = async (firstName, lastName, email, phoneNumber, county) => {
         setLoading(true);
-
         try {
-            const total = (totalPrice * 1.1).toFixed(2);
+            const total = isBuyNowSelected
+                ? (totalPrice * 1.1).toFixed(2)
+                : toPayAmount;
+
             let reqBody = {
                 name: `${firstName} ${lastName}`,
                 email: email,
@@ -100,14 +104,26 @@ const Checkout = () => {
                 <div className="text-center py-4">
                     <h2 className="text-3xl font-extrabold text-gray-800 inline-block border-b-[3px] border-gray-800 pb-1">Checkout</h2>
                 </div>
+
+                <div className="text-center">
+                    <button className="bg-blue text-white py-2 px-1 rounded m-2" onClick={handleBuyNowClick} >
+                        Buy Now
+                    </button>
+
+                    <button className="bg-blue text-white py-2 px-1 rounded m-2" onClick={handlePayDepositClick}>
+                        Pay Deposite
+                    </button>
+                </div>
+
+
                 <div className="container mt-4">
                     <div className="row">
                         <div className="col-md-8 order-md-2 mb-4">
                             <div className="mt-12">
                                 <div className="grid md:grid-cols-3 gap-4">
                                     <div className="mt-12">
-                                        {/* Conditionally render the appropriate Formik form */}
-                                        {/* {isBuyNowSelected ? ( */}
+                                        {/* Conditionally render the Buy Now form */}
+                                        {isBuyNowSelected ? (
                                             <Formik
                                                 initialValues={{
                                                     firstName: '',
@@ -124,7 +140,6 @@ const Checkout = () => {
                                                 }}
                                                 validationSchema={checkoutValidation}
                                                 onSubmit={async (values, { resetForm }) => {
-                                                    console.log(values);
                                                 }}
                                             >
                                                 {({
@@ -189,12 +204,14 @@ const Checkout = () => {
                                                                     />
                                                                     {errors.email && touched.email && <small className="text-red-500">{errors.email}</small>}
                                                                 </div>
+
                                                                 <div className="form-group col-md-6">
                                                                     <label>Phone number*</label>
                                                                     <input
                                                                         type="text"
                                                                         name="phoneNumber"
                                                                         placeholder="Phone number*"
+                                                                        maxLength={10}
                                                                         className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
                                                                         onChange={handleChange}
                                                                         onBlur={handleBlur}
@@ -292,9 +309,7 @@ const Checkout = () => {
                                                                 </div>
                                                             </div>
 
-
                                                             <div className="form-group">
-
                                                                 <div className="form-check">
                                                                     <label className="flex items-start space-x-2">
                                                                         <input
@@ -318,7 +333,7 @@ const Checkout = () => {
                                                                             checked={values.acknowledge}
                                                                         />
                                                                         <span>
-                                                                            I acknowledge that by downloading/accessing the [GE700, XA6, GE706, GT700, PRINCE2 MANUAL or any other related resources] within 14 days from the date of the Course Acceptance Confirmation, I lose the right to change my mind under the Consumer Contract Regulations. *
+                                                                            <img src={cardsImage} alt="Accepted Payment Methods" className="mx-auto w-1/2 md:w-1/4 lg:w-1/5" />
                                                                         </span>
                                                                     </label>
                                                                     {errors.acknowledge && touched.acknowledge && <small className="text-red-500">{errors.acknowledge}</small>}
@@ -372,8 +387,9 @@ const Checkout = () => {
                                                     </form>
                                                 )}
                                             </Formik>
-                                        {/* ) : ( */}
-                                            {/* <Formik
+                                        ) : (
+                                            //{/* Conditionally render the Pay Deposite form */}
+                                            <Formik
                                                 initialValues={{
                                                     firstName: '',
                                                     lastName: '',
@@ -386,10 +402,11 @@ const Checkout = () => {
                                                     email: '',
                                                     phoneNumber: '',
                                                     acknowledge: false,
+                                                    futurepay: '',
+                                                    topay: '',
                                                 }}
                                                 validationSchema={checkoutValidation}
                                                 onSubmit={async (values, { resetForm }) => {
-                                                    console.log(values);
                                                 }}
                                             >
                                                 {({
@@ -403,7 +420,8 @@ const Checkout = () => {
                                                     validateForm,
                                                     isValid,
                                                     setTouched,
-                                                    dirty
+                                                    dirty,
+                                                    setFieldValue
                                                 }) => (
                                                     <form onSubmit={handleSubmit}>
                                                         <FormObserver />
@@ -481,9 +499,9 @@ const Checkout = () => {
                                                                         onBlur={handleBlur}
                                                                         value={values.flat}
                                                                     />
-                                                                </div> */}
+                                                                </div>
 
-                                                                {/* <div className="form-group col-md-6">
+                                                                <div className="form-group col-md-6">
                                                                     <label>Street address*</label>
                                                                     <input
                                                                         type="text"
@@ -566,9 +584,8 @@ const Checkout = () => {
                                                                         name="topay"
                                                                         placeholder="To Pay*"
                                                                         className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
-                                                                        onChange={handleChange}
                                                                         onBlur={handleBlur}
-                                                                        value={values.topay}
+                                                                        value={toPayAmount}
                                                                     />
                                                                     {errors.topay && touched.topay && <small className="text-red-500">{errors.topay}</small>}
                                                                 </div>
@@ -582,14 +599,16 @@ const Checkout = () => {
                                                                         className="px-4 py-3 bg-white text-gray-800 w-full text-sm border-2 rounded-md focus:border-blue-500 outline-none"
                                                                         onChange={handleChange}
                                                                         onBlur={handleBlur}
-                                                                        value={values.futurepay}
+                                                                        value={futurePayAmount}
                                                                     />
                                                                     {errors.futurepay && touched.futurepay && <small className="text-red-500">{errors.futurepay}</small>}
                                                                 </div>
-                                                            </div> */}
+                                                            </div>
 
-                                                            {/* <div className="form-group">
 
+                                                           
+
+                                                            <div className="form-group">
                                                                 <div className="form-check">
                                                                     <label className="flex items-start space-x-2">
                                                                         <input
@@ -613,16 +632,16 @@ const Checkout = () => {
                                                                             checked={values.acknowledge}
                                                                         />
                                                                         <span>
-                                                                            I acknowledge that by downloading/accessing the [GE700, XA6, GE706, GT700, PRINCE2 MANUAL or any other related resources] within 14 days from the date of the Course Acceptance Confirmation, I lose the right to change my mind under the Consumer Contract Regulations. *
+                                                                                <img src={cardsImage} alt="Accepted Payment Methods"className="mx-auto w-1/2 md:w-1/4 lg:w-1/5"/>
                                                                         </span>
                                                                     </label>
                                                                     {errors.acknowledge && touched.acknowledge && <small className="text-red-500">{errors.acknowledge}</small>}
                                                                 </div>
-                                                            </div> */}
+                                                            </div>
 
 
                                                             {/* Modal Component */}
-                                                            {/* {isModalOpen && (
+                                                            {isModalOpen && (
                                                                 <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
                                                                     <div className="modal-dialog" role="document">
                                                                         <div className="modal-content">
@@ -650,13 +669,12 @@ const Checkout = () => {
                                                                                     </Elements>
                                                                                 )}
                                                                             </div>
-
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            )} */}
+                                                            )}
 
-                                                            {/* <button
+                                                            <button
                                                                 className="bg-blue text-white font-bold w-100 py-3 px-4 rounded w-full my-3"
                                                                 onClick={() => setIsModalOpen(true)}
                                                                 disabled={!values.acknowledge}
@@ -666,8 +684,8 @@ const Checkout = () => {
                                                         </div>
                                                     </form>
                                                 )}
-                                            </Formik> */}
-                                        {/* )} */}
+                                            </Formik>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -677,15 +695,8 @@ const Checkout = () => {
                         <div className="col-md-4 order-md-2 mb-4">
 
 
-                            {/* <button className="bg-blue text-white py-2 px-1 rounded m-2" onClick={handleBuyNowClick} >
-                                Buy Now
-                            </button>
 
-                            <button className="bg-blue text-white py-2 px-1 rounded m-2" onClick={handlePayDepositClick}>
-                                Pay Deposite
-                            </button> */}
-
-                            {/* {isBuyNowSelected ? ( */}
+                            {isBuyNowSelected ? (
                                 <div className="bg-white rounded-lg shadow-md p-6 sc__cart_sidebar">
                                     <h2 className="text-md font-semibold mb-4">Your Order</h2>
 
@@ -717,8 +728,8 @@ const Checkout = () => {
                                         <span className="font-semibold"><b>£&nbsp;</b>{(totalPrice * 1.1).toFixed(2)}</span>
                                     </div>
                                 </div>
-                            {/* ) : ( */}
-                                {/* <div className="bg-white rounded-lg shadow-md p-6 sc__cart_sidebar">
+                            ) : (
+                                <div className="bg-white rounded-lg shadow-md p-6 sc__cart_sidebar">
                                     <h2 className="text-md font-semibold mb-4">Your Order</h2>
 
                                     <div className="row mb-2">
@@ -750,14 +761,14 @@ const Checkout = () => {
                                     </div>
                                     <div className="flex justify-between mb-2">
                                         <span className="font-semibold">To Pay</span>
-                                        <span className="font-semibold"><b>£&nbsp;</b>4545454</span>
+                                        <span className="font-semibold"><b>£&nbsp;</b>{toPayAmount.toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between mb-2">
                                         <span className="font-semibold">Future Pay</span>
-                                        <span className="font-semibold"><b>£&nbsp;</b>852225</span>
+                                        <span className="font-semibold"><b>£&nbsp;</b>{futurePayAmount.toFixed(2)}</span>
                                     </div>
                                 </div>
-                            )} */}
+                            )}
                         </div>
                     </div>
                 </div>
