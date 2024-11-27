@@ -49,6 +49,7 @@ const AboutUs = lazy(() => import('./components/common/AboutUs'));
 const ContactUs = lazy(() => import('./components/common/ContactUs'));
 const AdminInstructorsList = lazy(() => import('./containers/admin/instructors/AdminInstructorsList'));
 const CreateInstructor = lazy(() => import('./containers/admin/instructors/CreateInstructor'));
+const EditInstructor = lazy(() => import('./containers/admin/instructors/EditInstructor'))
 
 function App() {
 
@@ -87,7 +88,7 @@ export const PublicRoutes = () => {
         <Route path='login' element={<Login />} />
         <Route path='register' element={<Register />} />
         <Route path='/student/student-dashboard' element={<StudentDashboard />} />
-        <Route path='/instructor/instructor-dashboard' element={<InstructorDashboard />} />
+        <Route path='/instructor/instructor-dashboard/:instructor' element={<InstructorDashboard />} />
         <Route path='/manager/manager-dashboard' element={<ManagerDashboard />} />
         <Route path='/course-listing' element={<CourseListing />} />
         <Route path='/course-listing/course-details' element={<CourseDetails />} />
@@ -197,6 +198,11 @@ export const AdminRoutes = () => {
         <Route path='admin-CreateInstructor' element={
           <PrivateRoute>
             <CreateInstructor />
+          </PrivateRoute>
+        } />
+        <Route path='admin-EditInstructor' element={
+          <PrivateRoute>
+            <EditInstructor />
           </PrivateRoute>
         } />
       </Routes>

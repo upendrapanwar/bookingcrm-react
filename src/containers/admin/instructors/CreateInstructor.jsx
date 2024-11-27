@@ -381,7 +381,7 @@ const CreateInstructor = () => {
                                                 </div>
 
                                                 <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">
-                                                    <i className="fas fa-plus-circle mr-2"></i> Create Course
+                                                    <i className="fas fa-plus-circle mr-2"></i> Create Instructor
                                                 </button>
 
                                             </form>
