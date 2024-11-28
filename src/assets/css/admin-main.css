@@ -1,5 +1,6 @@
 .admin_header_nav {
     background-color: #27374D;
+    z-index:99;
 }
 
 .admin_sidebar {
@@ -51,4 +52,8 @@
 
 .admin-main-container label {
     margin-top: 15px;
+}
+
+.table-responsive {
+z-index:9;
 }
