@@ -90,7 +90,7 @@ export const PublicRoutes = () => {
         <Route path='login' element={<Login />} />
         <Route path='register' element={<Register />} />
         <Route path='/student/student-dashboard' element={<StudentDashboard />} />
-        <Route path='/instructor/instructor-dashboard/:instructor' element={<InstructorDashboard />} />
+        <Route path='/instructor/instructor-dashboard' element={<InstructorDashboard />} />
         <Route path='/manager/manager-dashboard' element={<ManagerDashboard />} />
         <Route path='/course-listing' element={<CourseListing />} />
         <Route path='/course-listing/course-details' element={<CourseDetails />} />
