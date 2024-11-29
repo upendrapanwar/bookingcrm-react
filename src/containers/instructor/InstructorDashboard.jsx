@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
@@ -9,18 +9,6 @@ import flatpickr from 'flatpickr';
 import 'react-quill/dist/quill.snow.css';
 import 'flatpickr/dist/flatpickr.min.css';
 
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';  // For date click interaction
-import axios from 'axios';
-// import '@fullcalendar/daygrid/index.css';
-//import '@fullcalendar/core/main.min.css';
-// import '@fullcalendar/daygrid/main.css'; 
-// import '@fullcalendar/interaction/main.css'; 
-
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction'; // For date click interaction
 
 const InstructorDashboard = () => {
     const location = useLocation();
@@ -37,7 +25,9 @@ const InstructorDashboard = () => {
     const [selectedDates, setSelectedDates] = useState([]);
 
     const [courseScheduleDates, setCourseScheduleDates] = useState([]);
+    const [selectedRanges, setSelectedRanges] = useState([]);
 
+    console.log('selectedRanges--', selectedRanges)
     const fpRef = useRef(null);
     const formikRef = useRef(null);
 
@@ -55,50 +45,149 @@ const InstructorDashboard = () => {
         }
     }, [instructorId, instructorName]);
 
-    useEffect(() => {
+    // useEffect(() => {
 
+    //     let fp = null;
+
+    //     if (fpRef.current) {
+    //         fp = flatpickr(fpRef.current, {
+    //             mode: "multiple",
+    //             dateFormat: "Y-m-d",
+    //             allowInput: true,
+    //             conjunction: ", ",
+    //             closeOnSelect: false,
+    //             inline: false,
+    //             static: false,
+    //             clickOpens: true,
+    //             altInput: true,
+    //             altFormat: "Y-m-d",
+    //             onReady: function (selectedDates, dateStr, instance) {
+    //                 instance.altInput.placeholder = "Click to select dates";
+    //                 instance.altInput.value = selectedDates.length ? dateStr : "Click to select dates";
+    //                 instance.input.style.display = 'none';
+    //             },
+    //             onChange: (dates) => {
+    //                 const formattedDates = dates.map(date => {
+    //                     return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+    //                         .toISOString()
+    //                         .split('T')[0];
+    //                 });
+    //                 setSelectedDates(formattedDates);
+    //                 setCourseScheduleDates(formattedDates);
+
+    //                 if (formikRef.current) {
+    //                     formikRef.current.setFieldValue('courseScheduleDates', formattedDates);
+    //                 }
+    //             }
+    //         });
+
+    //         // Set initial dates if they exist
+    //         if (selectedDates.length > 0) {
+    //             const dateObjects = selectedDates.map(dateStr => new Date(dateStr));
+    //             fp.setDate(dateObjects, true);
+    //         }
+
+    //         // Store flatpickr instance in ref for later use
+    //         fpRef.current.flatpickr = fp;
+    //     }
+
+    //     return () => {
+    //         if (fpRef.current && fpRef.current.flatpickr) {
+    //             fpRef.current.flatpickr.destroy();
+    //         }
+    //     };
+    // }, []);
+
+
+
+    // useEffect(() => {
+    //     let fp = null;
+
+    //     if (fpRef.current) {
+    //         fp = flatpickr(fpRef.current, {
+    //             mode: "range", // Range mode for selecting start and end dates
+    //             dateFormat: "Y-m-d",
+    //             allowInput: true,
+    //             closeOnSelect: false,
+    //             altInput: true,
+    //             altFormat: "F j, Y",
+    //             onChange: (dates) => {
+    //                 if (dates.length === 2) { // Only capture when both start and end are selected
+    //                     const formattedRange = dates.map(date =>
+    //                         new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    //                             .toISOString()
+    //                             .split('T')[0]
+    //                     );
+
+    //                     setSelectedRanges(prevRanges => [...prevRanges, formattedRange]);
+
+    //                     if (formikRef.current) {
+    //                         formikRef.current.setFieldValue('courseScheduleDates', [...selectedRanges, formattedRange]);
+    //                     }
+
+    //                     // Clear the flatpickr selection to allow new range selection
+    //                     fp.clear();
+    //                 }
+    //             }
+    //         });
+
+    //         fpRef.current.flatpickr = fp;
+    //     }
+
+    //     return () => {
+    //         if (fpRef.current && fpRef.current.flatpickr) {
+    //             fpRef.current.flatpickr.destroy();
+    //         }
+    //     };
+    // }, [selectedRanges]);
+
+
+    useEffect(() => {
         let fp = null;
 
         if (fpRef.current) {
             fp = flatpickr(fpRef.current, {
-                mode: "multiple",
+                mode: "range",
                 dateFormat: "Y-m-d",
                 allowInput: true,
-                conjunction: ", ",
                 closeOnSelect: false,
-                inline: false,
-                static: false,
-                clickOpens: true,
                 altInput: true,
-                altFormat: "Y-m-d",
-                onReady: function (selectedDates, dateStr, instance) {
-                    instance.altInput.placeholder = "Click to select dates";
-                    instance.altInput.value = selectedDates.length ? dateStr : "Click to select dates";
-                    instance.input.style.display = 'none';
+                altFormat: "F j, Y",
+                inline: true, // Keep calendar always visible
+                onDayCreate: (dObj, dStr, fp, dayElem) => {
+                    const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Format: YYYY-MM-DD
+
+                    // Check if the date is within any previously selected range
+                    selectedRanges.forEach(([start, end]) => {
+                        if (dateStr >= start && dateStr <= end) {
+                            dayElem.classList.add("highlighted-range");
+                        }
+                    });
                 },
                 onChange: (dates) => {
-                    const formattedDates = dates.map(date => {
-                        return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-                            .toISOString()
-                            .split('T')[0];
-                    });
-                    setSelectedDates(formattedDates);
-                    setCourseScheduleDates(formattedDates);
+                    if (dates.length === 2) {
+                        const formattedRange = dates.map(date =>
+                            date.toLocaleDateString('en-CA')
+                        );
 
-                    if (formikRef.current) {
-                        formikRef.current.setFieldValue('courseScheduleDates', formattedDates);
+                        setSelectedRanges(prevRanges => [...prevRanges, formattedRange]);
+
+                        if (formikRef.current) {
+                            formikRef.current.setFieldValue('courseScheduleDates', [...selectedRanges, formattedRange]);
+                        }
+
+                        fp.clear(); // Allow new range selection
                     }
                 }
             });
 
-            // Set initial dates if they exist
-            if (selectedDates.length > 0) {
-                const dateObjects = selectedDates.map(dateStr => new Date(dateStr));
-                fp.setDate(dateObjects, true);
-            }
-
-            // Store flatpickr instance in ref for later use
             fpRef.current.flatpickr = fp;
+            // fpRef.current.style.width = "600px";
+            const calendar = document.querySelector('.flatpickr-calendar');
+                if (calendar) {
+                    calendar.style.width = '100%';
+                }
+            
         }
 
         return () => {
@@ -106,7 +195,9 @@ const InstructorDashboard = () => {
                 fpRef.current.flatpickr.destroy();
             }
         };
-    }, []);
+    }, [selectedRanges]);
+
+
 
 
 
@@ -178,9 +269,9 @@ const InstructorDashboard = () => {
                                 <div className="w-full p-6 bg-slate-500 rounded-lg shadow-md">
                                     <Formik
                                         initialValues={{
-                                            
+
                                             courseScheduleDates: []
-                                           
+
                                         }}
                                         onSubmit={handleSubmit}
                                     >
@@ -190,30 +281,34 @@ const InstructorDashboard = () => {
                                             return (
                                                 <form className="form-signin" onSubmit={formikProps.handleSubmit}>
 
+                                                    <div className="row">
+                                                        <div className="form-group mb-4 col-md-6">
+                                                            <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
+                                                            <div className="course-dates">
+                                                                <input
+                                                                    type="text"
+                                                                    id="courseScheduleDates"
+                                                                    name="courseScheduleDates"
+                                                                    className="form-control"
+                                                                    ref={fpRef}
+                                                                    placeholder="Click to select dates"
+                                                                    readOnly
+                                                                />
+                                                                {formikProps.touched.courseScheduleDates && formikProps.errors.courseScheduleDates ? (
+                                                                    <small className="text-danger">{formikProps.errors.courseScheduleDates}</small>
+                                                                ) : null}
+                                                                {selectedRanges.length <= 0 ? (
+                                                                    <small className="text-muted d-block mt-1">
+                                                                        You can select multiple dates.
+                                                                    </small>
+                                                                ) : null}
+                                                            </div>
+                                                        </div>
 
-                                                    <div className="form-group mb-4 col-md-6">
-                                                        <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
-                                                        <div className="course-dates">
-                                                            <input
-                                                                type="text"
-                                                                id="courseScheduleDates"
-                                                                name="courseScheduleDates"
-                                                                className="form-control"
-                                                                ref={fpRef}
-                                                                placeholder="Click to select dates"
-                                                                readOnly
-                                                            />
-                                                            {formikProps.touched.courseScheduleDates && formikProps.errors.courseScheduleDates ? (
-                                                                <small className="text-danger">{formikProps.errors.courseScheduleDates}</small>
-                                                            ) : null}
-                                                            {selectedDates.length <= 0 ? (
-                                                                <small className="text-muted d-block mt-1">
-                                                                    You can select multiple dates.
-                                                                </small>
-                                                            ) : null}
 
-                                                            {/* Selected Dates Table */}
-                                                            {selectedDates.length > 0 && (
+                                                        <div className="form-group mb-4 col-md-6">
+                                                            Selected Dates Table
+                                                            {selectedRanges.length > 0 && (
                                                                 <div className="mt-0">
                                                                     <div className="card shadow-sm">
                                                                         <div className="table-responsive" >
@@ -225,7 +320,7 @@ const InstructorDashboard = () => {
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody className="small">
-                                                                                    {selectedDates.map((date, index) => (
+                                                                                    {selectedRanges.map((date, index) => (
                                                                                         <tr key={index}>
                                                                                             <td className="px-3 py-2 align-middle">{date}</td>
                                                                                             <td className="text-center align-middle">
@@ -233,8 +328,8 @@ const InstructorDashboard = () => {
                                                                                                     type="button"
                                                                                                     className="btn btn-sm  btn-outline-danger  p-2"
                                                                                                     onClick={() => {
-                                                                                                        const newDates = selectedDates.filter((_, i) => i !== index);
-                                                                                                        setSelectedDates(newDates);
+                                                                                                        const newDates = selectedRanges.filter((_, i) => i !== index);
+                                                                                                        setSelectedRanges(newDates);
                                                                                                         setCourseScheduleDates(newDates);
 
                                                                                                         // Update flatpickr instance with new dates
@@ -260,11 +355,11 @@ const InstructorDashboard = () => {
                                                                 </div>
                                                             )}
                                                         </div>
+
                                                     </div>
 
-
                                                     <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">
-                                                        <i className="fas fa-plus-circle mr-2"></i> Create Course
+                                                        <i className="fas fa-plus-circle mr-2"></i> Submit
                                                     </button>
 
                                                 </form>
