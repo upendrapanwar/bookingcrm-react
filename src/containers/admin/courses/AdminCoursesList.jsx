@@ -19,7 +19,7 @@ const AdminCoursesList = () => {
     const [loading, setLoading] = useState([false]);
     const [columns, setColumns] = useState([]);
     const [orderDataSet, setOrderDataSet] = useState([]);
-    const [courses,setAllCourses] = useState([]);
+    const [courses, setAllCourses] = useState([]);
     const customStyles = {
         pagination: {
             style: {
@@ -94,12 +94,12 @@ const AdminCoursesList = () => {
     const handleStatusUpdate = (id) => {
         console.log('Update id: ', id);
         let courseId = {
-            id:id,
+            id: id,
         }
         setLoading(true);
-        
+
         axios
-            .put("admin/update_course_status",courseId)
+            .put("admin/update_course_status", courseId)
             .then((response) => {
                 toast.dismiss();
                 if (response.data.status) {
@@ -146,12 +146,12 @@ const AdminCoursesList = () => {
     const handleDeleteSeletedData = (id) => {
         console.log('Update id: ', id);
         let courseId = {
-            id:id,
+            id: id,
         }
         setLoading(true);
-        
+
         axios
-            .put("admin/delete_course",courseId)
+            .put("admin/delete_course", courseId)
             .then((response) => {
                 toast.dismiss();
                 if (response.data.status) {
@@ -259,11 +259,11 @@ const AdminCoursesList = () => {
                         //     sortable: true,
                         // },
                         {
-                                name: "Author",
-                                selector: (row, i) => row.createdby,
-                                cell: (row) =><span>Admin</span>,
-                                sortable: true,
-                            },
+                            name: "Author",
+                            selector: (row, i) => row.createdby,
+                            cell: (row) => <span>Admin</span>,
+                            sortable: true,
+                        },
                         {
                             name: "Created At",
                             selector: (row, i) => row.createdAt,
@@ -289,11 +289,11 @@ const AdminCoursesList = () => {
                                         <span className="editBtn">Edit</span>
                                     </button>
                                     <button
-                                        className="items-center px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+                                        className=" mr-10 items-center px-3 w-15 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
                                         onClick={() => handleStatusUpdate(row.course_id)}
                                     >
                                         {/* <svg class="svgclass w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd"></path></svg> */}
-                                        <span className="deleteBtn">{row.isActiveString === 'Active' ? 'Deactivate' : 'Activate'}</span>
+                                        <span className="myactiveBtn">{row.isActiveString === 'Active' ? 'Deactivate' : 'Activate'}</span>
                                     </button>
                                     <button
                                         className="items-center px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
@@ -329,7 +329,7 @@ const AdminCoursesList = () => {
             <Header />
             <div className="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
                 <Sidebar />
-                <div id="main-content" className="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900 admin-main-container"> 
+                <div id="main-content" className="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900 admin-main-container">
                     <main>
 
                         <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
