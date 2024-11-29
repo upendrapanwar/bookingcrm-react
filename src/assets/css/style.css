@@ -1349,6 +1349,18 @@ textarea.form-control {
 
 .sv__tankyou_orderDetails .card-header { background-color: #1d245f; color: #FFF;}
 
+.myactiveBtn{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    text-align: center;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    width: 100px;
+}
+
 /* .highlighted-range {
     background-color: #ffd700 !important; 
     color: white !important;

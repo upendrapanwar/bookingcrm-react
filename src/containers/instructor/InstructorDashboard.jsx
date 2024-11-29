@@ -182,10 +182,7 @@ const InstructorDashboard = () => {
             });
 
             fpRef.current.flatpickr = fp;
-             const calendar = document.querySelector('.flatpickr-calendar');
-        if (calendar) {
-            calendar.style.width = '100%';
-        }
+
         }
 
         return () => {
@@ -256,14 +253,14 @@ const InstructorDashboard = () => {
             <section className="main_container pt-70 pb-25">
                 <div className="container">
                     <div className="row">
-                        <div className="col-md-12">
+                        <div className="col-md-12 pl-20">
                             <h1>Hi, {storedInstructorData.instructorName || ''}!</h1>
                             {/* <p>Instructor ID from localStorage: {storedInstructorData.instructorId || 'Not available'}</p>
                             <p>Instructor Name from localStorage: {storedInstructorData.instructorName || 'Not available'}</p> */}
 
 
 
-                            <div className="col-md-12">
+                            <div className="col-md-10">
                                 <div className="w-full p-6 bg-slate-500 rounded-lg shadow-md">
                                     <Formik
                                         initialValues={{
@@ -280,7 +277,7 @@ const InstructorDashboard = () => {
                                                 <form className="form-signin" onSubmit={formikProps.handleSubmit}>
 
                                                     <div className="row">
-                                                        <div className="form-group mb-4 col-md-6">
+                                                        <div className="form-group mb-4 mr-5 col-md-4">
                                                             <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
                                                             <div className="course-dates">
                                                                 <input
@@ -304,7 +301,7 @@ const InstructorDashboard = () => {
                                                         </div>
 
 
-                                                        <div className="form-group mb-4 col-md-6">
+                                                        <div className="form-group mb-4 col-md-4">
                                                             Selected Dates Table
                                                             {selectedRanges.length > 0 && (
                                                                 <div className="mt-0">
