@@ -16,82 +16,16 @@ const PaymentDone = () => {
 
     const [message, setMessage] = useState("Verifying payment...");
     const [paymentStatus, setPaymentStatus] = useState(null);
-    
-    const [orderDetailsData, setOrderDetailsData] = useState({courses: []});
-    const totalPrice = orderDetailsData.courses.reduce((total, item) => total + item.regular_price * item.quantity, 0);
-    
 
-  // console.log("orderDetails", orderDetails)
+    const [orderDetailsData, setOrderDetailsData] = useState({ courses: [] });
+    const totalPrice = orderDetailsData.courses.reduce((total, item) => total + item.regular_price * item.quantity, 0);
+
+
     useEffect(() => {
-        // createInvoice();
-        // verifyPayment();
         handleClearCart();
         getOrderDetails(orderDetails);
     }, [])
 
-
-    // const createInvoice = async () => {
-    //     const queryParams = new URLSearchParams(window.location.search);
-    //     const paymentIntentId = queryParams.get("payment_intent");
-    //     console.log("paymentIntentId",paymentIntentId)
-
-    //     // if (!paymentIntentId) {
-    //     //     setMessage("Invalid payment details.");
-    //     //     return;
-    //     // }
-
-
-    //     // try {
-    //     //   const response = await axios.post("/create-invoice",{paymentIntentId}, 
-    //     //     {
-    //     //       headers: {
-    //     //         "Content-Type": "application/json",
-    //     //       }
-    //     //     }
-    //     //   );
-
-    //     //   // If the request is successful
-    //     //   console.log("Invoice created successfully:", response);
-    //     // } catch (err) {
-    //     //   // Handle error
-    //     //   console.error("Error creating invoice:", err);
-    //     //   toast.error("Invoice creation failed.");
-    //     // }
-    //   };
-
-
-    // /verify-payment
-    // const verifyPayment = async () => {
-    //     const queryParams = new URLSearchParams(window.location.search);
-    //     const paymentIntent = queryParams.get("payment_intent");
-
-    //     if (!paymentIntent) {
-    //         setMessage("Invalid payment details.");
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await axios.post("user/verify-payment", 
-    //         {payment_intent: paymentIntent},
-    //         {
-    //             headers: {
-    //                 "Accept": "application/json",
-    //                 "Content-Type": "application/json;charset=UTF-8",
-    //             }
-    //         });
-
-    //         if (response.data.success) {
-    //             console.log("response", response.data.data);
-    //             setMessage("Payment successful!");
-    //             setPaymentStatus(response.data.paymentIntent);
-    //         } else {
-    //             setMessage("Payment verification failed.");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error verifying payment:", error);
-    //         setMessage("Error verifying payment.");
-    //     }
-    // };
 
     const handleClearCart = () => {
         dispatch(clearCart());
@@ -100,22 +34,21 @@ const PaymentDone = () => {
 
     const getOrderDetails = (orderDetails) => {
         axios.get(`user/get-order-details?id=${orderDetails.id}`)
-        .then(response => {
-            toast.dismiss();
-            if (response.data) {
-             //   console.log('orderDetails---response',response)
+            .then(response => {
+                toast.dismiss();
+                if (response.data) {
+                    console.log('orderDetails---response', response)
                     setOrderDetailsData(response.data.data);
-                
-            }
-        }).catch(error => {
-            toast.dismiss();
-            if (error.response) {
-                toast.error('Data is not available', { position: "top-center", autoClose: 3000 });
-            }
-        });
+                }
+            }).catch(error => {
+                toast.dismiss();
+                if (error.response) {
+                    toast.error('Data is not available', { position: "top-center", autoClose: 3000 });
+                }
+            });
     };
 
-    console.log('orderDetailsData',orderDetailsData)
+    console.log('orderDetailsData', orderDetailsData)
     return (
         <>
             <Header />
@@ -145,7 +78,7 @@ const PaymentDone = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <h6>Order Date:</h6>
-                                  {/* //  <p>{orderDetails.createdAt}</p> */}
+                                    {/* //  <p>{orderDetails.createdAt}</p> */}
                                     <p>{new Date(orderDetailsData.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                 </div>
                             </div>
@@ -171,51 +104,66 @@ const PaymentDone = () => {
                                             <th>Price</th>
                                         </tr>
                                     </thead>
-                                    {/* <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Product A</td>
-                                            <td>2</td>
-                                            <td>$40</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2</td>
-                                            <td>Product B</td>
-                                            <td>1</td>
-                                            <td>$20</td>
-                                        </tr>
-                                    </tbody> */}
+
                                     <tbody>
                                         {orderDetailsData.courses.map((item, index) => (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>{item.course_title}</td>
                                                 <td>{item.quantity}</td>
-                                        
+
                                                 <td>£{item.regular_price * item.quantity}</td>
                                             </tr>
                                         ))}
                                     </tbody>
                                     <tfoot>
-                                        {/* <tr>
+                                        <tr>
+                                            <td colSpan="3" className="text-end"><strong>Subtotal:</strong></td>
+                                            {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                            <td><strong><b>£&nbsp;</b>{totalPrice.toFixed(2)}</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan="3" className="text-end"><strong>VAT:</strong></td>
+                                            {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                            <td><strong><b>£&nbsp;</b>{(totalPrice * 0.1).toFixed(2)}</strong></td>
+                                        </tr>
+                                        <tr>
                                             <td colSpan="3" className="text-end"><strong>Total:</strong></td>
-                                            <td><strong>$60</strong></td>
-                                        </tr> */}
-                                        <tr>
-                                        <td colSpan="3" className="text-end"><strong>Subtotal:</strong></td>
-                                        {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
-                                        <td><strong><b>£&nbsp;</b>{totalPrice.toFixed(2)}</strong></td>
+                                            {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                            <td><strong><b>£&nbsp;</b>{(totalPrice * 1.1).toFixed(2)}</strong></td>
                                         </tr>
-                                        <tr>
-                                        <td colSpan="3" className="text-end"><strong>VAT:</strong></td>
-                                        {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
-                                        <td><strong><b>£&nbsp;</b>{(totalPrice * 0.1).toFixed(2)}</strong></td>
-                                        </tr>
-                                        <tr>
-                                        <td colSpan="3" className="text-end"><strong>Total:</strong></td>
-                                        {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
-                                        <td><strong><b>£&nbsp;</b>{(totalPrice * 1.1).toFixed(2)}</strong></td>
-                                        </tr>
+
+                                        {orderDetailsData.toPay && (
+                                            <tr>
+                                                <td colSpan="3" className="text-end"><strong className="text-end">You have already paid :</strong></td>
+                                                <td>
+                                                    <strong>
+                                                        <b>£&nbsp;</b>{orderDetailsData.toPay.toFixed(2)}
+                                                    </strong>
+                                                </td>
+                                            </tr>
+                                        )}
+                                        {orderDetailsData.futurePay && (
+                                            <tr>
+                                                <td colSpan="3" className="text-end"><strong className="text-end">You need to pay the remaining amount of  :</strong></td>
+                                                <td>
+                                                    <strong><b>£&nbsp;</b>{orderDetailsData.futurePay.toFixed(2)}</strong>
+                                                </td>
+                                            </tr>
+                                        )}
+                                        {orderDetailsData.futurePay && orderDetailsData.toPay && (
+                                            <tr>
+                                                <td colSpan="4" className="text-danger">
+                                                    Term & Condition: The remaining amount of
+                                                    &nbsp;<strong>
+                                                        <b>£&nbsp;</b>{orderDetailsData.futurePay.toFixed(2)}
+                                                    </strong> must be paid at least 24 hours before the course starts. Otherwise, the amount of
+                                                    &nbsp;<strong className="text-success">
+                                                        <b>£&nbsp;</b>{orderDetailsData.toPay.toFixed(2)}
+                                                    </strong> already paid will not be refunded.
+                                                </td>
+                                            </tr>
+                                        )}
                                     </tfoot>
                                 </table>
                             </div>

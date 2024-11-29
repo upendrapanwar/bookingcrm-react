@@ -1322,6 +1322,11 @@ textarea.form-control {
     padding-top: 4rem;
 }
 
+.sv__checkout_wrapper .form-row .form-group .form-check input[type='checkout']{ margin-right: 10px;}
+.payDeposite_mode_field { background-color: #E5E7EB;}
+.payDeposite_mode_field label { font-weight: 600;}
+img.checkoutPaymentPic { max-width: 240px;}
+
 @media (min-width: 1024px) {
     .lg\:flex {
         display: flex;

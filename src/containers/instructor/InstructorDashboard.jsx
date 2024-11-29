@@ -10,6 +10,10 @@ import 'react-quill/dist/quill.snow.css';
 import 'flatpickr/dist/flatpickr.min.css';
 
 
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction'; // For date click interaction
+
 const InstructorDashboard = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
