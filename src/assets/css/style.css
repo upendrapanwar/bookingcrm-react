@@ -1256,6 +1256,13 @@ textarea.form-control {
     text-transform: uppercase;
     padding-left: 25px;
 }
+section {
+    z-index: 9;
+    position: relative;
+}
+.pr_video_section {
+    background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+}
 
 .hero-treatment {
     display: flex;
@@ -1266,7 +1273,9 @@ textarea.form-control {
     position: relative;
     overflow: hidden;
     text-align: center;
-  }
+    z-index: 0;
+}
+
   
   .hero-treatment:before {
     content: '';
