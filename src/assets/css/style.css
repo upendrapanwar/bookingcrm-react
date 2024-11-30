@@ -1376,10 +1376,25 @@ img.checkoutPaymentPic { max-width: 240px;}
     width: 100px;
 }
 
-/* .highlighted-range {
-    background-color: #ffd700 !important; 
+.highlighted-range {
+    background-color: #3595b3 !important; 
     color: white !important;
     border-radius: 50%;
+}
+
+/* .callender-highlight-date{
+    background-color: #ffeb3b !important;
+    border: 1px solid #fbc02d !important;
+    border-radius: 5px;
 } */
 
-
+.full-height-event {
+    height: 100% !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #253d70 !important; /* Optional background */
+    color: white !important; /* Optional text color */
+    border: none !important; /* Remove border if needed */
+}
