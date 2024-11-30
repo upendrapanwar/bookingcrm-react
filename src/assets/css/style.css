@@ -1318,6 +1318,7 @@ section {
 .site,
 .bgWhite{
     background-color: #fff;
+    position: relative;
 }
 
 @media (min-width: 640px) {

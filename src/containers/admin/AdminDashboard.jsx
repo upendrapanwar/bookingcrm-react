@@ -11,199 +11,202 @@ import moment from 'moment';
 const AdminDashboard = () => {
 
     const [weeklySales, setWeeklySales] = useState({ totalAmount: 0, lastWeekAmount: 0, percentage: 0, });
-    const [userStats, setUserStats] = useState({ totalUsers: 0, lastMonthUsers: 0, userPercentageChange: 0, });
+    const [userStats, setUserStats] = useState([]);
 
 
     useEffect(() => {
         getOrderDetails();
         getAllUser();
+        fetchPaymentsDetails();
     }, [])
 
 
+    // const getOrderDetails = async () => {
+    //     try {
+    //         const response = await axios.get('user/get-all-order-details');
+
+    //         if (response.data.status === true && response.data.data) {
+    //             const orders = response.data.data; // Array of order objects
+    //             console.log("orders",orders);
+    //             const totalAmount = orders.reduce((sum, order) => sum + (order.amount || 0), 0);
+
+    //             // Get current date and last week's date
+    //             const today = moment();
+    //             const lastWeek = moment().subtract(7, 'days');
+
+    //             // Filter orders from the last week
+    //             const lastWeekOrders = orders.filter(order => {
+    //                 const createdAt = moment(order.createdAt);
+    //                 return createdAt.isBetween(lastWeek, today, 'days', '[]'); // Inclusive of boundaries
+    //             });
+
+    //             // Sum the amounts for the last week's orders
+    //             const lastWeekAmount = lastWeekOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
+
+    //             // Format the lastWeekAmount as currency
+    //             const formatCurrency = (amount) => {
+    //                 return new Intl.NumberFormat('en-GB', {
+    //                     style: 'currency',
+    //                     currency: 'GBP',
+    //                 }).format(amount);
+    //             };
+
+    //             // Calculate percentage
+    //             const percentage = (lastWeekAmount / totalAmount) * 100;
+
+    //             // Update state
+    //             setWeeklySales({
+    //                 totalAmount: formatCurrency(totalAmount),
+    //                 lastWeekAmount: formatCurrency(lastWeekAmount),
+    //                 percentage: percentage.toFixed(2),
+    //             });
+    //         }
+
+    //     } catch (error) {
+    //         toast.error('An error occurred while fetching order details.');
+    //     }
+    // };
+
+
+    // const getOrderDetails = async () => {
+    //     try {
+    //         const response = await axios.get('user/get-all-order-details');
+
+    //         if (response.data.status === true && response.data.data) {
+    //             const orders = response.data.data; // Array of order objects
+    //             console.log("All orders:", orders);
+
+    //             // Step 1: Get current date and last week's date
+    //             const currentDate = new Date();
+    //             const lastWeekDate = new Date();
+    //             lastWeekDate.setDate(currentDate.getDate() - 7); // 7 days ago
+
+    //             // Step 2: Filter orders by createdAt
+    //             const lastWeekOrders = orders.filter(order => {
+    //                 const orderDate = new Date(order.createdAt);
+    //                 return orderDate >= lastWeekDate && orderDate < currentDate; // Last week
+    //             });
+
+    //             const thisWeekOrders = orders.filter(order => {
+    //                 const orderDate = new Date(order.createdAt);
+    //                 return orderDate >= currentDate; // This week
+    //             });
+
+    //             // Step 3: Calculate total sales
+    //             const lastWeekSales = lastWeekOrders.reduce((total, order) => total + order.amount, 0);
+    //             const thisWeekSales = thisWeekOrders.reduce((total, order) => total + order.amount, 0);
+
+    //             console.log("Last Week Sales:", lastWeekSales);
+    //             console.log("This Week Sales:", thisWeekSales);
+
+    //             // Step 4: Calculate percentage change
+    //             if (lastWeekSales > 0) {
+    //                 const percentageChange = ((thisWeekSales - lastWeekSales) / lastWeekSales) * 100;
+    //                 console.log("Sales Percentage Change:", percentageChange.toFixed(2) + "%");
+    //             } else {
+    //                 console.log("No sales last week, cannot calculate percentage change.");
+    //             }
+    //         }
+    //     } catch (error) {
+    //         toast.error('An error occurred while fetching order details.');
+    //     }
+    // };
+
     const getOrderDetails = async () => {
         try {
-            const response = await axios.get('user/get-all-order-details');
+            const response = await axios.get('admin/get-all-order-details');
 
             if (response.data.status === true && response.data.data) {
                 const orders = response.data.data; // Array of order objects
-                console.log("orders",orders);
-                const totalAmount = orders.reduce((sum, order) => sum + (order.amount || 0), 0);
+                console.log("response of orders data", orders);
 
-                // Get current date and last week's date
-                const today = moment();
-                const lastWeek = moment().subtract(7, 'days');
+                // Group orders by week and calculate total sales per week
+                const weeklySales = {}; // To store sales grouped by week
 
-                // Filter orders from the last week
-                const lastWeekOrders = orders.filter(order => {
-                    const createdAt = moment(order.createdAt);
-                    return createdAt.isBetween(lastWeek, today, 'days', '[]'); // Inclusive of boundaries
+                // Loop through each order to calculate weekly sales
+                orders.forEach(order => {
+                    const orderDate = new Date(order.createdAt); // Using createdAt as the date
+                    // console.log("testing orderDate", orderDate);
+                    const weekNumber = getWeekNumber(orderDate); // Get the week number from the order date
+                    // console.log("testing weekNumber", weekNumber);
+
+                    if (!weeklySales[weekNumber]) {
+                        weeklySales[weekNumber] = 0;
+                    }
+                    weeklySales[weekNumber] += order.amount; // Add the sales amount for that week
                 });
 
-                // Sum the amounts for the last week's orders
-                const lastWeekAmount = lastWeekOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
+                // console.log("Weekly Sales:", weeklySales);
 
-                // Format the lastWeekAmount as currency
-                const formatCurrency = (amount) => {
-                    return new Intl.NumberFormat('en-GB', {
-                        style: 'currency',
-                        currency: 'GBP',
-                    }).format(amount);
-                };
+                // Calculate Total Sales Across All Weeks
+                const totalSales = Object.values(weeklySales).reduce((total, weekSales) => total + weekSales, 0);
 
-                // Calculate percentage
-                const percentage = (lastWeekAmount / totalAmount) * 100;
+                // console.log("Total Sales (All Weeks):", totalSales);
 
-                // Update state
-                setWeeklySales({
-                    totalAmount: formatCurrency(totalAmount),
-                    lastWeekAmount: formatCurrency(lastWeekAmount),
-                    percentage: percentage.toFixed(2),
-                });
+                // Calculate Percentage Sales per Week
+                const salesPercentages = {};
+                for (const week in weeklySales) {
+                    const weekSales = weeklySales[week];
+                    const percentage = (weekSales / totalSales) * 100;
+                    salesPercentages[week] = percentage;
+                }
+
+                // console.log("Sales Percentages:", salesPercentages);
             }
-
         } catch (error) {
             toast.error('An error occurred while fetching order details.');
         }
     };
 
-
-    // const getOrderDetails = async () => {
-//     try {
-//         const response = await axios.get('user/get-all-order-details');
-
-//         if (response.data.status === true && response.data.data) {
-//             const orders = response.data.data; // Array of order objects
-//             console.log("All orders:", orders);
-
-//             // Step 1: Get current date and last week's date
-//             const currentDate = new Date();
-//             const lastWeekDate = new Date();
-//             lastWeekDate.setDate(currentDate.getDate() - 7); // 7 days ago
-
-//             // Step 2: Filter orders by createdAt
-//             const lastWeekOrders = orders.filter(order => {
-//                 const orderDate = new Date(order.createdAt);
-//                 return orderDate >= lastWeekDate && orderDate < currentDate; // Last week
-//             });
-
-//             const thisWeekOrders = orders.filter(order => {
-//                 const orderDate = new Date(order.createdAt);
-//                 return orderDate >= currentDate; // This week
-//             });
-
-//             // Step 3: Calculate total sales
-//             const lastWeekSales = lastWeekOrders.reduce((total, order) => total + order.amount, 0);
-//             const thisWeekSales = thisWeekOrders.reduce((total, order) => total + order.amount, 0);
-
-//             console.log("Last Week Sales:", lastWeekSales);
-//             console.log("This Week Sales:", thisWeekSales);
-
-//             // Step 4: Calculate percentage change
-//             if (lastWeekSales > 0) {
-//                 const percentageChange = ((thisWeekSales - lastWeekSales) / lastWeekSales) * 100;
-//                 console.log("Sales Percentage Change:", percentageChange.toFixed(2) + "%");
-//             } else {
-//                 console.log("No sales last week, cannot calculate percentage change.");
-//             }
-//         }
-//     } catch (error) {
-//         toast.error('An error occurred while fetching order details.');
-//     }
-// };
-
-// const getOrderDetails = async () => {
-//     try {
-//         const response = await axios.get('user/get-all-order-details');
-
-//         if (response.data.status === true && response.data.data) {
-//             const orders = response.data.data; // Array of order objects
-            
-//             // Group orders by week and calculate total sales per week
-//             const weeklySales = {}; // To store sales grouped by week
-
-//             // Loop through each order to calculate weekly sales
-//             orders.forEach(order => {
-//                 const orderDate = new Date(order.createdAt); // Using createdAt as the date
-//                 const weekNumber = getWeekNumber(orderDate); // Get the week number from the order date
-//                 if (!weeklySales[weekNumber]) {
-//                     weeklySales[weekNumber] = 0;
-//                 }
-//                 weeklySales[weekNumber] += order.amount; // Add the sales amount for that week
-//             });
-
-//             console.log("Weekly Sales:", weeklySales);
-
-//             // Calculate Total Sales Across All Weeks
-//             const totalSales = Object.values(weeklySales).reduce((total, weekSales) => total + weekSales, 0);
-
-//             console.log("Total Sales (All Weeks):", totalSales);
-
-//             // Calculate Percentage Sales per Week
-//             const salesPercentages = {};
-//             for (const week in weeklySales) {
-//                 const weekSales = weeklySales[week];
-//                 const percentage = (weekSales / totalSales) * 100;
-//                 salesPercentages[week] = percentage;
-//             }
-
-//             console.log("Sales Percentages:", salesPercentages);
-//         }
-//     } catch (error) {
-//         toast.error('An error occurred while fetching order details.');
-//     }
-// };
-
-// Helper function to get the week number (you can modify it based on your date format)
-const getWeekNumber = (date) => {
-    const startDate = new Date(date.getFullYear(), 0, 1); // First day of the year
-    const diff = date - startDate; // Difference in milliseconds
-    const oneWeek = 1000 * 60 * 60 * 24 * 7; // Number of milliseconds in a week
-    return Math.ceil(diff / oneWeek); // Calculate the week number
-};
+    // Helper function to get the week number (you can modify it based on your date format)
+    const getWeekNumber = (date) => {
+        const startDate = new Date(date.getFullYear(), 0, 1); // First day of the year
+        const diff = date - startDate; // Difference in milliseconds
+        const oneWeek = 1000 * 60 * 60 * 24 * 7; // Number of milliseconds in a week
+        return Math.ceil(diff / oneWeek); // Calculate the week number
+    };
 
 
+    // const getAllUser = async () => {
+    //     try {
+    //         const response = await axios.get("admin/get-all-users");
 
-
+    //         if (response.data.status === true && response.data.data) {
+    //             const users = response.data.data; // All user data
+    //             console.log("response of users data", users);
+    //         }
+    //     } catch (error) {
+    //         toast.error('An error occurred while fetching user details.');
+    //     }
+    // }
 
     const getAllUser = async () => {
         try {
-            const response = await axios.get("user/get-all-users");
-
+            const response = await axios.get("admin/get-all-users");
+    
             if (response.data.status === true && response.data.data) {
-                const users = response.data.data; // All user data
-
-                // Get current date and last month's date range
-                const today = moment();
-                const startOfCurrentMonth = moment().startOf("month");
-                const startOfLastMonth = moment().subtract(1, "month").startOf("month");
-                const endOfLastMonth = moment().subtract(1, "month").endOf("month");
-
-                // Filter users created last month
-                const lastMonthUsers = users.filter((user) => {
-                    const createdAt = moment(user.createdAt);
-                    return createdAt.isBetween(startOfLastMonth, endOfLastMonth, "days", "[]");
-                });
-
-                // Total users till now
-                const totalUsers = users.length;
-
-                // Calculate percentage change
-                const lastMonthUsersCount = lastMonthUsers.length;
-                const percentageChange = lastMonthUsersCount
-                    ? ((lastMonthUsersCount / totalUsers) * 100).toFixed(2)
-                    : 0;
-
-                // Update state
-                setUserStats({
-                    totalUsers,
-                    lastMonthUsers: lastMonthUsersCount,
-                    userPercentageChange: percentageChange,
-                });
-            } else {
-                // setError("Failed to fetch user data.");
-            }
+                const users = response.data.data; 
+                const studentUsers = users.filter(user => user.role === "student");
+                const totaluser =  studentUsers.length;
+                console.log("totaluser users:", totaluser);
+    }
         } catch (error) {
-            // setError("An error occurred while fetching user details.");
+            toast.error('An error occurred while fetching user details.');
+        }
+    };
+    
+
+
+    const fetchPaymentsDetails = async () => {
+        try{
+            const response = await axios.get("admin/get-payment-details");
+
+            if(response.data.status === true && response.data.data){
+                console.log("response of payments data", response);
+            }
+
+        } catch(error){
+            toast.error('An error occurred while fetching payments details.');
         }
     }
 

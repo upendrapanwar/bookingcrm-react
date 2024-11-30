@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom';
+import $ from 'jquery';
 import './App.css';
 //import './index.css';
 import './output.css';
@@ -129,7 +130,6 @@ export const PrivateRoute = ({ children }) => {
 
     if (authInfo) {
       const { token, role } = JSON.parse(authInfo);
-      console.log('Token & User Role:', token, role);
 
       return token && role === "admin";
     }

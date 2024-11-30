@@ -30,8 +30,8 @@ const CreateCourse = () => {
     const [courseScheduleDates, setCourseScheduleDates] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedDates, setSelectedDates] = useState([]);
-    const [timeRanges, setTimeRanges] = useState([ { key: 0, time: null } ]);
-    
+    const [timeRanges, setTimeRanges] = useState([{ key: 0, time: null }]);
+
 
     const styles = {
         editor: {
@@ -252,7 +252,7 @@ const CreateCourse = () => {
     };
 
 
-/***********************************************************************/
+    /***********************************************************************/
 
     const handleTimeChange = (timeRange, index) => {
         const newTimeRanges = [...timeRanges];
@@ -270,9 +270,9 @@ const CreateCourse = () => {
                 end: range.time[1].format('hh:mm A')     // Changed format here
             }));
 
-            if (formikRef.current) {
-                formikRef.current.setFieldValue('course_time', formattedTimes);
-            }
+        if (formikRef.current) {
+            formikRef.current.setFieldValue('course_time', formattedTimes);
+        }
         //formikProps.setFieldValue('course_time', formattedTimes);
     };
 
@@ -286,7 +286,7 @@ const CreateCourse = () => {
     const removeTimeRange = (indexToRemove) => {
         const newTimeRanges = timeRanges.filter((_, index) => index !== indexToRemove);
         setTimeRanges(newTimeRanges);
-        
+
         const formattedTimes = newTimeRanges
             .filter(range => range.time)
             .map(range => ({
@@ -294,9 +294,9 @@ const CreateCourse = () => {
                 end: range.time[1].format('hh:mm A')
             }));
 
-            if (formikRef.current) {
-                formikRef.current.setFieldValue('course_time', formattedTimes);
-            }
+        if (formikRef.current) {
+            formikRef.current.setFieldValue('course_time', formattedTimes);
+        }
         //formikProps.setFieldValue('course_time', formattedTimes);
     };
 
@@ -590,33 +590,31 @@ const CreateCourse = () => {
   ) : null}
 </div> */}
 
-<div className="form-group mb-4 col-md-6">
-  <label>Student Enrollment Capacity</label>
-  <div>
-    {[...Array(7)].map((_, i) => (
-      <div key={i} className="form-check form-check-inline">
-        <input
-          type="radio"
-          name="enrollment_capacity"
-          className="form-check-input"
-          id={`capacity${i + 6}`}
-          value={i + 6}
-          onChange={formikProps.handleChange}
-          onBlur={formikProps.handleBlur}
-          checked={formikProps.values.enrollment_capacity == i + 6}
-        />
-        <label className="form-check-label" htmlFor={`capacity${i + 6}`}>
-          {i + 6}
-        </label>
-      </div>
-    ))}
-  </div>
-  {formikProps.touched.enrollment_capacity && formikProps.errors.enrollment_capacity ? (
-    <small className="text-danger">{formikProps.errors.enrollment_capacity}</small>
-  ) : null}
-</div>
-
-
+                                                            <div className="form-group mb-4 col-md-6">
+                                                                <label>Student Enrollment Capacity</label>
+                                                                <div>
+                                                                    {[...Array(7)].map((_, i) => (
+                                                                        <div key={i} className="form-check form-check-inline">
+                                                                            <input
+                                                                                type="radio"
+                                                                                name="enrollment_capacity"
+                                                                                className="form-check-input"
+                                                                                id={`capacity${i + 6}`}
+                                                                                value={i + 6}
+                                                                                onChange={formikProps.handleChange}
+                                                                                onBlur={formikProps.handleBlur}
+                                                                                checked={formikProps.values.enrollment_capacity == i + 6}
+                                                                            />
+                                                                            <label className="form-check-label" htmlFor={`capacity${i + 6}`}>
+                                                                                {i + 6}
+                                                                            </label>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                                {formikProps.touched.enrollment_capacity && formikProps.errors.enrollment_capacity ? (
+                                                                    <small className="text-danger">{formikProps.errors.enrollment_capacity}</small>
+                                                                ) : null}
+                                                            </div>
 
                                                             {/* Course Time */}
                                                             <div className="form-group mb-4 col-md-6">
@@ -643,7 +641,7 @@ const CreateCourse = () => {
                                                                             )}
                                                                         </div>
                                                                     ))}
-                                                                    
+
                                                                     <button
                                                                         type="button"
                                                                         className="btn btn-outline-secondary btn-sm mt-2"
@@ -769,60 +767,60 @@ const CreateCourse = () => {
 
                                                             {/* <div className="col-md-6">
                                                                 <div className="collum"> */}
-                                                                    {/* Additional Information */}
-                                                                    <div className="form-group mb-4 col-md-6">
-                                                                        <label htmlFor="additional_information">Aditional Information</label>
-                                                                        <textarea
-                                                                            name="additional_information"
-                                                                            className="form-control"
-                                                                            id="additionalInformation"
-                                                                            placeholder="Enter additional information (optional)"
-                                                                            onChange={formikProps.handleChange}
-                                                                            onBlur={formikProps.handleBlur}
-                                                                            value={formikProps.values.additional_information}
-                                                                            rows="12"
-                                                                        />
-                                                                        {formikProps.touched.additional_information && formikProps.errors.additional_information ? (
-                                                                            <small className="text-danger">{formikProps.errors.additional_information}</small>
-                                                                        ) : null}
-                                                                    </div>
+                                                            {/* Additional Information */}
+                                                            <div className="form-group mb-4 col-md-6">
+                                                                <label htmlFor="additional_information">Aditional Information</label>
+                                                                <textarea
+                                                                    name="additional_information"
+                                                                    className="form-control"
+                                                                    id="additionalInformation"
+                                                                    placeholder="Enter additional information (optional)"
+                                                                    onChange={formikProps.handleChange}
+                                                                    onBlur={formikProps.handleBlur}
+                                                                    value={formikProps.values.additional_information}
+                                                                    rows="12"
+                                                                />
+                                                                {formikProps.touched.additional_information && formikProps.errors.additional_information ? (
+                                                                    <small className="text-danger">{formikProps.errors.additional_information}</small>
+                                                                ) : null}
+                                                            </div>
 
-                                                                    {/* Completing the course */}
-                                                                    <div className="form-group mb-4 col-md-6">
-                                                                        <label htmlFor="completing_the_course">Completing the course</label>
-                                                                        <textarea
-                                                                            name="completing_the_course"
-                                                                            className="form-control"
-                                                                            id="completingthecourse"
-                                                                            placeholder="Enter completing the course information (optional)"
-                                                                            onChange={formikProps.handleChange}
-                                                                            onBlur={formikProps.handleBlur}
-                                                                            value={formikProps.values.completing_the_course}
-                                                                            rows="8"
-                                                                        />
-                                                                        {formikProps.touched.completing_the_course && formikProps.errors.completing_the_course ? (
-                                                                            <small className="text-danger">{formikProps.errors.completing_the_course}</small>
-                                                                        ) : null}
-                                                                    </div>
+                                                            {/* Completing the course */}
+                                                            <div className="form-group mb-4 col-md-6">
+                                                                <label htmlFor="completing_the_course">Completing the course</label>
+                                                                <textarea
+                                                                    name="completing_the_course"
+                                                                    className="form-control"
+                                                                    id="completingthecourse"
+                                                                    placeholder="Enter completing the course information (optional)"
+                                                                    onChange={formikProps.handleChange}
+                                                                    onBlur={formikProps.handleBlur}
+                                                                    value={formikProps.values.completing_the_course}
+                                                                    rows="8"
+                                                                />
+                                                                {formikProps.touched.completing_the_course && formikProps.errors.completing_the_course ? (
+                                                                    <small className="text-danger">{formikProps.errors.completing_the_course}</small>
+                                                                ) : null}
+                                                            </div>
 
-                                                                    {/* Why Use CST Training */}
-                                                                    <div className="form-group mb-4 col-md-6">
-                                                                            <label htmlFor="why_use_our_training">Why Use Bookinglive Training</label>
-                                                                            <textarea
-                                                                                name="why_use_our_training"
-                                                                                className="form-control"
-                                                                                id="whyuseourtraining"
-                                                                                placeholder="Enter why use Bookinglive training"
-                                                                                onChange={formikProps.handleChange}
-                                                                                onBlur={formikProps.handleBlur}
-                                                                                value={formikProps.values.why_use_our_training}
-                                                                                rows="8"
-                                                                            />
-                                                                            {formikProps.touched.why_use_our_training && formikProps.errors.why_use_our_training ? (
-                                                                                <small className="text-danger">{formikProps.errors.why_use_our_training}</small>
-                                                                            ) : null}
-                                                                        </div>
-                                                                {/* </div>
+                                                            {/* Why Use CST Training */}
+                                                            <div className="form-group mb-4 col-md-6">
+                                                                <label htmlFor="why_use_our_training">Why Use Bookinglive Training</label>
+                                                                <textarea
+                                                                    name="why_use_our_training"
+                                                                    className="form-control"
+                                                                    id="whyuseourtraining"
+                                                                    placeholder="Enter why use Bookinglive training"
+                                                                    onChange={formikProps.handleChange}
+                                                                    onBlur={formikProps.handleBlur}
+                                                                    value={formikProps.values.why_use_our_training}
+                                                                    rows="8"
+                                                                />
+                                                                {formikProps.touched.why_use_our_training && formikProps.errors.why_use_our_training ? (
+                                                                    <small className="text-danger">{formikProps.errors.why_use_our_training}</small>
+                                                                ) : null}
+                                                            </div>
+                                                            {/* </div>
                                                             </div> */}
                                                         </div>
                                                     </div>

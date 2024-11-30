@@ -12,7 +12,6 @@ const Navigation = () => {
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
-    console.log('authInfo', authInfo)
 
     const logout = () => {
         localStorage.clear();

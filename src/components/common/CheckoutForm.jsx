@@ -13,6 +13,7 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
     const [loading, setLoading] = useState(false);
     const [localFormValues, setLocalFormValues] = useState({});
 
+    console.log("cart ka data check kr rha hu", cart);
     const { toPayAmount, futurePayAmount } = paydepositeValue || {};
 
     useEffect(() => {
@@ -56,14 +57,17 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
 
             // Step 2: Check if payment was successful
             if (paymentIntent && paymentIntent.status === "succeeded") {
+                // const paymentMethodDetails = await stripe.retrievePaymentMethod(paymentMethodId);
+                // console.log("Payment Method Details:", paymentMethodDetails);
+
                 if (toPayAmount === undefined || futurePayAmount === undefined) {
                     try {
-                        // Step 3: Send email and save order details sequentially
+                        // // Step 3: Send email and save order details sequentially
                         const studentRegisterResponse = await studentRegister(localFormValues);
-                        await sendWellcomeEmail(localFormValues);
-                        await sendEmail(localFormValues, paymentIntent);
+                        await sendWellcomeEmail(localFormValues, cart);
+                        await sendEmail(localFormValues, paymentIntent, cart);
                         const orderDetails = await saveOrderDetails(localFormValues, paymentIntent, cart);
-                        await sendEmailToAdmin(localFormValues, paymentIntent, orderDetails);
+                        await sendEmailToAdmin(localFormValues, paymentIntent, orderDetails, cart);
                         await savePaymentDetails(studentRegisterResponse, paymentIntent, orderDetails, cart);
 
                         setMessage("Payment successful, email sent, and order details saved!");
@@ -85,14 +89,15 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
                         navigate("/payment-done");
                     }
                 } else if (toPayAmount !== undefined && toPayAmount !== null && futurePayAmount !== undefined && futurePayAmount !== null) {
+
                     try {
                         // Step 3: Send email and save order details sequentially
                         const studentRegisterResponse = await studentRegister(localFormValues);
-                        await sendWellcomeEmail(localFormValues);
-                        await sendEmailToPayStudent(localFormValues, paymentIntent,toPayAmount, futurePayAmount);
+                        await sendWellcomeEmail(localFormValues, cart);
+                        await sendEmailToPayStudent(localFormValues, paymentIntent, toPayAmount, futurePayAmount, cart);
                         const orderDetails = await saveTopayOrderDetails(localFormValues, paymentIntent, cart, toPayAmount, futurePayAmount);
-                        await sendEmailToPayAdmin(localFormValues, paymentIntent, orderDetails, toPayAmount, futurePayAmount);
-                        await saveToPayPaymentDetails(studentRegisterResponse, paymentIntent, orderDetails, cart, toPayAmount, futurePayAmount);
+                        await sendEmailToPayAdmin(localFormValues, paymentIntent, orderDetails, toPayAmount, futurePayAmount, cart);
+                        await saveToPayPaymentDetails(studentRegisterResponse, paymentIntent, orderDetails, cart, toPayAmount, futurePayAmount, cart);
 
                         setMessage("Payment successful, email sent, and order details saved!");
                         navigate("/payment-done", { state: { orderDetails } });
@@ -125,6 +130,17 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
         layout: "tabs",
     };
     /******************************************************************************************* */
+    // const paymentMethod = async(payment_method) => {
+    //     try{
+    //         const response = await axios.post(`user/get-payment-method/${payment_method}`)
+    //         console.log("Checking to the payment method.....",response);
+    //         return response;
+    //     }catch(error){
+    //         console.error('Failed to get payment method:', error.response?.data || error);
+    //     }
+    // }
+
+    /******************************************************************************************* */
     const studentRegister = async (formvalues) => {
         console.log('formvalues----SaveOrderDetails', formvalues)
         try {
@@ -137,14 +153,24 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
         }
     }
     /******************************************************************************************* */
-    const sendEmail = async (formvalues, paymentIntent) => {
+    const sendEmail = async (formvalues, paymentIntent, cart) => {
         console.log('formvalues----inemail send function', formvalues)
         try {
+            const coursesData = cart.map(course => ({
+                // id: course._id,
+                quantity: course.quantity,
+                course_title: course.course_title,
+                regular_price: course.regular_price,
+                // course_type: course_type,
+                buy_date: course.createdAt,
+            }));
+
             const response = await axios.post('user/send-payment-email', {
                 paymentIntent: paymentIntent.id,
                 amount: paymentIntent.amount,
                 email: formvalues.email,
                 name: formvalues.firstName,
+                courses_data: coursesData,
             });
             console.log('Email sent successfully:', response.data);
             //window.location.href = "http://localhost:3000/complete";
@@ -183,10 +209,20 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
     }
     /*********************************************************************************************** */
 
-    const sendWellcomeEmail = async (formvalues) => {
+    const sendWellcomeEmail = async (formvalues, cart) => {
         try {
+            const coursesData = cart.map(course => ({
+                // id: course._id,
+                quantity: course.quantity,
+                course_title: course.course_title,
+                regular_price: course.regular_price,
+                // course_type: course_type,
+                buy_date: course.createdAt,
+            }));
+
             const response = await axios.post('user/send-wellcome-email', {
-                formvalues: formvalues
+                formvalues: formvalues,
+                courses_data: coursesData,
             });
             console.log('Wellcome email send successfully:', response.data);
         } catch (error) {
@@ -195,11 +231,24 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
     }
     /*********************************************************************************************** */
 
-    const sendEmailToAdmin = async (formvalues, paymentIntent,toPayAmount, futurePayAmount) => {
+    const sendEmailToAdmin = async (formvalues, paymentIntent, toPayAmount, futurePayAmount, cart) => {
         try {
+
+            const coursesData = cart.map(course => ({
+                // id: course._id,
+                quantity: course.quantity,
+                course_title: course.course_title,
+                regular_price: course.regular_price,
+                // course_type: course_type,
+                buy_date: course.createdAt,
+            }));
+
             const response = await axios.post('user/send-student-enrolled-email', {
                 formvalues: formvalues,
-                paymentIntent: paymentIntent
+                paymentIntent: paymentIntent,
+                toPay: toPayAmount,
+                futurePay: futurePayAmount,
+                courses_data: coursesData,
             });
             console.log('Student enrolled email send successfully:', response.data);
         } catch (error) {
@@ -295,16 +344,29 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
     }
 
     /*********************************************************************************************** */
-    const sendEmailToPayStudent = async (formvalues, paymentIntent, toPayAmount, futurePayAmount) => {
+    const sendEmailToPayStudent = async (formvalues, paymentIntent, toPayAmount, futurePayAmount, cart) => {
         console.log('formvalues----inemail send function', formvalues)
         try {
+
+            const coursesData = cart.map(course => ({
+                // id: course._id,
+                quantity: course.quantity,
+                course_title: course.course_title,
+                regular_price: course.regular_price,
+                // course_type: course_type,
+                buy_date: course.createdAt
+            }));
+
+            console.log("coursesData", coursesData)
+
             const response = await axios.post('user/send-topay-payment-email', {
                 paymentIntent: paymentIntent.id,
                 amount: paymentIntent.amount,
                 toPay: toPayAmount,
-                futurePay: futurePayAmount, 
+                futurePay: futurePayAmount,
                 email: formvalues.email,
                 name: formvalues.firstName,
+                courses_data: coursesData,
             });
             console.log('Email sent successfully:', response.data);
             //window.location.href = "http://localhost:3000/complete";
@@ -314,13 +376,25 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
         }
     }
     /*********************************************************************************************** */
-    const sendEmailToPayAdmin = async (formvalues, paymentIntent, toPayAmount, futurePayAmount) => {
+    const sendEmailToPayAdmin = async (formvalues, paymentIntent, toPayAmount, futurePayAmount, cart) => {
         try {
+
+            const coursesData = cart.map(course => ({
+                // id: course._id,
+                quantity: course.quantity,
+                course_title: course.course_title,
+                regular_price: course.regular_price,
+                // course_type: course_type,
+                buy_date: course.createdAt,
+            }));
+
+
             const response = await axios.post('user/send-topay-student-enrolled-email', {
                 formvalues: formvalues,
                 paymentIntent: paymentIntent,
-                toPay: toPayAmount,  
+                toPay: toPayAmount,
                 futurePay: futurePayAmount,
+                courses_data: coursesData,
             });
             console.log('Student enrolled email send successfully:', response.data);
         } catch (error) {
