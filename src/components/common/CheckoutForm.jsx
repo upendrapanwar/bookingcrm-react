@@ -157,11 +157,11 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
         console.log('formvalues----inemail send function', formvalues)
         try {
             const coursesData = cart.map(course => ({
-                // id: course._id,
+                //id: course._id,
                 quantity: course.quantity,
                 course_title: course.course_title,
                 regular_price: course.regular_price,
-                // course_type: course_type,
+                course_type: course.course_type,
                 buy_date: course.createdAt,
             }));
 
@@ -172,6 +172,7 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
                 name: formvalues.firstName,
                 courses_data: coursesData,
             });
+           
             console.log('Email sent successfully:', response.data);
             //window.location.href = "http://localhost:3000/complete";
         } catch (emailError) {
