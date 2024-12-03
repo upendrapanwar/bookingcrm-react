@@ -12,6 +12,7 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
     const [isLoading, setIsLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [localFormValues, setLocalFormValues] = useState({});
+  // const carts=cart;
 
     console.log("cart ka data check kr rha hu", cart);
     const { toPayAmount, futurePayAmount } = paydepositeValue || {};
@@ -183,7 +184,8 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
 
     /*********************************************************************************************** */
     const saveOrderDetails = async (formvalues, paymentIntent, cart) => {
-        console.log('formvalues----SaveOrderDetails', formvalues)
+        // console.log('cart--order--cart',cart)
+        // console.log('formvalues----SaveOrderDetails', formvalues)
         try {
             const coursesData = cart.map(course => ({
                 id: course._id,
@@ -231,24 +233,23 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
         }
     }
     /*********************************************************************************************** */
-
-    const sendEmailToAdmin = async (formvalues, paymentIntent, toPayAmount, futurePayAmount, cart) => {
+  
+    const sendEmailToAdmin = async (formvalues, paymentIntent, orderDetails,  cart) => {
         try {
-
-            const coursesData = cart.map(course => ({
-                // id: course._id,
+            console.log('cart-------#####',cart)
+            const coursesData = (cart).map(course => ({
+                //id: course._id,
                 quantity: course.quantity,
                 course_title: course.course_title,
                 regular_price: course.regular_price,
                 // course_type: course_type,
-                buy_date: course.createdAt,
+               // buy_date: course.createdAt,
             }));
-
             const response = await axios.post('user/send-student-enrolled-email', {
                 formvalues: formvalues,
                 paymentIntent: paymentIntent,
-                toPay: toPayAmount,
-                futurePay: futurePayAmount,
+                orderDetails: orderDetails,
+               // futurePay: futurePayAmount,
                 courses_data: coursesData,
             });
             console.log('Student enrolled email send successfully:', response.data);
@@ -377,7 +378,7 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
         }
     }
     /*********************************************************************************************** */
-    const sendEmailToPayAdmin = async (formvalues, paymentIntent, toPayAmount, futurePayAmount, cart) => {
+    const sendEmailToPayAdmin = async (formvalues, paymentIntent, orderDetails, toPayAmount, futurePayAmount, cart) => {
         try {
 
             const coursesData = cart.map(course => ({
@@ -396,6 +397,7 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
                 toPay: toPayAmount,
                 futurePay: futurePayAmount,
                 courses_data: coursesData,
+                orderDetails: orderDetails,
             });
             console.log('Student enrolled email send successfully:', response.data);
         } catch (error) {

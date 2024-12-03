@@ -6,7 +6,7 @@ import Footer from '../../components/common/Footer';
 import bannerBg from '../../assets/images/page-banner-bg.jpg';
 import ContactFormSchema from '../../validation-schemas/ContactFormSchema';
 
-const AboutUs = () => {
+const ContactUs = () => {
     const navigate = useNavigate();
 
     const heroImageRef = useRef(null); // Create a ref for the hero image
@@ -211,7 +211,7 @@ const AboutUs = () => {
     );
 };
 
-export default AboutUs;
+export default ContactUs;
 
 
 // import React, { useEffect, useRef } from 'react';
