@@ -556,7 +556,7 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
                         await sendWellcomeEmail(localFormValues, cart);
                         await sendEmailToPayStudent(localFormValues, paymentIntent, toPayAmount, futurePayAmount, cart,classLink);
                         const orderDetails = await saveTopayOrderDetails(localFormValues, paymentIntent, cart, toPayAmount, futurePayAmount);
-                        await sendEmailToPayAdmin(localFormValues, paymentIntent, orderDetails, toPayAmount, futurePayAmount, cart);
+                        await sendEmailToPayAdmin(localFormValues, paymentIntent, orderDetails, toPayAmount, futurePayAmount, cart, classLink);
                         await saveToPayPaymentDetails(studentRegisterResponse, paymentIntent, orderDetails, cart, toPayAmount, futurePayAmount, cart);
 
                         setMessage("Payment successful, email sent, and order details saved!");
@@ -694,21 +694,15 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
         }
     }
     /*********************************************************************************************** */
-
-    const sendEmailToAdmin = async (formvalues, paymentIntent, orderDetails,cart,classLink) => {
-        console.log("cart.............sendEmailToAdmin.....................checking cart",cart)
-
+  
+    const sendEmailToAdmin = async (formvalues, paymentIntent, orderDetails,  cart, classLink) => {
         try {
-            const coursesData = cart.map(course => ({
-                // id: course._id,
+            console.log('cart-------#####',cart)
+            const coursesData = (cart).map(course => ({
                 quantity: course.quantity,
                 course_title: course.course_title,
-                regular_price: course.regular_price,
-                // course_type: course_type,
-                buy_date: course.createdAt,
+                regular_price: course.regular_price,               
             }));
-
-            
             const response = await axios.post('user/send-student-enrolled-email', {
                 formvalues: formvalues,
                 paymentIntent: paymentIntent,
@@ -846,7 +840,7 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
         }
     }
     /*********************************************************************************************** */
-    const sendEmailToPayAdmin = async (formvalues, paymentIntent, toPayAmount, futurePayAmount, cart) => {
+    const sendEmailToPayAdmin = async (formvalues, paymentIntent, orderDetails, toPayAmount, futurePayAmount, cart, classLink) => {
         try {
 
             console.log("cart.............sendEmailToPayAdmin.....................checking cart",cart)
@@ -866,6 +860,8 @@ export default function CheckoutForm({ paydepositeValue, formvalues, triggerVali
                 toPay: toPayAmount,
                 futurePay: futurePayAmount,
                 courses_data: coursesData,
+                orderDetails: orderDetails,
+                classLink: classLink,
             });
             console.log('Student enrolled email send successfully:', response.data);
         } catch (error) {

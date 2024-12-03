@@ -58,12 +58,13 @@ const CourseListing = (passedData) => {
     /***********************************************************************/
 
     //  console.log('selectedCourse---', selectedCourse);
-    useEffect(() => {
-        getCourses();
-        // getCategories();
-    }, []);
+    // useEffect(() => {
+
+    //     // getCategories();
+    // }, []);
 
     useEffect(() => {
+        getCourses();
         // Check if we need to reset from navigation
         if (passedData.passedData === false) {
             setIsSearch(false);
@@ -441,9 +442,7 @@ const CourseListing = (passedData) => {
                                             <div className="tab_btn_panel  d-flex flex-wrap justify-center">
 
                                                 <div className="btn_filter_panel flex flex-wrap justify-center">
-                                                    {items.slice(0, 3).map((item, index) => (
-
-
+                                                    {/* {items.slice(0, 3).map((item, index) => (
                                                         <button
                                                             key={index}
                                                             className={`tab-button btn btn-link text-center collapsed mr-1 ml-1 ${activeTab === index ? 'active' : ''}`}
@@ -451,9 +450,33 @@ const CourseListing = (passedData) => {
                                                         >
                                                             {item.title}
                                                         </button>
+                                                    ))} */}
 
+                                                    {items
+                                                        .filter(item => {
+                                                            // Check if there are any courses in this month
+                                                            const today = new Date();
+                                                            return courses.some(course => {
+                                                                const upcomingDate = course.course_schedule_dates
+                                                                    .map(dateString => new Date(dateString))
+                                                                    .find(date => date >= today);
 
-                                                    ))}
+                                                                if (!upcomingDate) return false;
+
+                                                                const courseMonth = upcomingDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                                                                return courseMonth === item.title;
+                                                            });
+                                                        })
+                                                        .slice(0, 3) // Limit to first 3 months with courses
+                                                        .map((item, index) => (
+                                                            <button
+                                                                key={index}
+                                                                className={`tab-button btn btn-link text-center collapsed mr-1 ml-1 ${activeTab === index ? 'active' : ''}`}
+                                                                onClick={() => handleTabClick(index)}
+                                                            >
+                                                                {item.title}
+                                                            </button>
+                                                        ))}
                                                 </div>
                                             </div>
                                         </div>
