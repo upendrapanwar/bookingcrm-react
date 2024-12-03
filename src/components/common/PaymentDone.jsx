@@ -33,6 +33,7 @@ const PaymentDone = () => {
 
 
     const getOrderDetails = (orderDetails) => {
+        console.log("orderDetailsorderDetailsorderDetailsorderDetails",orderDetails)
         axios.get(`user/get-order-details?id=${orderDetails.id}`)
             .then(response => {
                 toast.dismiss();

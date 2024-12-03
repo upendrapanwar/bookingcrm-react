@@ -144,7 +144,7 @@ const InstructorMoreInformation = () => {
                         <div className="col-md-12 mt-5">
                             <div className="d-flex justify-content-between align-items-center">
                                 <h2>Instructor Information</h2>
-                                {/* <button className="btn btn-secondary" onClick={() => navigate(-1)}>Back</button> */}
+                                <button className="btn btn-secondary" onClick={() => navigate(-1)}>Back</button>
                                 {/* <button
                                     type="button"
                                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
