@@ -761,39 +761,35 @@ const EditCourse = () => {
 
                                                                                 {/* Enrollment Capacity */}
                                                                                 <div className="form-group mb-4 col-md-12">
-                                                                                    <label htmlFor="enrollment_capacity">Student Enrollment Capacity</label>
-                                                                                    <input
-                                                                                        type="number"
-                                                                                        name="enrollment_capacity"
-                                                                                        className="form-control"
-                                                                                        id="enrollmentCapacity"
-                                                                                        placeholder="Enter student enrollment capacity"
-                                                                                        onChange={formikProps.handleChange}
-                                                                                        onBlur={formikProps.handleBlur}
-                                                                                        value={formikProps.values.enrollment_capacity}
-                                                                                    />
+                                                                                    <label>Student Enrollment Capacity</label>
+                                                                                    <div>
+                                                                                        {[...Array(7)].map((_, i) => (
+                                                                                            <div key={i} className="form-check form-check-inline">
+                                                                                                <input
+                                                                                                    type="radio"
+                                                                                                    name="enrollment_capacity"
+                                                                                                    className="form-check-input"
+                                                                                                    id={`capacity${i + 6}`}
+                                                                                                    value={i + 6}
+                                                                                                    onChange={formikProps.handleChange}
+                                                                                                    onBlur={formikProps.handleBlur}
+                                                                                                    checked={formikProps.values.enrollment_capacity == i + 6}
+                                                                                                />
+                                                                                                <label className="form-check-label" htmlFor={`capacity${i + 6}`}>
+                                                                                                    {i + 6}
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        ))}
+                                                                                    </div>
                                                                                     {formikProps.touched.enrollment_capacity && formikProps.errors.enrollment_capacity ? (
                                                                                         <small className="text-danger">{formikProps.errors.enrollment_capacity}</small>
                                                                                     ) : null}
                                                                                 </div>
 
+
+
+
                                                                                 {/* Course Time */}
-                                                                                {/* <div className="form-group mb-4 col-md-6">
-                                                                <label htmlFor="course_time">Course Time</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="course_time"
-                                                                    className="form-control"
-                                                                    id="courseTime"
-                                                                    placeholder="Time (12:00 AM - 01:00 AM)"
-                                                                    onChange={handleChange}
-                                                                    onBlur={handleBlur}
-                                                                    value={values.course_time}
-                                                                />
-                                                                {touched.course_time && errors.course_time ? (
-                                                                    <small className="text-danger">{errors.course_time}</small>
-                                                                ) : null}
-                                                            </div> */}
 
                                                                                 <div className="form-group mb-4 col-md-12">
                                                                                     <label htmlFor="course_time">Course Time</label>
@@ -834,32 +830,6 @@ const EditCourse = () => {
                                                                                 </div>
 
                                                                                 {/*courseScheduleDates */}
-                                                                                {/* <div className="form-group mb-4 col-md-6">
-                                                                    <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
-                                                                    <div className="course-dates">
-                                                                        <input
-                                                                            type="text"
-                                                                            id="courseScheduleDates"
-                                                                            name="course_schedule_dates"
-                                                                            className="form-control"
-                                                                            ref={fpRef}
-                                                                            placeholder="Click to select dates"
-                                                                            readOnly
-                                                                        />
-                                                                        {formikProps.touched.course_schedule_dates &&
-                                                                            formikProps.errors.course_schedule_dates && (
-                                                                                <small className="text-danger">
-                                                                                    {formikProps.errors.course_schedule_dates}
-                                                                                </small>
-                                                                            )}
-                                                                        {selectedDates.length > 0 && (
-                                                                            <small className="text-muted d-block mt-1">
-                                                                                Current dates: {selectedDates.join(', ')}
-                                                                            </small>
-                                                                        )}
-                                                                    </div>
-                                                                </div> */}
-
                                                                                 <div className="form-group mb-4 col-md-12">
                                                                                     <label htmlFor="courseScheduleDates">Select Course Schedule Dates:</label>
                                                                                     <div className="course-dates">

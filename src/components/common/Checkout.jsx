@@ -37,7 +37,7 @@ const Checkout = () => {
     useEffect(() => {
         setToPayAmount(toPay);
         setFuturePayAmount(futurePay);
-    }, [totalPrice]);
+    }, [totalPrice,formvalues]);
 
 
     const paydepositeValue = {
@@ -45,9 +45,9 @@ const Checkout = () => {
         futurePayAmount,
     }
 
-    //update formvalue and send in the checkoutForm component
-    useEffect(() => {
-    }, [formvalues]);
+    // //update formvalue and send in the checkoutForm component
+    // useEffect(() => {
+    // }, [formvalues]);
 
     // Handle Buy Now button click
     const handleBuyNowClick = () => setIsBuyNowSelected(true); // Show Buy Now form
@@ -92,17 +92,14 @@ const Checkout = () => {
         }
     };
 
-
     const appearance = {
         theme: 'stripe',
     };
-
 
     const loader = 'auto';
 
     const FormObserver = () => {
         const { values } = useFormikContext();
-        console.log("values", values)
         useEffect(() => {
             setFormvalues(values);
         }, [values]);
