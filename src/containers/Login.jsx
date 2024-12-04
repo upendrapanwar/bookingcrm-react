@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Formik } from "formik";
 import { toast } from 'react-toastify';
 import axios from "axios";
-import UserLoginSchema from '../validation-schemas/UserLoginSchema';
+//import UserLoginSchema from '../validation-schemas/UserLoginSchema';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
 

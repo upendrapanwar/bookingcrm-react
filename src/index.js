@@ -16,6 +16,7 @@ import "./assets/css/default.css";
 import "./assets/css/slick.css";
 import "./assets/css/font-awesome.min.css";
 import "./assets/css/bootstrap.min.css";
+import { HeaderProvider } from './components/common/HeaderContext';
 
 
 
@@ -26,7 +27,9 @@ root.render(
   <Provider store={store}>
     <BrowserRouter>
       {/* <ErrorBoundary> */}
-      <App />
+      <HeaderProvider>
+        <App />
+      </HeaderProvider>
       {/* <ErrorBoundary> */}
 
     </BrowserRouter>

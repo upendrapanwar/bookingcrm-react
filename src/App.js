@@ -33,10 +33,11 @@ import PaymentDone from './components/common/PaymentDone';
 
 const Home = lazy(() => import('./containers/Home'));
 const Register = lazy(() => import('./containers/Register'));
-const Login = lazy(() => import('./containers/Login'));
+//const Login = lazy(() => import('./containers/Login'));
 const StudentDashboard = lazy(() => import('./containers/student/StudentDashboard'));
 const InstructorDashboard = lazy(() => import('./containers/instructor/InstructorDashboard'));
 const ManagerDashboard = lazy(() => import('./containers/manager/ManagerDashboard'));
+//const HeaderProvider = lazy(()=> import('./components/common/HeaderContext')); 
 
 const AdminLogin = lazy(() => import('./containers/admin/Login'));
 const AdminDashboard = lazy(() => import('./containers/admin/AdminDashboard'));
@@ -89,7 +90,7 @@ export const PublicRoutes = () => {
   return (
     <>
       <Routes>
-        <Route path='login' element={<Login />} />
+        {/*<Route path='login' element={<Login />} />*/}
         <Route path='register' element={<Register />} />
         <Route path='/student/student-dashboard' element={<StudentDashboard />} />
         <Route path='/instructor' element={<InstructorDashboard />} />

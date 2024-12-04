@@ -9,11 +9,12 @@ import Footer from '../../../components/common/Footer';
 import EmptyImage from "../../../assets/images/EmptyImage.png";
 import bannerBg from '../../../assets/images/page-banner-bg.jpg';
 import { useDispatch } from 'react-redux';
+import { useHeader } from '../../common/HeaderContext';
 import { addToCart } from '../../../store/reducers/cart-reducer';
 import $ from "jquery";
 
 const CourseListing = (passedData) => {
-
+    const { setHeaderData } = useHeader();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const accordionRefs = useRef([]);
@@ -34,7 +35,7 @@ const CourseListing = (passedData) => {
     /***********************************************************************/
     /***********************************************************************/
     // parallax image display 
-    const setTranslate = (xPos, yPos, el) => {
+    /*const setTranslate = (xPos, yPos, el) => {
         if (el) {
             el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
         }
@@ -44,13 +45,18 @@ const CourseListing = (passedData) => {
         const yScrollPosition = window.scrollY;
         setTranslate(0, yScrollPosition * -0.3, heroImageRef.current);
         requestAnimationFrame(scrollLoop);
-    };
+    };*/
 
     useEffect(() => {
-        scrollLoop();
+        setHeaderData({
+            heading: 'CITB SMSTS Online Courses',
+            paragraph1:'Online Monday to Friday, Day Release &amp; Weekend Courses Are Available',
+            paragraph2:'Or View Our Classroom Courses Here - Site Management Safety Training Scheme'
+        })
+        /*scrollLoop();
         return () => {
             cancelAnimationFrame(scrollLoop);
-        };
+        };*/
     }, []);
 
     // parallax image display 
@@ -99,7 +105,7 @@ const CourseListing = (passedData) => {
     */
     const toggleAccordion = (index) => {
         setActiveIndex(activeIndex === index ? -1 : index);
-
+        /*
         setTimeout(() => {
             if (accordionRefs.current[index]) {
                 accordionRefs.current[index].scrollIntoView({
@@ -107,7 +113,7 @@ const CourseListing = (passedData) => {
                     block: 'center',
                 });
             }
-        }, 100);
+        }, 100);*/
     };
     /***********************************************************************/
     /***********************************************************************/
@@ -324,7 +330,7 @@ const CourseListing = (passedData) => {
             <Header />
 
 
-            <section className="hero-treatment">
+            {/*<section className="hero-treatment">
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-12 pt-40">
@@ -345,7 +351,7 @@ const CourseListing = (passedData) => {
                         transform: "translate3d(0, 0, 0)", // Initial transform value
                     }}
                 ></div>
-            </section>
+            </section>*/}
 
             <section className="front_section bg-low-light-blue Container_wrapper pr_filter_section">
                 <div className="container">
