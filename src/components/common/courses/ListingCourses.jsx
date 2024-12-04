@@ -65,11 +65,14 @@ const CourseListing = (passedData) => {
 
     useEffect(() => {
         getCourses();
-        // Check if we need to reset from navigation
         if (passedData.passedData === false) {
             setIsSearch(false);
         }
     }, [passedData]);
+
+    useEffect(() => {
+        //getCourses();
+    }, []);
     /***********************************************************************/
     /***********************************************************************/
     /**
@@ -115,10 +118,11 @@ const CourseListing = (passedData) => {
      * 
      */
     const getCourses = () => {
-        setLoading(true);
+        //  setLoading(true);
         axios
             .get("user/get-all-courses")
             .then((response) => {
+                // console.log('response---of course',response)
                 toast.dismiss();
                 if (response.data.status) {
                     setCourses(response.data.data);
@@ -135,7 +139,7 @@ const CourseListing = (passedData) => {
             })
             .finally(() => {
                 setTimeout(() => {
-                    setLoading(false);
+                    // setLoading(false);
                 }, 300);
             });
     }
@@ -314,7 +318,7 @@ const CourseListing = (passedData) => {
 
     /***********************************************************************/
     /***********************************************************************/
-    // console.log('selectedCourse----', selectedCourse)
+    console.log('selectedCourse----', courses)
     return (
         <>
             <Header />
@@ -375,7 +379,7 @@ const CourseListing = (passedData) => {
                                 }) => (
                                     <form onSubmit={handleSubmit}>
                                         <div className="form-row">
-                                            <div className="form-group col-md-5">
+                                            <div className="form-group col-md-4">
                                                 <label>Date</label>
                                                 <select
                                                     className="form-control"
@@ -395,7 +399,7 @@ const CourseListing = (passedData) => {
                                                         <small className="text-danger">{errors.month}</small>
                                                     ) : null} */}
                                             </div>
-                                            <div className="form-group col-md-5">
+                                            <div className="form-group col-md-4">
                                                 <label>Type</label>
                                                 <select
                                                     className="form-control"
@@ -415,8 +419,13 @@ const CourseListing = (passedData) => {
                                             </div>
                                             <div className="form-group col-md-2">
                                                 <label>&nbsp;</label>
+                                                <button type="submit" className="btn btn-primary">SEARCH</button>
+                                            </div>
+
+                                            <div className="form-group col-md-2">
+                                                <label>&nbsp;</label>
                                                 {(isSearch === false) ? (
-                                                    <button type="submit" className="btn btn-primary">SEARCH</button>) : (
+                                                    '') : (
                                                     <button type="button" onClick={handleReset} className="btn btn-primary">RESET</button>
                                                 )}
                                             </div>
@@ -453,20 +462,20 @@ const CourseListing = (passedData) => {
                                                     ))} */}
 
                                                     {items
-                                                        .filter(item => {
-                                                            // Check if there are any courses in this month
-                                                            const today = new Date();
-                                                            return courses.some(course => {
-                                                                const upcomingDate = course.course_schedule_dates
-                                                                    .map(dateString => new Date(dateString))
-                                                                    .find(date => date >= today);
+                                                        // .filter(item => {
+                                                        //     // Check if there are any courses in this month
+                                                        //     const today = new Date();
+                                                        //     return courses.some(course => {
+                                                        //         const upcomingDate = course.course_schedule_dates
+                                                        //             .map(dateString => new Date(dateString))
+                                                        //             .find(date => date >= today);
 
-                                                                if (!upcomingDate) return false;
+                                                        //         if (!upcomingDate) return false;
 
-                                                                const courseMonth = upcomingDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-                                                                return courseMonth === item.title;
-                                                            });
-                                                        })
+                                                        //         const courseMonth = upcomingDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                                                        //         return courseMonth === item.title;
+                                                        //     });
+                                                        // })
                                                         .slice(0, 3) // Limit to first 3 months with courses
                                                         .map((item, index) => (
                                                             <button
@@ -484,43 +493,39 @@ const CourseListing = (passedData) => {
                                             <div className={`tab-content ${activeTab === index ? 'active' : ''}`} key={index}>
                                                 {activeTab === index && (
                                                     <div className="card">
-                                                        {/* <div className="card-header" ref={(el) => (accordionRefs.current[index] = el)}>
-                                                            <h2 className="mb-0">
-                                                                <button
-                                                                    className="btn btn-link btn-block text-left collapsed"
-                                                                    onClick={() => toggleAccordion(index)}
-                                                                    aria-expanded={activeIndex === index}
-                                                                >
-                                                                    {item.title}
-                                                                </button>
 
-                                                            </h2>
-                                                        </div> */}
-                                                        {/* {activeIndex === index && ( */}
                                                         <div className="card-body">
                                                             <div className="products columns-1">
                                                                 {(() => {
-                                                                    const today = new Date();
+                                                                    // const today = new Date();
 
-                                                                    const filteredCourses = courses.filter(course => {
-                                                                        const upcomingDate = course.course_schedule_dates
-                                                                            .map(dateString => new Date(dateString))
-                                                                            .find(date => date >= today);
+                                                                    // const filteredCourses = courses.filter(course => {
+                                                                    //     const upcomingDate = course.course_schedule_dates
+                                                                    //         .map(dateString => new Date(dateString))
+                                                                    //         .find(date => date >= today);
 
-                                                                        if (!upcomingDate) return false;
+                                                                    //     if (!upcomingDate) return false;
 
-                                                                        const courseMonth = upcomingDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-                                                                        return courseMonth === item.title;
-                                                                    });
+                                                                    //     const courseMonth = upcomingDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                                                                    //     return courseMonth === item.title;
+                                                                    // });
 
-                                                                    if (filteredCourses.length === 0) {
-                                                                        return <p>No upcoming courses available for {item.title}.</p>;
+                                                                    // if (filteredCourses.length === 0) {
+                                                                    //     return <p>No upcoming courses available for {item.title}.</p>;
+                                                                    // }
+
+                                                                    // Find the courses for the current month
+                                                                    const monthData = courses.find(course => course.month === item.title);
+
+                                                                    // If no courses for the current month, show a message
+                                                                    if (!monthData || monthData.courses.length === 0) {
+                                                                        return <p>No courses available for {item.title}.</p>;
                                                                     }
 
                                                                     return (
                                                                         <>
                                                                             <div className="products_row_listing">
-                                                                                {filteredCourses.map((course, itemIndex) => (
+                                                                                {monthData.courses.map((course, itemIndex) => (
                                                                                     <div className="product" key={itemIndex}>
                                                                                         <div className="product_list_rows">
                                                                                             <div className="pr_col product-logo">
