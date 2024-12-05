@@ -3,34 +3,34 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import axios from "axios";
 import { Formik } from "formik";
-import Loader from "../../../components/common/Loader";
+// import Loader from "../../../components/common/Loader";
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import EmptyImage from "../../../assets/images/EmptyImage.png";
-import bannerBg from '../../../assets/images/page-banner-bg.jpg';
+// import bannerBg from '../../../assets/images/page-banner-bg.jpg';
 import { useDispatch } from 'react-redux';
 import { useHeader } from '../../common/HeaderContext';
 import { addToCart } from '../../../store/reducers/cart-reducer';
-import $ from "jquery";
+// import $ from "jquery";
 
 const CourseListing = (passedData) => {
     const { setHeaderData } = useHeader();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const accordionRefs = useRef([]);
-    const heroImageRef = useRef(null);
+    // const accordionRefs = useRef([]);
+    // const heroImageRef = useRef(null);
 
     const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState([false]);
+    // const [loading, setLoading] = useState([false]);
     const [activeIndex, setActiveIndex] = useState(0);
-    const [categories, setCategories] = useState([]);
+    // const [categories, setCategories] = useState([]);
     const [searchCourses, setSearchCourses] = useState([]);
     const [isSearch, setIsSearch] = useState(false);
     const [searchMonth, setSearchMonth] = useState(null);
     const [searchType, setSearchType] = useState(null);
     const today = new Date();
     const [activeTab, setActiveTab] = useState(0);
-
+console.log('courses----11',courses)
 
     /***********************************************************************/
     /***********************************************************************/
@@ -50,8 +50,8 @@ const CourseListing = (passedData) => {
     useEffect(() => {
         setHeaderData({
             heading: 'CITB SMSTS Online Courses',
-            paragraph1:'Online Monday to Friday, Day Release &amp; Weekend Courses Are Available',
-            paragraph2:'Or View Our Classroom Courses Here - Site Management Safety Training Scheme'
+            paragraph1: 'Online Monday to Friday, Day Release &amp; Weekend Courses Are Available',
+            paragraph2: 'Or View Our Classroom Courses Here - Site Management Safety Training Scheme'
         })
         /*scrollLoop();
         return () => {
@@ -144,42 +144,9 @@ const CourseListing = (passedData) => {
                 }
             })
             .finally(() => {
-                setTimeout(() => {
-                    // setLoading(false);
-                }, 300);
-            });
-    }
-    /***********************************************************************/
-    /***********************************************************************/
-
-    /**
-     * Handle to get categories
-     * 
-     */
-    const getCategories = () => {
-        setLoading(true);
-        axios
-            .get("admin/getAllcategories")
-            .then((response) => {
-                toast.dismiss();
-                if (response.data.status) {
-                    console.log('Courses-----', response)
-                    setCategories(response.data.data);
-                    // setLoading(false);
-                } else {
-                    toast.error(response.data.message, { autoClose: 3000 });
-                }
-            })
-            .catch((error) => {
-                toast.dismiss();
-                if (error.response) {
-                    toast.error(error.response.data.message, { autoClose: 3000 });
-                }
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    setLoading(false);
-                }, 300);
+                // setTimeout(() => {
+                //     // setLoading(false);
+                // }, 300);
             });
     }
     /***********************************************************************/
@@ -217,77 +184,59 @@ const CourseListing = (passedData) => {
         console.log("Selected Month:", values.month);
         console.log("Selected Type:", values.type);
 
-        // Set search criteria in state
         setSearchMonth(values.month || null);
         setSearchType(values.type || null);
 
         try {
-            // Get the current date if month is not provided
-            const currentDate = new Date();
-            const inputDate = values.month ? new Date(values.month) : currentDate;
-            const inputMonth = inputDate.getMonth();
-            const inputYear = inputDate.getFullYear();
+            // Parse input month and year
+            const inputDate = values.month ? new Date(`${values.month}`) : null;
+            const inputMonth = inputDate ? inputDate.getMonth() : null;
+            const inputYear = inputDate ? inputDate.getFullYear() : null;
 
             console.log("Filtering for month/year:", inputMonth, inputYear);
 
-            // Filter the courses based on provided inputs
-            const searchCourses = courses.filter(course => {
-                if (!course) return false;
+            // Filter logic
+            const searchCourses = courses
+                .filter(group => {
+                    const groupDate = new Date(`${group.month}`);
+                    const groupMonth = groupDate.getMonth();
+                    const groupYear = groupDate.getFullYear();
 
-                const typeMatch = values.type
-                    ? course.course_type?.toLowerCase() === values.type.toLowerCase()
-                    : true;
+                    const monthMatch = inputMonth !== null && inputYear !== null
+                        ? groupMonth === inputMonth && groupYear === inputYear
+                        : true;
 
-                let monthMatch = false;
-                if (course.course_schedule_dates && course.course_schedule_dates.length > 0) {
-                    try {
-                        const courseDate = new Date(course.course_schedule_dates[0]);
+                    if (monthMatch) {
+                        return group.courses.some(course => {
+                            const typeMatch = values.type
+                                ? course.course_type?.toLowerCase() === values.type.toLowerCase()
+                                : true;
 
-                        if (!isNaN(courseDate.getTime())) {
-                            monthMatch =
-                                courseDate.getMonth() === inputMonth &&
-                                courseDate.getFullYear() === inputYear;
-
-                            console.log("Course date comparison:", {
-                                course: course.course_title,
-                                courseMonth: courseDate.getMonth(),
-                                courseYear: courseDate.getFullYear(),
-                                inputMonth,
-                                inputYear,
-                                monthMatch,
-                                typeMatch
-                            });
-                        }
-                    } catch (error) {
-                        console.log("Error processing course date:", error);
+                            return typeMatch;
+                        });
                     }
-                }
+                    return false;
+                })
+                .flatMap(group =>
+                    group.courses.filter(course => {
+                        const typeMatch = values.type
+                            ? course.course_type?.toLowerCase() === values.type.toLowerCase()
+                            : true;
 
-                // Determine final match logic based on provided inputs
-                if (values.type && values.month) {
-                    return typeMatch && monthMatch;
-                } else if (values.type) {
-                    return typeMatch;
-                } else if (values.month) {
-                    return monthMatch;
-                }
-                return false;
-            });
+                        return typeMatch;
+                    })
+                );
 
-            // Update state with the filtered courses
             setSearchCourses(searchCourses);
             setIsSearch(true);
 
             console.log("Search Courses:", searchCourses);
 
-            // Reset the form after the search
             resetForm();
         } catch (error) {
             console.error("Error in handleSubmit:", error);
         }
     };
-
-
 
 
     /***********************************************************************/
@@ -302,16 +251,6 @@ const CourseListing = (passedData) => {
 
     /***********************************************************************/
     /***********************************************************************/
-
-    const handleViewMore = () => {
-        navigate('#');
-    };
-    /***********************************************************************/
-    /***********************************************************************/
-
-    const handleClose = () => {
-        setIsSearch(false);
-    };
 
     const handleTabClick = (index) => {
         setActiveTab(index);
@@ -364,7 +303,7 @@ const CourseListing = (passedData) => {
                     </div>
 
                     <div className="row form_container_row">
-                        <div className="col-lg-8 offset-lg-2 pb-25">
+                        <div className="col-lg-10 offset-lg-2 pb-25">
                             <Formik
                                 initialValues={{
                                     month: "",
@@ -401,9 +340,6 @@ const CourseListing = (passedData) => {
                                                         </option>
                                                     ))}
                                                 </select>
-                                                {/* {touched.month && errors.month ? (
-                                                        <small className="text-danger">{errors.month}</small>
-                                                    ) : null} */}
                                             </div>
                                             <div className="form-group col-md-4">
                                                 <label>Type</label>
@@ -419,9 +355,6 @@ const CourseListing = (passedData) => {
                                                     <option value="Day Release">Day Release</option>
                                                     <option value="Weekend">Weekend</option>
                                                 </select>
-                                                {/* {touched.type && errors.type ? (
-                                                    <small className="text-danger">{errors.type}</small>
-                                                ) : null} */}
                                             </div>
                                             <div className="form-group col-md-2">
                                                 <label>&nbsp;</label>
@@ -457,16 +390,6 @@ const CourseListing = (passedData) => {
                                             <div className="tab_btn_panel  d-flex flex-wrap justify-center">
 
                                                 <div className="btn_filter_panel flex flex-wrap justify-center">
-                                                    {/* {items.slice(0, 3).map((item, index) => (
-                                                        <button
-                                                            key={index}
-                                                            className={`tab-button btn btn-link text-center collapsed mr-1 ml-1 ${activeTab === index ? 'active' : ''}`}
-                                                            onClick={() => handleTabClick(index)}
-                                                        >
-                                                            {item.title}
-                                                        </button>
-                                                    ))} */}
-
                                                     {items
                                                         // .filter(item => {
                                                         //     // Check if there are any courses in this month
@@ -503,27 +426,8 @@ const CourseListing = (passedData) => {
                                                         <div className="card-body">
                                                             <div className="products columns-1">
                                                                 {(() => {
-                                                                    // const today = new Date();
-
-                                                                    // const filteredCourses = courses.filter(course => {
-                                                                    //     const upcomingDate = course.course_schedule_dates
-                                                                    //         .map(dateString => new Date(dateString))
-                                                                    //         .find(date => date >= today);
-
-                                                                    //     if (!upcomingDate) return false;
-
-                                                                    //     const courseMonth = upcomingDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-                                                                    //     return courseMonth === item.title;
-                                                                    // });
-
-                                                                    // if (filteredCourses.length === 0) {
-                                                                    //     return <p>No upcoming courses available for {item.title}.</p>;
-                                                                    // }
-
-                                                                    // Find the courses for the current month
                                                                     const monthData = courses.find(course => course.month === item.title);
 
-                                                                    // If no courses for the current month, show a message
                                                                     if (!monthData || monthData.courses.length === 0) {
                                                                         return <p>No courses available for {item.title}.</p>;
                                                                     }
@@ -547,15 +451,29 @@ const CourseListing = (passedData) => {
                                                                                                 <div className='courseType_label'><span>{course.course_type}</span></div>
                                                                                             </div>
                                                                                             <div className="pr_col product-info">
-                                                                                                {/* <h2>{course.course_title} | {course.start_date} | {course.course_format}</h2> */}
                                                                                                 <h2>
                                                                                                     {course.course_title} | {
+                                                                                                        // course.course_schedule_dates
+                                                                                                        //     .map(dateString => new Date(dateString))
+                                                                                                        //     .find(date => date >= today)
+                                                                                                        //     ?.toLocaleDateString('en-GB')
+                                                                                                        //     .split('/')
+                                                                                                        //     .join('-') || 'No upcoming date available'
                                                                                                         course.course_schedule_dates
                                                                                                             .map(dateString => new Date(dateString))
-                                                                                                            .find(date => date >= today)
+                                                                                                            .filter(date => !isNaN(date))
+                                                                                                            .sort((a, b) => a - b)
+                                                                                                            .find(date => {
+                                                                                                                const localDate = new Date(date);
+                                                                                                                localDate.setHours(0, 0, 0, 0);
+                                                                                                                const localToday = new Date(today);
+                                                                                                                localToday.setHours(0, 0, 0, 0);
+                                                                                                                return localDate >= localToday;
+                                                                                                            })
                                                                                                             ?.toLocaleDateString('en-GB')
                                                                                                             .split('/')
-                                                                                                            .join('-') || 'No upcoming date available'
+                                                                                                            .join('-')
+                                                                                                        || 'No upcoming date available'
                                                                                                     } | {course.course_format}
                                                                                                 </h2>
                                                                                                 <h3>
@@ -580,9 +498,7 @@ const CourseListing = (passedData) => {
                                                                                                 </h3>
                                                                                                 <div className="product-other-detail">
                                                                                                     <ul>
-                                                                                                        {/* <li className='pt-2'>{course.course_type}</li> */}
-                                                                                                        {/* <li>Weekend</li> */}
-                                                                                                        {/* <li className='pt-2'>{course.course_time}</li> */}
+
                                                                                                         <ul>
                                                                                                             {course.course_time.map((time, index) => (
                                                                                                                 <li key={index} className='pt-2'>
@@ -597,7 +513,7 @@ const CourseListing = (passedData) => {
                                                                                             <div className="pr_col product-btns">
                                                                                                 <div className="pr-btns">
                                                                                                     <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link>
-                                                                                                    {/* <a href="#" className="btns more-info">More info</a> */}
+
                                                                                                     <Link
                                                                                                         to="#"
                                                                                                         onClick={(e) => {
@@ -620,7 +536,7 @@ const CourseListing = (passedData) => {
                                                                 })()}
                                                             </div>
                                                         </div>
-                                                        {/* )} */}
+
                                                     </div>
                                                 )}
                                             </div>
@@ -644,21 +560,12 @@ const CourseListing = (passedData) => {
 
                                             <div className="d-flex justify-content-between align-items-center mb-8">
                                                 <h4 className="text-center w-100 m-0 search-heading">Showing results for your search</h4>
-                                                {/* <button
-                                                    type="button"
-                                                    className="btn btn-sm  btn-outline-danger  p-2 mr-3"
-                                                    //className="close-icon btn btn-link pr-2 text-dark" 
-                                                    onClick={handleClose}>
-                                                    X
-                                                </button> */}
                                             </div>
                                             <div className="tab-buttons  d-flex flex-wrap justify-center">
                                                 <div className="tab_btn_panel  d-flex flex-wrap justify-center">
                                                     <div className="btn_filter_panel flex flex-wrap justify-center">
                                                         <button
                                                             className="tab-button btn btn-link text-center collapsed mr-1 ml-1 "
-                                                        // onClick={() => toggleAccordion(index)}
-                                                        // aria-expanded={activeIndex === index}
                                                         >
                                                             {searchMonth || ''} {searchType || ''}
                                                         </button>
@@ -667,20 +574,6 @@ const CourseListing = (passedData) => {
                                             </div>
                                             <div className="card mt-2">
 
-                                                {/* <div className="card-header">
-                                                
-                                                    <h2 className="mb-0">
-                                                        <button
-                                                            className="btn btn-link btn-block text-left collapsed d-inline-block"
-                                                        // onClick={() => toggleAccordion(index)}
-                                                        // aria-expanded={activeIndex === index}
-                                                        >
-                                                            {searchMonth || ''} {searchType || ''}
-                                                        </button>
-                                                    </h2>
-                                                
-                                                </div> */}
-                                                {/* {activeIndex === index && ( */}
                                                 <div className="card-body">
                                                     <div className="products columns-1">
                                                         <div className="products_row_listing">
@@ -734,9 +627,6 @@ const CourseListing = (passedData) => {
                                                                                 </h3>
                                                                                 <div className="product-other-detail">
                                                                                     <ul>
-
-                                                                                        {/* <li>Weekend</li> */}
-                                                                                        {/* <li className='pt-2'>{course.course_time}</li> */}
                                                                                         <ul>
                                                                                             {course.course_time.map((time, index) => (
                                                                                                 <li key={index} className='pt-2'>
@@ -751,7 +641,6 @@ const CourseListing = (passedData) => {
                                                                             <div className="pr_col product-btns">
                                                                                 <div className="pr-btns">
                                                                                     <Link to="#" className="btns add-to-cart" onClick={() => AddToCart(course)}>Add to cart</Link>
-                                                                                    {/* <a href="#" className="btns more-info">More info</a> */}
                                                                                     <Link
                                                                                         to="#"
                                                                                         onClick={(e) => {
@@ -771,7 +660,6 @@ const CourseListing = (passedData) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {/* )} */}
                                             </div>
                                         </div>
                                     </div>

@@ -9,34 +9,40 @@ import smstsImage from '../../assets/images/SMSTS-1024x594.jpg';
 import examIcon from '../../assets/images/Icons/exam.png';
 import professionalismIcon from '../../assets/images/Icons/professionalism.png';
 import architect from '../../assets/images/architect-3979490_1280.jpg';
+import { useHeader } from './HeaderContext';
 
 const AboutUs = () => {
     const navigate = useNavigate();
-
+    const { setHeaderData } = useHeader();
 
     const heroImageRef = useRef(null); // Create a ref for the hero image
 
-    const setTranslate = (xPos, yPos, el) => {
-        if (el) {
-            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-        }
-    };
+    // const setTranslate = (xPos, yPos, el) => {
+    //     if (el) {
+    //         el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+    //     }
+    // };
 
-    const scrollLoop = () => {
-        const yScrollPosition = window.scrollY;
-        setTranslate(0, yScrollPosition * -0.4, heroImageRef.current);
-        requestAnimationFrame(scrollLoop); // Keep looping for a smooth effect
-    };
+    // const scrollLoop = () => {
+    //     const yScrollPosition = window.scrollY;
+    //     setTranslate(0, yScrollPosition * -0.4, heroImageRef.current);
+    //     requestAnimationFrame(scrollLoop); // Keep looping for a smooth effect
+    // };
 
     useEffect(() => {
+        setHeaderData({
+            heading: 'CITB SMSTS Online Courses',
+            paragraph1: 'Online Monday to Friday, Day Release &amp; Weekend Courses Are Available',
+            paragraph2: 'Or View Our Classroom Courses Here - Site Management Safety Training Scheme'
+        })
         // Start the scroll loop when the component mounts
-        scrollLoop();
+        //scrollLoop();
 
         // Clean up the animation frame on unmount
-        return () => {
-            cancelAnimationFrame(scrollLoop);
-        };
-    }, []);
+       // return () => {
+       //     cancelAnimationFrame(scrollLoop);
+        //};
+    }, [setHeaderData]);
 
     useEffect(() => {
         console.log('test');
@@ -46,7 +52,7 @@ const AboutUs = () => {
         <>
             <Header />
 
-            <section className="hero-treatment">
+            {/* <section className="hero-treatment">
             <div className="container">
                     <div className="row">
                         <div className="col-lg-12 pt-40">
@@ -67,7 +73,7 @@ const AboutUs = () => {
                         transform: "translate3d(0, 0, 0)", // Initial transform value
                     }}
                 ></div>
-            </section>       
+            </section>        */}
 
             <section className="front_section Container_wrapper about_section bgWhite">
                 <div className="container">
