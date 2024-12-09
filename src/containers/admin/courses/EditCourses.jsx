@@ -547,7 +547,7 @@ const EditCourse = () => {
                                                             course_information: course.course_information || '',
                                                             additional_information: course.additional_information || '',
                                                             course_schedule_dates: course.course_schedule_dates || courseScheduleDates,
-                                                            zoom_links: course.zoom_links,
+                                                            zoom_links: course.zoom_links || '',
                                                             completing_the_course: course.completing_the_course || '',
                                                             why_use_our_training: course.why_use_our_training || '',
                                                             // course_image: course.course_image || null,

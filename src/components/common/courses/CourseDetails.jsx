@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Loader from "../../../components/common/Loader";
 import Header from '../../../components/common/Header';
+import { useHeader } from '../../common/HeaderContext';
 import Footer from '../../../components/common/Footer';
 import { addToCart } from '../../../store/reducers/cart-reducer';
 import { useDispatch } from 'react-redux';
@@ -19,50 +20,48 @@ const CourseDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { setHeaderData } = useHeader();
     const today = new Date();
-
-    const { course } = location.state || {};
-
-    const [loading, setLoading] = useState(false);
+    const course = location.state.course;
+    //   const [course, setCourse] = useState('');
     const [isOpen, setIsOpen] = useState({ courseInfo: true, additionalInfo: false, Completing_the_course: false, Why_cst_training: false });
-    const [activeIndex, setActiveIndex] = useState(null);
+
+    useEffect(() => {
+        const getNextAvailableDate = () => {
+            return course.course_schedule_dates
+                .map(dateString => new Date(dateString))
+                .filter(date => !isNaN(date))
+                .sort((a, b) => a - b)
+                .find(date => {
+                    const localDate = new Date(date);
+                    localDate.setHours(0, 0, 0, 0);
+                    const localToday = new Date(today);
+                    localToday.setHours(0, 0, 0, 0);
+                    return localDate >= localToday;
+                })
+                ?.toLocaleDateString('en-GB')
+                .split('/')
+                .join('-') || 'No upcoming date available';
+        };
+
+        setHeaderData({
+            heading: `${course.course_title} | ${getNextAvailableDate()} | ${course.course_format}`,
+            paragraph1: 'Online Monday to Friday, Day Release & Weekend Courses Are Available',
+        });
+    }, [course]);
 
 
     if (!course) {
         return <p>No course details available!</p>;
     }
-    console.log('course in detail page---', course)
+    console.log('course in detail page---', course);
     /***********************************************************************/
-
-    /**
-     * Handle toggle
-     * 
-     */
-    // const toggleSection = (section) => {
-    //     setIsOpen((prevState) => ({
-    //         ...prevState,
-    //         [section]: !prevState[section],
-    //         courseInfo: section === 'courseInfo' ? !prevState.courseInfo : false,
-    //         Completing_the_course: section === 'Completing_the_course' ? !prevState.Completing_the_course : false,
-    //         Why_cst_training: section === 'Why_cst_training' ? !prevState.Why_cst_training : false,
-    //         additionalInfo: section === 'additionalInfo' ? !prevState.additionalInfo : false,
-    //     }));
-    // };
-
+    /***********************************************************************/
     const toggleSection = (section) => {
         setIsOpen((prevState) => ({
             ...prevState,
             [section]: !prevState[section],
         }));
-    };
-    /***********************************************************************/
-
-    /**
-    * Handle to toggleAccordion
-    * 
-    */
-    const toggleAccordion = (index) => {
-        setActiveIndex(activeIndex === index ? null : index);
     };
     /***********************************************************************/
 
@@ -73,8 +72,8 @@ const CourseDetails = () => {
     /***********************************************************************/
 
     const handleAddToCart = async (course, e) => {
-        e.preventDefault();
-        const cart = course;
+        // e.preventDefault();
+        const cart = { ...course };
         console.log("add to cart- cart:", cart);
         dispatch(addToCart(cart));
         toast.success(`${cart.course_title} added to cart!`);
@@ -84,10 +83,9 @@ const CourseDetails = () => {
 
     return (
         <>
-            {loading && <Loader />}
             <Header />
             <>
-                <section className="page_banner_wrapper pb-25">
+                {/* <section className="page_banner_wrapper pb-25">
                     <div className="banner-bg">
                         <img src={bannerBg} alt="" />
                     </div>
@@ -95,17 +93,24 @@ const CourseDetails = () => {
                         <div className="row">
                             <div className="col-lg-12  pt-40">
                                 <div className="pb-25 ">
-                                    {/* <h1 className="pb-15">
-                                        {course.course_title}| {course.start_date} | {course.course_format}
-                                    </h1> */}
+                                
                                     <h1 className="pb-15">
                                         {course.course_title} | {
                                             course.course_schedule_dates
                                                 .map(dateString => new Date(dateString))
-                                                .find(date => date >= today)
+                                                .filter(date => !isNaN(date))
+                                                .sort((a, b) => a - b)
+                                                .find(date => {
+                                                    const localDate = new Date(date);
+                                                    localDate.setHours(0, 0, 0, 0);
+                                                    const localToday = new Date(today);
+                                                    localToday.setHours(0, 0, 0, 0);
+                                                    return localDate >= localToday;
+                                                })
                                                 ?.toLocaleDateString('en-GB')
                                                 .split('/')
-                                                .join('-') || 'No upcoming date available'
+                                                .join('-')
+                                            || 'No upcoming date available'
                                         } | {course.course_format}
                                     </h1>
                                     <p>
@@ -117,7 +122,7 @@ const CourseDetails = () => {
                             </div>
                         </div>
                     </div>
-                </section>
+                </section> */}
                 <section className="page_section course_fullInfo_section pt-3">
                     <div className="container">
                         <div className="row">
@@ -125,7 +130,7 @@ const CourseDetails = () => {
                                 <button
                                     type="button"
                                     className="inline-flex flex items-center px-3 py-2 text-sm font-medium  btn-orange rounded-lg"
-                                    onClick={() => navigate(-1)}
+                                    onClick={() => navigate('/', { replace: true })}
                                 >
                                     <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
@@ -141,10 +146,19 @@ const CourseDetails = () => {
                                     {course.course_title} | {
                                         course.course_schedule_dates
                                             .map(dateString => new Date(dateString))
-                                            .find(date => date >= today)
+                                            .filter(date => !isNaN(date))
+                                            .sort((a, b) => a - b)
+                                            .find(date => {
+                                                const localDate = new Date(date);
+                                                localDate.setHours(0, 0, 0, 0);
+                                                const localToday = new Date(today);
+                                                localToday.setHours(0, 0, 0, 0);
+                                                return localDate >= localToday;
+                                            })
                                             ?.toLocaleDateString('en-GB')
                                             .split('/')
-                                            .join('-') || 'No upcoming date available'
+                                            .join('-')
+                                        || 'No upcoming date available'
                                     } | {course.course_format}
                                 </h3>
                                 <div className="row">
@@ -156,6 +170,7 @@ const CourseDetails = () => {
                                             <ul className="class_date">
                                                 {course && course.course_schedule_dates && course.course_schedule_dates.length > 0 ? (
                                                     course.course_schedule_dates
+                                                        .slice()
                                                         .sort((a, b) => new Date(a) - new Date(b))
                                                         .map((date, index) => {
                                                             return (

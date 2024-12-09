@@ -4,45 +4,40 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import bannerBg from '../../assets/images/page-banner-bg.jpg';
 import Loader from "../../components/common/Loader";
+import { useHeader } from './HeaderContext';
 
 const CourseDeliveryOptions = () => {
     const heroImageRef = useRef(null);
+    const { setHeaderData } = useHeader();
 
     const [loading, setLoading] = useState(false);
 
 
-    const setTranslate = (xPos, yPos, el) => {
-        if (el) {
-            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-        }
-    };
+    // const setTranslate = (xPos, yPos, el) => {
+    //     if (el) {
+    //         el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+    //     }
+    // };
 
-    const scrollLoop = () => {
-        const yScrollPosition = window.scrollY;
-        setTranslate(0, yScrollPosition * -0.4, heroImageRef.current);
-        requestAnimationFrame(scrollLoop); // Keep looping for a smooth effect
-    };
-
-    useEffect(() => {
-        // Start the scroll loop when the component mounts
-        scrollLoop();
-
-        // Clean up the animation frame on unmount
-        return () => {
-            cancelAnimationFrame(scrollLoop);
-        };
-    }, []);
-
+    // const scrollLoop = () => {
+    //     const yScrollPosition = window.scrollY;
+    //     setTranslate(0, yScrollPosition * -0.4, heroImageRef.current);
+    //     requestAnimationFrame(scrollLoop); // Keep looping for a smooth effect
+    // };
 
     useEffect(() => {
-        console.log("test----")
-    }, []);
+        setHeaderData({
+            heading: 'CITB SMSTS Online Courses',
+            paragraph1: 'Online Monday to Friday, Day Release &amp; Weekend Courses Are Available',
+            paragraph2: 'Or View Our Classroom Courses Here - Site Management Safety Training Scheme'
+        })
+    }, [setHeaderData]);
 
     return (
         <>
             {loading && <Loader />}
             <Header />
-            <section className="hero-treatment">
+            {/* <section className="hero-treatment">
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-12 pt-40">
@@ -63,7 +58,7 @@ const CourseDeliveryOptions = () => {
                         transform: "translate3d(0, 0, 0)",
                     }}
                 ></div>
-            </section>
+            </section> */}
 
             <div className="site grid-container  hfeed bgWhite" id="page">
                 <div className="site-content" id="content">
