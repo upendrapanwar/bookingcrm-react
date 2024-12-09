@@ -6,5 +6,6 @@ export default Yup.object({
     lastName: Yup.string().required("Last name is required"),
     email: Yup.string().email("Invalid email address").required("Email is required"),
     phone: Yup.string(),
+    subject: Yup.string().required("Subject name is required"),
     message: Yup.string().required("Message is required"),
 });

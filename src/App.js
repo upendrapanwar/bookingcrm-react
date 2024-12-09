@@ -55,6 +55,7 @@ const AdminInstructorsList = lazy(() => import('./containers/admin/instructors/A
 const CreateInstructor = lazy(() => import('./containers/admin/instructors/CreateInstructor'));
 const EditInstructor = lazy(() => import('./containers/admin/instructors/EditInstructor'))
 const InstructorMoreInformation = lazy(()=> import('./containers/admin/instructors/InstructorMoreInformation'))
+const TicketList = lazy(()=> import('./components/common/tickets/TicketList'));
 
 function App() {
 
@@ -104,6 +105,7 @@ export const PublicRoutes = () => {
         <Route path='/course-delivery-option' element={<CourseDeliveryOptions />} />
         <Route path='/checkout' element={<Checkout/>} />
         <Route path='/payment-done' element={<PaymentDone/>} />
+        <Route path='/ticket-list' element={<TicketList/>} />
         {/* <Route path='/complete' element={<CompletePage/>} /> */}
         {/* <Route path='/checkout-form' element={<CheckoutForm/>} /> */}
 
