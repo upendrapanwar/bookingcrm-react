@@ -17,8 +17,8 @@ import "./assets/css/slick.css";
 import "./assets/css/font-awesome.min.css";
 import "./assets/css/bootstrap.min.css";
 import { HeaderProvider } from './components/common/HeaderContext';
-
-
+import { ErrorBoundary } from 'react-error-boundary';
+import ErrorPage from './components/error-page/ErrorPage';
 
 
 axios.defaults.baseURL = config.apiURI;
@@ -26,12 +26,11 @@ const root = createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
     <BrowserRouter>
-      {/* <ErrorBoundary> */}
-      <HeaderProvider>
-        <App />
-      </HeaderProvider>
-      {/* <ErrorBoundary> */}
-
+      <ErrorBoundary FallbackComponent={ErrorPage} onReset={() => (window.location.href = '/')}>
+        <HeaderProvider>
+          <App />
+        </HeaderProvider>
+      </ErrorBoundary>
     </BrowserRouter>
   </Provider>
 );

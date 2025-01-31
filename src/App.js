@@ -28,6 +28,9 @@ import Order from './components/common/Order';
 import CheckoutForm from './components/common/CheckoutForm';
 import CompletePage from './components/common/CompletePage';
 import PaymentDone from './components/common/PaymentDone';
+import TicketAdminList from './containers/admin/tickets/TicketList';
+import AdminReplyTicket from './containers/admin/tickets/ReplyTicket';
+import AdminRaiseTicket from './containers/admin/tickets/RaiseTicket';
 
 
 
@@ -54,8 +57,9 @@ const ContactUs = lazy(() => import('./components/common/ContactUs'));
 const AdminInstructorsList = lazy(() => import('./containers/admin/instructors/AdminInstructorsList'));
 const CreateInstructor = lazy(() => import('./containers/admin/instructors/CreateInstructor'));
 const EditInstructor = lazy(() => import('./containers/admin/instructors/EditInstructor'))
-const InstructorMoreInformation = lazy(()=> import('./containers/admin/instructors/InstructorMoreInformation'))
-const TicketList = lazy(()=> import('./components/common/tickets/TicketList'));
+const InstructorMoreInformation = lazy(() => import('./containers/admin/instructors/InstructorMoreInformation'))
+const TicketList = lazy(() => import('./components/common/tickets/TicketList'));
+const ReplyTicket = lazy(() =>import('./components/common/tickets/ReplyTicket'));
 
 function App() {
 
@@ -99,13 +103,14 @@ export const PublicRoutes = () => {
         <Route path='/course-listing' element={<CourseListing />} />
         <Route path='/course-listing/course-details' element={<CourseDetails />} />
         <Route path='/about-us' element={<AboutUs />} />
-        <Route path='/contact-us' element={<ContactUs />} />
+        <Route path='/contact-us/:id?' element={<ContactUs />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/checkout' element={<Checkout />} />
         <Route path='/course-delivery-option' element={<CourseDeliveryOptions />} />
         <Route path='/checkout' element={<Checkout/>} />
         <Route path='/payment-done' element={<PaymentDone/>} />
         <Route path='/ticket-list' element={<TicketList/>} />
+        <Route path='/reply-ticket/:id' element={<ReplyTicket/>} />
         {/* <Route path='/complete' element={<CompletePage/>} /> */}
         {/* <Route path='/checkout-form' element={<CheckoutForm/>} /> */}
 
@@ -216,7 +221,24 @@ export const AdminRoutes = () => {
             <InstructorMoreInformation />
           </PrivateRoute>
         } />
+        <Route path='tickets/ticket-list' element={
+          <PrivateRoute>
+            <TicketAdminList />
+          </PrivateRoute>
+        } />
+        <Route path='tickets/reply-ticket/:id' element={
+          <PrivateRoute>
+            <AdminReplyTicket />
+          </PrivateRoute>
+        } />
+      <Route path='tickets/raise-ticket' element={
+          <PrivateRoute>
+            <AdminRaiseTicket />
+          </PrivateRoute>
+        } />
+        
       </Routes>
+      
     </>
   );
 }
