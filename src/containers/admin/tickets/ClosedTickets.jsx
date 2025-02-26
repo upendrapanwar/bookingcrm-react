@@ -8,9 +8,11 @@ import AvatarComponent from '../../../components/common/Avatar';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import Loader from '../../common/Loader';
+import Loader from '../../../components/common/Loader';
+import BgColorIconComponent from '../../../components/common/BgColorIcon';
+import * as XLSX from 'xlsx';
 
-const ClosedTicket = () => {
+const ClosedTickets = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState([false]);
     const [closedTickets, setClosedTickets] = useState([false]);
@@ -84,7 +86,7 @@ const ClosedTicket = () => {
         console.log('requestData=', requestData);
 
         if (requestData) {
-            axios.post(`user/change-ticket-status`, requestData).then(response => {
+            axios.post(`admin/change-ticket-status`, requestData).then(response => {
                 if (response.data) {
                     console.log(response.data);
                     toast.success(`Status changed successfully!`, { position: "top-center", autoClose: 3000 });
@@ -107,9 +109,8 @@ const ClosedTicket = () => {
      * 
      */
     const getClosedTickets = (condition) => {
-        const validEmail = localStorage.getItem('valid_email');
         setLoading(true);
-        axios.get(`user/get-closed-tickets/${validEmail}`).then(response => {
+        axios.get(`admin/get-closed-tickets`).then(response => {
             if (response.data) {
                 console.log(response.data)
                 if (response.data.status) {
@@ -125,7 +126,8 @@ const ClosedTicket = () => {
                             email: value.email,
                             subject: value.subject,
                             screenshot: (value.screenshot != null) ? value.screenshot : <AvatarComponent />,
-                            status: (value.status) ? <div className="flex items-center"><div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div><span>{value.status}</span></div> : <div className="flex items-center"><div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div><span></span></div>,
+                            //status: (value.status) ? <div className="flex items-center"><div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div><span>{value.status}</span></div> : <div className="flex items-center"><div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div><span></span></div>,
+                            status: value.status,
                             updatedAt: value.updatedAt,
                             createdAt: value.createdAt
                         });
@@ -153,7 +155,11 @@ const ClosedTicket = () => {
                         {
                             name: "Status",
                             selector: (row, i) => row.status,
-                            cell: (row) => row.status,
+                            cell: (row) => {
+                                var bgColoricon = '';
+                                bgColoricon = 'bg-green-400'; 
+                                return row.status ? (<BgColorIconComponent icon={bgColoricon} status={row.status}/>) : (<div></div>)
+                            },
                             sortable: true,
                         },
                         {
@@ -282,7 +288,7 @@ const ClosedTicket = () => {
     // Handle multiple row deletion
     const deleteSelectedRows = async () => {
         setOpenModal(false);
-        await axios.post(`user/delete-selected-tickets`, selectedRows).then(response => {
+        await axios.post(`admin/delete-selected-tickets`, selectedRows).then(response => {
             if (response.data) {
                 console.log(response.data);
                 toast.success(`Ticket deleted successfully!`, { position: "top-center", autoClose: 3000 });
@@ -380,4 +386,4 @@ const ClosedTicket = () => {
     );
 };
 
-export default ClosedTicket;
+export default ClosedTickets;

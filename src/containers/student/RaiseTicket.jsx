@@ -3,9 +3,9 @@ import { Formik } from "formik";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import RaiseTicketSchema from '../../validation-schemas/RaiseTicketSchema';
+import Loader from '../../components/common/Loader';
 
 const RaiseTicket = () => {
-
     const [loading, setLoading] = useState([false]);
     //const navigate = useNavigate();
     const [imageFile, setImageFile] = useState(null);
@@ -13,14 +13,18 @@ const RaiseTicket = () => {
     const cloudName = process.env.REACT_APP_CLOUD_NAME;
 
     useEffect(() => {
-
+        
     }, []);
 
     /***********************************************************************/
     /***********************************************************************/
-
+    const handleLoading = (status) => {
+        setLoading(status);
+    }
+    /***********************************************************************/
+    /***********************************************************************/
     const handleSubmitTicket = async (values, { resetForm }) => {
-        setLoading(true);
+        handleLoading(true);
         let imageData;
         if (imageFile) {
             imageData = await handleImageUpload();
@@ -52,9 +56,12 @@ const RaiseTicket = () => {
                     toast.error(response.data.message, { autoClose: 3000 });
                     // recaptchaRef.current.reset(); // Reset the ReCAPTCHA
                 }
+                handleLoading(false);
+                
             })
             .catch((error) => {
                 toast.dismiss();
+                setLoading(false);
                 if (error.response) {
                     resetForm();
                     toast.error(error.response.data.message, { autoClose: 3000 });
@@ -63,7 +70,7 @@ const RaiseTicket = () => {
             })
             .finally(() => {
                 setTimeout(() => {
-                    setLoading(false);
+                    handleLoading(false);
                 }, 300);
             });
         
@@ -166,6 +173,7 @@ const RaiseTicket = () => {
     return (
         <>
             <div className="">
+                {loading === true ? <Loader /> : ''}
                 <Formik
                     initialValues={{
                         tfirstName: '',
@@ -174,7 +182,7 @@ const RaiseTicket = () => {
                         subject: '',
                         tmessage: '',
                         screenshot: '',
-                        status: 'opening'
+                        status: 'open'
                     }}
                     onSubmit={(values, { resetForm }) => {
                         handleSubmitTicket(values, { resetForm });
@@ -305,7 +313,7 @@ const RaiseTicket = () => {
                             <div className="form-row">
                                 <div className="form-group col-md-12 text-center">
                                     <button type="submit" className="btn btn-md btn-orange px-4" disabled={!isValid}>
-                                        Submit
+                                        Submit 
                                     </button>
                                 </div>
                             </div>

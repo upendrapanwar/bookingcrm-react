@@ -28,10 +28,6 @@ import Order from './components/common/Order';
 import CheckoutForm from './components/common/CheckoutForm';
 import CompletePage from './components/common/CompletePage';
 import PaymentDone from './components/common/PaymentDone';
-import AdminOrdersList from './containers/admin/orders/AdminOrdersList';
-import OrderMoreInformation from './containers/admin/orders/AdminOrderMoreInformation';
-import CourseDetailsInformation from './containers/admin/courses/CourseDetailsInformation';
-import CourseReviews from './components/common/courses/CourseReviews'
 
 
 
@@ -60,8 +56,6 @@ const CreateInstructor = lazy(() => import('./containers/admin/instructors/Creat
 const EditInstructor = lazy(() => import('./containers/admin/instructors/EditInstructor'))
 const InstructorMoreInformation = lazy(()=> import('./containers/admin/instructors/InstructorMoreInformation'))
 const TicketList = lazy(()=> import('./components/common/tickets/TicketList'));
-
-
 
 function App() {
 
@@ -105,13 +99,14 @@ export const PublicRoutes = () => {
         <Route path='/course-listing' element={<CourseListing />} />
         <Route path='/course-listing/course-details' element={<CourseDetails />} />
         <Route path='/about-us' element={<AboutUs />} />
-        <Route path='/contact-us' element={<ContactUs />} />
+        <Route path='/contact-us/:id?' element={<ContactUs />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/checkout' element={<Checkout />} />
         <Route path='/course-delivery-option' element={<CourseDeliveryOptions />} />
         <Route path='/checkout' element={<Checkout/>} />
         <Route path='/payment-done' element={<PaymentDone/>} />
         <Route path='/ticket-list' element={<TicketList/>} />
+        <Route path='/reply-ticket/:id' element={<ReplyTicket/>} />
         {/* <Route path='/complete' element={<CompletePage/>} /> */}
         {/* <Route path='/checkout-form' element={<CheckoutForm/>} /> */}
 
@@ -224,23 +219,8 @@ export const AdminRoutes = () => {
             <InstructorMoreInformation />
           </PrivateRoute>
         } />
-         <Route path='orders/orders-list' element={
-          <PrivateRoute>
-            <AdminOrdersList />
-          </PrivateRoute>
-        } />
-         <Route path='admin-Order-MoreInformation' element={
-          <PrivateRoute>
-            <OrderMoreInformation />
-          </PrivateRoute>
-        } />
-        <Route path='admin-courseDetails' element={
-          <PrivateRoute>
-            <CourseDetailsInformation />
-          </PrivateRoute>
-        } />
-        
       </Routes>
+      
     </>
   );
 }

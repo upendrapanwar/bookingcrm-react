@@ -1,32 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from 'react';
 import axios from "axios";
-import { toast } from 'react-toastify';
-import { Select, Button, Modal } from "flowbite-react";
-import { HiOutlineTicket, HiOutlineTrash, HiMail, HiOutlineExclamationCircle } from "react-icons/hi";
 import AvatarComponent from '../../../components/common/Avatar';
+import { toast } from 'react-toastify';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import Loader from '../../common/Loader';
+import { useNavigate } from "react-router-dom";
+import { Select, Button, Modal } from "flowbite-react";
+import { HiOutlineTicket, HiOutlineTrash, HiMail, HiOutlineExclamationCircle } from "react-icons/hi";
+import BgColorIconComponent from '../../../components/common/BgColorIcon';
+import * as XLSX from 'xlsx';
+import { CSVLink } from "react-csv";
+import ReactToPrint from "react-to-print";
+import { FaFileExport, FaPrint } from "react-icons/fa";
 
-const ClosedTicket = () => {
+const AllTicket = () => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState([false]);
-    const [closedTickets, setClosedTickets] = useState([false]);
-    const [orderDataSet, setOrderDataSet] = useState([]);
-    const [columns, setColumns] = useState([]);
-    const validEmail = localStorage.getItem('valid_email');
-    const [selectedRows, setSelectedRows] = useState([]);
     const [openModal, setOpenModal] = useState(false);
+    const [loading, setLoading] = useState([false]);
+    const [allTickets, setAllTickets] = useState("");
+    const [columns, setColumns] = useState([]);
+    const [orderDataSet, setOrderDataSet] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const tableRef = useRef();
 
     const customStyles = {
-        pagination: {
-            tableWrapper: {
-                style: {
-                    overflowX: 'auto', // Enables horizontal scroll
-                },
+        tableWrapper: {
+            style: {
+                overflowX: 'auto', // Enables horizontal scroll
             },
+        },
+        pagination: {
             style: {
                 display: 'flex',
                 justifyContent: 'center',
@@ -51,7 +55,6 @@ const ClosedTicket = () => {
         },
 
     };
-
     // Custom text for the pagination buttons
     const paginationComponentOptions = {
         rowsPerPageText: 'Rows per page:',
@@ -64,9 +67,56 @@ const ClosedTicket = () => {
     };
 
     useEffect(() => {
-        getClosedTickets();
+        getAllTickets();
+
     }, []);
 
+    /***********************************************************************/
+    /***********************************************************************/
+    /**
+     * Handle datatable checkbox check
+     * 
+     */
+    const handleChange = (state) => {
+        // You can use setState or dispatch with something like Redux so we can use the retrieved data
+        console.log('Selected Rows: ', state.selectedRows);
+    };
+    /***********************************************************************/
+    /***********************************************************************/
+    const handleSelectedRowsChange = ({ selectedRows }) => {
+        const selectedIds = selectedRows.map(row => row.id);
+        setSelectedRows(selectedIds);
+    };
+    // Handle multiple row deletion
+    const deleteSelectedRows = async () => {
+        setOpenModal(false);
+        await axios.post(`admin/delete-selected-tickets`, selectedRows).then(response => {
+            if (response.data) {
+                console.log(response.data);
+                toast.success(`Ticket deleted successfully!`, { position: "top-center", autoClose: 3000 });
+                setSelectedRows([]);
+                getAllTickets();
+            }
+        }).catch(error => {
+
+            if (error.response) {
+                toast.error('Something went wrong! Try Again!', { position: "top-center", autoClose: 3000 });
+            }
+        });
+        console.log('selectedRows=', selectedRows);
+
+    };
+    /**
+     * Navigates to reply ticket page
+     * 
+     */
+    const handleReplyTicket = (id) => {
+        console.log('id=', id)
+        if (id) {
+            navigate(`/admin/tickets/reply-ticket/${id}`);
+        }
+
+    }
     /***********************************************************************/
     /***********************************************************************/
     /**
@@ -84,11 +134,11 @@ const ClosedTicket = () => {
         console.log('requestData=', requestData);
 
         if (requestData) {
-            axios.post(`user/change-ticket-status`, requestData).then(response => {
+            axios.post(`admin/change-ticket-status`, requestData).then(response => {
                 if (response.data) {
                     console.log(response.data);
                     toast.success(`Status changed successfully!`, { position: "top-center", autoClose: 3000 });
-                    getClosedTickets('statusChanged');
+                    getAllTickets();
                 }
             }).catch(error => {
 
@@ -103,37 +153,101 @@ const ClosedTicket = () => {
     /***********************************************************************/
     /***********************************************************************/
     /**
-     * Get closed ticket list
+     * Export To Excel XLSX
+     * 
      * 
      */
-    const getClosedTickets = (condition) => {
-        const validEmail = localStorage.getItem('valid_email');
-        setLoading(true);
-        axios.get(`user/get-closed-tickets/${validEmail}`).then(response => {
+    const exportToExcel = () => {
+        const headers = columns.map((col) => col.name);
+        const rows = orderDataSet.map((row) => columns.map((col) => row[col.selector]));
+    
+        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    
+        XLSX.writeFile(workbook, "data-table.xlsx");
+      };
+    /***********************************************************************/
+    /***********************************************************************/
+    const csvExport = (
+        <CSVLink
+          data={orderDataSet}
+          headers={columns.map((col) => ({ label: col.name, key: col.selector }))}
+          filename="table-data.csv"
+        >
+          Export to CSV
+        </CSVLink>
+      );
+    const handleExportClick = (format) => {
+        console.log(`Export clicked for format: ${format}`);
+        // Add your export logic for different formats
+        if (format === "csv") {
+          console.log("Exporting to CSV...");
+          // Call your CSV export logic here
+        } else if (format === "xlsx") {
+          console.log("Exporting to Excel...");
+          // Call your XLSX export logic here
+        }
+      };
+    const handleAddTicket = () => {
+        navigate('/admin/tickets/raise-ticket');
+    }
+     // Define Custom Actions
+  const actions = (
+    <div className="d-flex">
+      {/* Export to Excel Button */}
+      <button
+        className="btn btn-primary me-2"
+        onClick={exportToExcel}
+        title="Export to Excel"
+      >
+        <FaFileExport /> Export
+      </button>
+
+      {/* Print Button */}
+      <ReactToPrint
+        trigger={() => (
+          <button className="btn btn-secondary" title="Print Table">
+            <FaPrint /> Print
+          </button>
+        )}
+        content={() => tableRef.current}
+      />
+    </div>
+  );
+    /**
+     * Get all ticket list
+     * 
+     * 
+     */
+    const getAllTickets = () => {
+        axios.get(`admin/get-all-tickets`).then(response => {
             if (response.data) {
                 console.log(response.data)
                 if (response.data.status) {
-                    setClosedTickets(response.data.data);
+                    setAllTickets(response.data.data);
                     console.log(response.data.data)
                     var ticketsData = response.data.data;
                     let ticketsDataArray = [];
                     ticketsData.forEach(function (value) {
                         ticketsDataArray.push({
                             id: value.id,
-                            first_name: value.firstName,
-                            last_name: value.lastName,
-                            email: value.email,
-                            subject: value.subject,
-                            screenshot: (value.screenshot != null) ? value.screenshot : <AvatarComponent />,
-                            status: (value.status) ? <div className="flex items-center"><div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div><span>{value.status}</span></div> : <div className="flex items-center"><div className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2"></div><span></span></div>,
+                            first_name: value.firstName || '',
+                            last_name: value.lastName || '',
+                            email: value.email || '',
+                            subject: value.subject || '',
+                            screenshot: (value.screenshot != null) ? value.screenshot.toString() : <AvatarComponent />,
+                            //status: (value.status) ? (<div className="flex items-center"><div className={`h-2.5 w-2.5 rounded-full ${bgColoricon} mr-2`}></div><span>{value.status}</span></div>) : (<div></div>),
+                            status: value.status,
                             updatedAt: value.updatedAt,
                             createdAt: value.createdAt
                         });
+                        
                     });
                     var columnsData = [
                         {
                             name: "Name",
-                            selector: (row, i) => row.first_name + + row.last_name,
+                            selector: (row, i) => `${row.first_name}  ${row.last_name}`,
                             cell: (row) => <span>{row.first_name} {row.last_name}</span>,
                             sortable: true,
                         },
@@ -153,7 +267,22 @@ const ClosedTicket = () => {
                         {
                             name: "Status",
                             selector: (row, i) => row.status,
-                            cell: (row) => row.status,
+                            cell: (row) => {
+                                var bgColoricon = '';
+                                if (row.status === "open") {
+                                    bgColoricon = 'bg-red-600';
+                                }
+                                if (row.status === "waiting") {
+                                    bgColoricon = 'bg-yellow-400';
+                                }
+                                if (row.status === "closed") {
+                                    bgColoricon = 'bg-green-400';
+                                }
+                                return row.status ?                                
+                                 (
+                                    <BgColorIconComponent icon={bgColoricon} status={row.status}/>
+                                ) : (<div></div>);
+                            },
                             sortable: true,
                         },
                         {
@@ -196,16 +325,17 @@ const ClosedTicket = () => {
                             },
                             sortable: true,
                         },
+
                         {
                             name: "Actions",
                             cell: (row) => (
 
                                 <>
-
                                     <Button color="blue" onClick={() => handleReplyTicket(row.id)}>
                                         <HiMail className="mr-2 h-5 w-5" />
                                         Reply
                                     </Button>
+
                                 </>
                             ),
                         },
@@ -216,103 +346,21 @@ const ClosedTicket = () => {
                 }
 
             }
-            setLoading(false);
         }).catch(error => {
-            setLoading(false);
-            setColumns([]);
-            setOrderDataSet([]);
-            if (error.response && typeof condition === undefined) {
+            toast.dismiss();
+            if (error.response) {
                 toast.error('Data is not available', { position: "top-center", autoClose: 3000 });
             }
         });
 
     }
-
-    /***********************************************************************/
-    /***********************************************************************/
-    /**
-     * Handle datatable checkbox check
-     * 
-     */
-    const handleChange = (state) => {
-        // You can use setState or dispatch with something like Redux so we can use the retrieved data
-        console.log('Selected Rows: ', state.selectedRows);
-    };
-    /***********************************************************************/
-    /***********************************************************************/
-    /**
-     * Handle selected row change
-     * 
-     * @param Object
-     * @return null
-     * 
-    */
-    const handleSelectedRowsChange = ({ selectedRows }) => {
-        const selectedIds = selectedRows.map(row => row.id);
-        setSelectedRows(selectedIds);
-    };
-    /***********************************************************************/
-    /***********************************************************************/
-    /**
-     * Manage delete selected user by id
-     * 
-     * @param id
-     * @return Object|null
-     * 
-    */
-    const handleDeleteSeletedData = (id) => {
-        console.log('Update id: ', id);
-    }
     /***********************************************************************/
     /***********************************************************************/
 
-    /**
-     * Navigates to reply ticket page
-     * 
-     */
-    const handleReplyTicket = (id) => {
-        console.log('id=', id)
-        if (id) {
-            navigate(`/reply-ticket/${id}`);
-        }
-
-    }
-    /***********************************************************************/
-    /***********************************************************************/
-    // Handle multiple row deletion
-    const deleteSelectedRows = async () => {
-        setOpenModal(false);
-        await axios.post(`user/delete-selected-tickets`, selectedRows).then(response => {
-            if (response.data) {
-                console.log(response.data);
-                toast.success(`Ticket deleted successfully!`, { position: "top-center", autoClose: 3000 });
-                setSelectedRows([]);
-                getClosedTickets();
-            }
-        }).catch(error => {
-
-            if (error.response) {
-                toast.error('Something went wrong! Try Again!', { position: "top-center", autoClose: 3000 });
-            }
-        });
-        console.log('selectedRows=', selectedRows);
-
-    };
-    /***********************************************************************/
-    /***********************************************************************/
-    /**
-    * Navigate to raise a ticket page
-    * 
-    */
-    const handleAddTicket = () => {
-        navigate('/contact-us/1');
-    }
-    /***********************************************************************/
-    /***********************************************************************/
     return (
         <>
             <div className="">
-                {loading === true ? <Loader /> : ''}
+
                 <div className="flex flex-col">
                     <div className="overflow-x-auto w-full">
                         <div className="min-w-full align-middle">
@@ -327,31 +375,35 @@ const ClosedTicket = () => {
                                             <HiOutlineTrash className="mr-2 h-5 w-5" />
                                             Delete Ticket
                                         </Button>
-
-
                                     </div>
-                                    <DataTableExtensions
-                                        columns={columns}
-                                        data={orderDataSet}
-                                    >
-                                        <DataTable
-                                            title="Table"
-                                            selectableRows
-                                            onSelectedRowsChange={handleSelectedRowsChange}
-                                            noHeader
-                                            defaultSortField="id"
-                                            defaultSortAsc={false}
-                                            pagination
-                                            paginationComponentOptions={paginationComponentOptions}
-                                            highlightOnHover
-                                            Clicked
-                                            Selected={handleChange}
-                                            customStyles={customStyles}
-                                        />
-                                    </DataTableExtensions>
+
+                                    <div className="table-container">
+                                        <DataTableExtensions
+                                            columns={columns}
+                                            data={orderDataSet}
+                                            export={false}
+                                            print={false}
+                                            exportHeaders
+                                        >
+                                            <DataTable
+                                                title="Table"
+                                                selectableRows
+                                                onSelectedRowsChange={handleSelectedRowsChange}
+                                                noHeader
+                                                defaultSortField="id"
+                                                defaultSortAsc={false}
+                                                pagination
+                                                paginationComponentOptions={paginationComponentOptions}
+                                                highlightOnHover
+                                                Clicked
+                                                Selected={handleChange}
+                                                customStyles={customStyles}
+                                                
+                                            />
+                                        </DataTableExtensions>
+                                    </div>
                                 </div>
                             ) : <div class="overflow-hidden shadow">No Record Found!</div>}
-
                         </div>
                         <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
                             <Modal.Header />
@@ -380,4 +432,4 @@ const ClosedTicket = () => {
     );
 };
 
-export default ClosedTicket;
+export default AllTicket;
