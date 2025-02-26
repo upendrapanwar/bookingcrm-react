@@ -5,6 +5,7 @@ import Footer from '../../components/common/Footer';
 import { Formik } from "formik";
 import { toast } from 'react-toastify';
 import axios from "axios";
+import { useHeader } from '../../components/common/HeaderContext';
 
 import flatpickr from 'flatpickr';
 import 'react-quill/dist/quill.snow.css';
@@ -14,6 +15,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 const InstructorDashboard = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
+    const { setHeaderData } = useHeader();
     const instructorId = queryParams.get('id');
     const instructorName = queryParams.get('name');
 
@@ -30,6 +32,19 @@ const InstructorDashboard = () => {
     console.log('selectedRanges--', selectedRanges)
     const fpRef = useRef(null);
     const formikRef = useRef(null);
+
+
+     useEffect(() => {
+            setHeaderData({
+                heading: 'Instructor',
+                paragraph1: ' ',
+                paragraph2: ' '
+            })
+            /*scrollLoop();
+            return () => {
+                cancelAnimationFrame(scrollLoop);
+            };*/
+        }, []);
 
     useEffect(() => {
         if (instructorId && instructorName) {
@@ -72,6 +87,9 @@ const InstructorDashboard = () => {
                 altInput: true,
                 altFormat: "F j, Y",
                 inline: true, // Keep calendar always visible
+                defaultDate: selectedRanges.length
+                ? [selectedRanges[selectedRanges.length - 1][0], selectedRanges[selectedRanges.length - 1][1]]
+                : null,
                 onDayCreate: (dObj, dStr, fp, dayElem) => {
                     const dateStr = dayElem.dateObj.toLocaleDateString('en-CA'); // Format: YYYY-MM-DD
 
@@ -160,7 +178,7 @@ const InstructorDashboard = () => {
     return (
         <>
             <Header />
-            <section className="main_container pt-70 pb-25">
+            <section className="main_container pt-70 pb-25 bgWhite">
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12">

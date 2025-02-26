@@ -10,12 +10,13 @@ import Loader from "../../components/common/Loader";
 import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 import { toast } from 'react-toastify';
-import cardsImage from '../../assets/images/cards.png'
+import cardsImage from '../../assets/images/cards.png';
+import { useHeader } from '../../components/common/HeaderContext';
 
 const stripePromise = loadStripe("pk_test_51QKGTWCHTdQvfuyCjb1L0IIPZZrMyeB49Jg7kOdfbYo5C6vcAPM3ZiQNAnViMPpYRhDX0Mr81ThvXty30PXi6bkh00DbyB1Lgr");
 
 const Checkout = () => {
-
+    const { setHeaderData } = useHeader();
     const cart = useSelector((state) => state.cart.cart || []);
     const totalPrice = cart.reduce((total, item) => total + item.regular_price * item.quantity, 0);
 
@@ -32,12 +33,18 @@ const Checkout = () => {
     const toPay = ((totalPrice * 1.1).toFixed(2) * 45) / 100;
     const futurePay = Math.floor((totalPrice * 1.1).toFixed(2)) - toPay;
 
-
+    useEffect(() => {
+        setHeaderData({
+            heading: 'Checkout',
+            paragraph1: '',
+            paragraph2: ''
+        })
+    }, []);
 
     useEffect(() => {
         setToPayAmount(toPay);
         setFuturePayAmount(futurePay);
-    }, [totalPrice,formvalues]);
+    }, [totalPrice, formvalues]);
 
 
     const paydepositeValue = {
@@ -110,10 +117,10 @@ const Checkout = () => {
         <>
             {loading === true ? <Loader /> : ''}
             <Header />
-            <div className="p-4 sv__checkout_wrapper">
-                <div className="text-center py-4">
+            <div className="p-4 sv__checkout_wrapper bgWhite">
+                {/* <div className="text-center py-4">
                     <h2 className="text-3xl font-extrabold text-gray-800 inline-block border-b-[3px] border-gray-800 pb-1">Checkout</h2>
-                </div>
+                </div> */}
                 <div className="container mt-4">
                     <div className="row">
                         <div className="col-md-8 order-md-2 mb-4">

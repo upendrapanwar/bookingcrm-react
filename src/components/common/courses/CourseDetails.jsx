@@ -81,6 +81,16 @@ const CourseDetails = () => {
     /***********************************************************************/
     /***********************************************************************/
 
+    const handleReviews = async (course) => {
+        // e.preventDefault();
+        // const course = { ...course };
+        console.log("course---reviews--handle:", course);
+        const id = course.id
+        navigate(`/course-listing/course-reviews?id=${id}`);
+    }
+    /***********************************************************************/
+    /***********************************************************************/
+
     return (
         <>
             <Header />
@@ -123,7 +133,7 @@ const CourseDetails = () => {
                         </div>
                     </div>
                 </section> */}
-                <section className="page_section course_fullInfo_section pt-3">
+                <section className="page_section course_fullInfo_section pt-3 bgWhite">
                     <div className="container">
                         <div className="row">
                             <div className="d-flex justify-content-end mb-3">
@@ -224,12 +234,18 @@ const CourseDetails = () => {
                                             </ul>
                                         </div>
                                     </div>
-                                    <div className="col-lg-12">
+                                    <div className="col-lg-12 flex justify-between ">
                                         <button
-                                            className="btn btn-md btn-orange px-4"
+                                            className="btn btn-md btn-orange ms-5 "
                                             onClick={(e) => handleAddToCart(course, e)}
                                         >
                                             Add to cart
+                                        </button>
+                                        <button
+                                            className="btn btn-md btn-orange me-5"
+                                            onClick={(e) => handleReviews(course)}
+                                        >
+                                            Reviews
                                         </button>
                                     </div>
                                 </div>{" "}

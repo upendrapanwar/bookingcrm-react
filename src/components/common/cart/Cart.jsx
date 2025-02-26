@@ -1,15 +1,27 @@
-import React from 'react';
+import React, {useEffect}from 'react';
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 import { useSelector, useDispatch } from 'react-redux';
 import { incrementQuantity, decrementQuantity, removeItem } from '../../../store/reducers/cart-reducer';
 import { useNavigate } from 'react-router-dom';
+import { useHeader } from '../../common/HeaderContext';
 
 const Cart = () => {
+    const { setHeaderData } = useHeader();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const cart = useSelector((state) => state.cart.cart || []);
     const totalPrice = cart.reduce((total, item) => total + item.regular_price * item.quantity, 0);
+
+
+     useEffect(() => {
+            setHeaderData({
+                heading: 'Shopping Cart',
+                paragraph1: '',
+                paragraph2: ''
+            })
+        }, []);
+
 
     const handleCheckoutStripe = () => {
         navigate("/checkout");
@@ -22,11 +34,11 @@ const Cart = () => {
     return (
         <>
             <Header />
-            <div className="bg-gray-100 py-8 sc__cart_wrapper">
-                <div className="text-center py-3 pt-5">
+            <div className="bg-gray-100 py-8 sc__cart_wrapper bgWhite">
+                {/* <div className="text-center py-3 pt-5">
                     <h2 className="text-3xl font-extrabold text-gray-800 inline-block border-b-[3px] border-gray-800 pb-1">Shopping Cart</h2>
-                </div>
-                <div className="container mx-auto px-4  mb-8">
+                </div> */}
+                <div className="container mx-auto px-4  pb-3">
                     {/* <h1 className="text-2xl font-semibold my-4">Shopping Cart</h1> */}
                     {cart.length > 0 ? (
                         <div className="flex flex-col md:flex-column gap-2">
@@ -132,7 +144,7 @@ const Cart = () => {
                             </div>
                         </div>
                     ) : (
-                        <div className="text-center mt-10">
+                        <div className="text-center pt-50 bgWhite pb-5">
                             <h2 className="text-lg font-semibold mb-4">Your cart is empty!</h2>
                             <button
                                 className="bg-blue text-white font-bold py-2 px-4 rounded"

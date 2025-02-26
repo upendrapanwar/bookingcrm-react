@@ -1,16 +1,26 @@
+body,
+.admin-main-container {
+    background-color: #faf9fd !important;
+}
+
+.admin-main-container .bg-white {
+    background-color: #FFF !important;
+}
+
 .admin_header_nav {
     background-color: #27374D;
-    z-index:99;
+    z-index: 99;
 }
 
 .admin_sidebar {
-    background-color: #E7F6F2;
+    background-color: #FFF;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .admin_sidebar ul li button:hover,
 .admin_sidebar ul li a:hover {
-    background-color: #9DB2BF;
-    color: #27374D;
+    background-color: #b599e6;
+    color: #464646;
     text-decoration: none;
 }
 
@@ -19,13 +29,13 @@
 }
 
 .admin-main-container button {
-    background-color: #FFD700;
-    color: #27374D !important;
+    background-color: #1a237e;
+    color: #FFF !important;
 }
 
 .admin-main-container button:hover {
-    background-color: #FFD700;
-    color: #27374D !important;
+    background-color: #1a237e;
+    color: #FFF !important;
 }
 
 .admin-main-container .editBtn,
@@ -48,6 +58,7 @@
 .admin-main-container #pagination-next-page,
 .admin-main-container #pagination-last-page {
     padding: 8px;
+    background-color: #b599e6;
 }
 
 .admin-main-container label {
@@ -55,10 +66,117 @@
 }
 
 .table-responsive {
-z-index:9;
+    z-index: 9;
 }
 
-.admin-main-container .form-check { margin-right: 25px;}
-.admin-main-container .form-check  label {
-    margin-top: 0px; margin-left: 5px;
+.admin-main-container .form-check {
+    margin-right: 25px;
 }
+
+.admin-main-container .form-check label {
+    margin-top: 0px;
+    margin-left: 5px;
+}
+
+
+/********************************* instructor  callender**********************/
+
+.admin-main-container .fc-toolbar .fc-button {
+    color: white !important;
+    border: none !important;
+}
+
+
+.fc-event-content {
+    display: flex;
+    flex-direction: column;  
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+
+.event-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/* .course-title {
+    margin-top: 5px;  
+    font-size: 14px;   
+    font-weight: 500;
+} */
+
+
+.engaged-event .course-title {
+    color: #ffffff;  
+    background-color: #7e89bb !important;  
+    height: 100%;  
+    width: 100%; 
+    display: block;  
+    text-align: start;  
+    font-size: 10px;
+    padding: 5px 0 5px 5px;
+
+    flex-direction: column;  
+    justify-content: center;
+}
+
+.course-divider {
+    border: 0;  
+    height: 2px;  
+    background-color: #080808; 
+    padding: 0px 0 0px 0px;
+    margin: 0%;
+   width: 100%;
+}
+
+.fc .fc-daygrid {
+    max-width: calc(150px * 7); 
+    overflow-x: auto; 
+}
+
+
+
+
+   .rating {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+  }
+  
+  .star {
+    font-size: 30px;  
+    margin-right: 5px; 
+    position: relative;
+  }
+  
+  .star::before {
+    content: '★';  
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #ccc; 
+  }
+  
+  .star.rated::before {
+    color: #ffc107; 
+  }
+  
+  .star.half-star::before {
+    color: #ffc107; 
+    background: linear-gradient(to right, #ffc107 50%, #ccc 50%);
+    -webkit-background-clip: text; 
+    background-clip: text;
+    color: transparent; 
+  }
+
+  button.custom-delete-btn {
+    margin-top: -4px;
+    color: rgb(209, 16, 16) !important; /* Apply text color */
+    background-color: transparent !important; /* Remove background */
+    /* height: 5em !important; 
+    width: 25em !important;  */
+  }

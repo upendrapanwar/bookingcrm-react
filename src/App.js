@@ -28,6 +28,10 @@ import Order from './components/common/Order';
 import CheckoutForm from './components/common/CheckoutForm';
 import CompletePage from './components/common/CompletePage';
 import PaymentDone from './components/common/PaymentDone';
+import AdminOrdersList from './containers/admin/orders/AdminOrdersList';
+import OrderMoreInformation from './containers/admin/orders/AdminOrderMoreInformation';
+import CourseDetailsInformation from './containers/admin/courses/CourseDetailsInformation';
+import CourseReviews from './components/common/courses/CourseReviews'
 
 
 
@@ -56,6 +60,8 @@ const CreateInstructor = lazy(() => import('./containers/admin/instructors/Creat
 const EditInstructor = lazy(() => import('./containers/admin/instructors/EditInstructor'))
 const InstructorMoreInformation = lazy(()=> import('./containers/admin/instructors/InstructorMoreInformation'))
 const TicketList = lazy(()=> import('./components/common/tickets/TicketList'));
+
+
 
 function App() {
 
@@ -111,6 +117,8 @@ export const PublicRoutes = () => {
 
         
         <Route path='/order-done' element={<Order/>} />
+
+        <Route path='/course-listing/course-reviews' element={<CourseReviews />} />
         <Route index element={<Home />} />
       </Routes>
     </>
@@ -216,6 +224,22 @@ export const AdminRoutes = () => {
             <InstructorMoreInformation />
           </PrivateRoute>
         } />
+         <Route path='orders/orders-list' element={
+          <PrivateRoute>
+            <AdminOrdersList />
+          </PrivateRoute>
+        } />
+         <Route path='admin-Order-MoreInformation' element={
+          <PrivateRoute>
+            <OrderMoreInformation />
+          </PrivateRoute>
+        } />
+        <Route path='admin-courseDetails' element={
+          <PrivateRoute>
+            <CourseDetailsInformation />
+          </PrivateRoute>
+        } />
+        
       </Routes>
     </>
   );

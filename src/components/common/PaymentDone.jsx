@@ -7,18 +7,29 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { clearCart } from '../../store/reducers/cart-reducer'
 import { toast } from "react-toastify";
+import { useHeader } from '../../components/common/HeaderContext';
 
 const PaymentDone = () => {
 
     const dispatch = useDispatch();
     const location = useLocation();
     const orderDetails = location.state?.orderDetails;
+    const { setHeaderData } = useHeader();
 
     const [message, setMessage] = useState("Verifying payment...");
     const [paymentStatus, setPaymentStatus] = useState(null);
 
     const [orderDetailsData, setOrderDetailsData] = useState({ courses: [] });
-    const totalPrice = orderDetailsData.courses.reduce((total, item) => total + item.regular_price * item.quantity, 0);
+    const totalPrice = orderDetailsData.courses.reduce((total, item) => total + item.course_price * item.course_quantity, 0);
+
+
+    useEffect(() => {
+        setHeaderData({
+            heading: 'Payment Done!',
+            paragraph1: '',
+            paragraph2: ''
+        })
+    }, []);
 
 
     useEffect(() => {
@@ -33,7 +44,7 @@ const PaymentDone = () => {
 
 
     const getOrderDetails = (orderDetails) => {
-        console.log("orderDetailsorderDetailsorderDetailsorderDetails",orderDetails)
+        console.log("orderDetailsorderDetailsorderDetailsorderDetails", orderDetails)
         axios.get(`user/get-order-details?id=${orderDetails.id}`)
             .then(response => {
                 toast.dismiss();
@@ -53,7 +64,7 @@ const PaymentDone = () => {
     return (
         <>
             <Header />
-            <div className="bg-gray-100">
+            <div className="bg-gray-100 bgWhite">
                 <div className="container py-3">
                     <svg viewBox="0 0 24 24" className="text-green-600 w-16 h-16 mx-auto my-6">
                         <path fill="currentColor"
@@ -61,7 +72,7 @@ const PaymentDone = () => {
                         </path>
                     </svg>
                     <div className="text-center">
-                        <h3 className="md:text-2xl text-base text-gray-900 font-semibold text-center mb-4">Payment Done!</h3>
+                        {/* <h3 className="md:text-2xl text-base text-gray-900 font-semibold text-center mb-4">Payment Done!</h3> */}
                         <p className="text-gray-600 my-2">Thank you for completing your secure online payment.<br />Have a great day!  </p>
 
                     </div>
@@ -71,104 +82,122 @@ const PaymentDone = () => {
                         <div className="card-header text-white">
                             <h5 className="mb-0 text-white">Order Details</h5>
                         </div>
-                        <div className="card-body">
-                            <div className="row">
-                                <div className="col-md-6">
-                                    <h6>Order ID:</h6>
-                                    <p>{orderDetailsData.id}</p>
+
+                        {orderDetailsData ? (
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <h6>Order ID:</h6>
+                                        <p>{orderDetailsData.id}</p>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <h6>Order Date:</h6>
+                                        {/* //  <p>{orderDetails.createdAt}</p> */}
+                                        <p>{new Date(orderDetailsData.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                    </div>
                                 </div>
-                                <div className="col-md-6">
-                                    <h6>Order Date:</h6>
-                                    {/* //  <p>{orderDetails.createdAt}</p> */}
-                                    <p>{new Date(orderDetailsData.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <h6>Customer Name:</h6>
+                                        {/* <p>{orderDetailsData.studentId.first_name}</p> */}
+                                        <p>
+                                            {orderDetailsData?.studentId?.first_name || 'Unknown'} {orderDetailsData?.studentId?.last_name || ''}
+                                        </p>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <h6>Email:</h6>
+                                        <p>{orderDetailsData.studentId?.email || 'Unknown'}</p>
+                                    </div>
+                                </div>
+                                <hr />
+                                <h6 className="mb-3">Items Ordered:</h6>
+                                <div className="table-responsive">
+                                    <table className="table table-striped border rounded">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Product</th>
+                                                <th>Instructor</th>
+                                                <th>Quantity</th>
+                                                <th>Price</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {orderDetailsData.courses.map((item, index) => (
+                                                <tr key={index}>
+                                                    <td>{index + 1}</td>
+                                                    <td>{item.course_title}</td>
+                                                    <td>{item.instructorName || 'Assign soon'}</td>
+                                                    <td>{item.course_quantity || 1}</td>
+
+                                                    <td>£{(item.course_price * item.course_quantity).toFixed(2)|| 0.00}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colSpan="4" className="text-end"><strong>Subtotal:</strong></td>
+                                                {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                                <td><strong><b>£&nbsp;</b>{totalPrice.toFixed(2)}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td colSpan="4" className="text-end"><strong>VAT:</strong></td>
+                                                {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                                <td><strong><b>£&nbsp;</b>{(totalPrice * 0.1).toFixed(2)}</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td colSpan="4" className="text-end"><strong>Total:</strong></td>
+                                                {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
+                                                <td><strong><b>£&nbsp;</b>{(totalPrice * 1.1).toFixed(2)}</strong></td>
+                                            </tr>
+
+                                            {orderDetailsData.toPay && (
+                                                <tr>
+                                                    <td colSpan="4" className="text-end"><strong className="text-end">You have already paid :</strong></td>
+                                                    <td>
+                                                        <strong>
+                                                            <b>£&nbsp;</b>{orderDetailsData.toPay.toFixed(2)}
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            {orderDetailsData.futurePay && (
+                                                <tr>
+                                                    <td colSpan="4" className="text-end"><strong className="text-end">You need to pay the remaining amount of  :</strong></td>
+                                                    <td>
+                                                        <strong><b>£&nbsp;</b>{orderDetailsData.futurePay.toFixed(2)}</strong>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            {orderDetailsData.futurePay && orderDetailsData.toPay && (
+                                                <tr>
+                                                    <td colSpan="4" className="text-danger">
+                                                        Term & Condition: The remaining amount of
+                                                        &nbsp;<strong>
+                                                            <b>£&nbsp;</b>{orderDetailsData.futurePay.toFixed(2)}
+                                                        </strong> must be paid at least 24 hours before the course starts. Otherwise, the amount of
+                                                        &nbsp;<strong className="text-success">
+                                                            <b>£&nbsp;</b>{orderDetailsData.toPay.toFixed(2)}
+                                                        </strong> already paid will not be refunded.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tfoot>
+                                    </table>
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="col-md-6">
-                                    <h6>Customer Name:</h6>
-                                    <p>{orderDetailsData.firstName}</p>
-                                </div>
-                                <div className="col-md-6">
-                                    <h6>Email:</h6>
-                                    <p>{orderDetailsData.email}</p>
+
+                        ) : (
+                            <div className="card-body">
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <h6>loading...</h6>
+                                        {/* <p>{orderDetailsData.id}</p> */}
+                                    </div>
                                 </div>
                             </div>
-                            <hr />
-                            <h6 className="mb-3">Items Ordered:</h6>
-                            <div className="table-responsive">
-                                <table className="table table-striped border rounded">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Product</th>
-                                            <th>Quantity</th>
-                                            <th>Price</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {orderDetailsData.courses.map((item, index) => (
-                                            <tr key={index}>
-                                                <td>{index + 1}</td>
-                                                <td>{item.course_title}</td>
-                                                <td>{item.quantity}</td>
-
-                                                <td>£{item.regular_price * item.quantity}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colSpan="3" className="text-end"><strong>Subtotal:</strong></td>
-                                            {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
-                                            <td><strong><b>£&nbsp;</b>{totalPrice.toFixed(2)}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan="3" className="text-end"><strong>VAT:</strong></td>
-                                            {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
-                                            <td><strong><b>£&nbsp;</b>{(totalPrice * 0.1).toFixed(2)}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan="3" className="text-end"><strong>Total:</strong></td>
-                                            {/* <span><b>£&nbsp;</b>{totalPrice.toFixed(2)}</span> */}
-                                            <td><strong><b>£&nbsp;</b>{(totalPrice * 1.1).toFixed(2)}</strong></td>
-                                        </tr>
-
-                                        {orderDetailsData.toPay && (
-                                            <tr>
-                                                <td colSpan="3" className="text-end"><strong className="text-end">You have already paid :</strong></td>
-                                                <td>
-                                                    <strong>
-                                                        <b>£&nbsp;</b>{orderDetailsData.toPay.toFixed(2)}
-                                                    </strong>
-                                                </td>
-                                            </tr>
-                                        )}
-                                        {orderDetailsData.futurePay && (
-                                            <tr>
-                                                <td colSpan="3" className="text-end"><strong className="text-end">You need to pay the remaining amount of  :</strong></td>
-                                                <td>
-                                                    <strong><b>£&nbsp;</b>{orderDetailsData.futurePay.toFixed(2)}</strong>
-                                                </td>
-                                            </tr>
-                                        )}
-                                        {orderDetailsData.futurePay && orderDetailsData.toPay && (
-                                            <tr>
-                                                <td colSpan="4" className="text-danger">
-                                                    Term & Condition: The remaining amount of
-                                                    &nbsp;<strong>
-                                                        <b>£&nbsp;</b>{orderDetailsData.futurePay.toFixed(2)}
-                                                    </strong> must be paid at least 24 hours before the course starts. Otherwise, the amount of
-                                                    &nbsp;<strong className="text-success">
-                                                        <b>£&nbsp;</b>{orderDetailsData.toPay.toFixed(2)}
-                                                    </strong> already paid will not be refunded.
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
+                        )}
                     </div>
 
                     <div className="text-center mt-2 mb-3">

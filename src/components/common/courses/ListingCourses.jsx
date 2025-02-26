@@ -30,7 +30,7 @@ const CourseListing = (passedData) => {
     const [searchType, setSearchType] = useState(null);
     const today = new Date();
     const [activeTab, setActiveTab] = useState(0);
-console.log('courses----11',courses)
+   // console.log('courses----11', courses)
 
     /***********************************************************************/
     /***********************************************************************/
@@ -507,12 +507,27 @@ console.log('courses----11',courses)
                                                                                                             ))}
                                                                                                         </ul>
                                                                                                         {course.course_format === 'Online' && <li className='pt-2'>Remote (Zoom)</li>}
+
+                                                                                                        <li className='pt-2'>
+                                                                                                            Seats Left: {course.enrollment_capacity ? course.enrollment_capacity : '0'}
+                                                                                                        </li>
                                                                                                     </ul>
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div className="pr_col product-btns">
                                                                                                 <div className="pr-btns">
-                                                                                                    <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link>
+                                                                                                    {/* <Link to="#" className="btns add-to-cart" onClick={() => handleAddToCart(course)}>Add to cart</Link> */}
+
+                                                                                                    <Link
+                                                                                                        to="#"
+                                                                                                        className="btns add-to-cart"
+                                                                                                        onClick={() => handleAddToCart(course)}
+                                                                                                        disabled={course.enrollment_capacity <= 0}
+                                                                                                        style={{ pointerEvents: course.enrollment_capacity <= 0 ? 'none' : 'auto' }}
+                                                                                                    >
+                                                                                                        {course.enrollment_capacity > 0 ? 'Add to cart' : 'Sold Out'}
+                                                                                                    </Link>
+
 
                                                                                                     <Link
                                                                                                         to="#"

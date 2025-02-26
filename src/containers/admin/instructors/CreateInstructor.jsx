@@ -11,6 +11,7 @@ import Footer from '../../../components/admin/Footer';
 import EmptyImage from '../../../assets/images/EmptyImage.png';
 import CreateInstructorSchema from '../../../validation-schemas/CreateInstructorSchema';
 import Loader from "../../../components/common/Loader";
+import Sidebar from '../../../components/admin/Sidebar';
 
 const CreateInstructor = () => {
 
@@ -207,194 +208,215 @@ const CreateInstructor = () => {
         <>
             {loading === true ? <Loader /> : ''}
             <Header />
-            <section className="product_wrapper front_product_section columns-1 pb-25">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="w-full p-6 bg-slate-500 rounded-lg shadow-md">
-                                <Formik
-                                    initialValues={{
-                                        first_name: '',
-                                        last_name: '',
-                                        contact_no: '',
-                                        email: '',
-                                        instructor_image: '',
-                                        instructor_unavailable_dates: [],
-                                    }}
-                                    onSubmit={handleSubmit}
-                                    validationSchema={CreateInstructorSchema}
-                                >
-                                    {(formikProps) => {
-                                        formikRef.current = formikProps;
 
-                                        return (
-                                            <form className="form-signin" onSubmit={formikProps.handleSubmit}>
-                                                <div className="flex justify-between items-center mb-3">
-                                                    <h1 className="h3 font-weight-normal text-center">Create Instructor</h1>
-                                                    <button
-                                                        type="button"
-                                                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
-                                                        onClick={() => navigate(-1)}
-                                                    >
-                                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-                                                        </svg>
-                                                        Back
-                                                    </button>
-                                                </div>
-                                                <hr className="my-4 border-2 border-gray-300" />
 
-                                                <div className="row mb-4">
-                                                    {/* Main Form Fields Section */}
-                                                    <div className="col-md-8">
-                                                        <div className="row">
-                                                            {/* First Name */}
-                                                            <div className="form-group mb-4 col-md-6">
-                                                                <label htmlFor="first_name">First Name</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="first_name"
-                                                                    className="form-control"
-                                                                    id="firstName"
-                                                                    placeholder="Enter first name"
-                                                                    onChange={formikProps.handleChange}
-                                                                    onBlur={formikProps.handleBlur}
-                                                                    value={formikProps.values.first_name}
-                                                                />
-                                                                {formikProps.touched.first_name && formikProps.errors.first_name ? (
-                                                                    <small className="text-danger">{formikProps.errors.first_name}</small>
-                                                                ) : null}
-                                                            </div>
+            <div className="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
+                <Sidebar />
+                <div id="main-content" className="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900 admin-main-container">
+                    <main>
 
-                                                            {/* Last Name */}
-                                                            <div className="form-group mb-4 col-md-6">
-                                                                <label htmlFor="last_name">Last Name</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="last_name"
-                                                                    className="form-control"
-                                                                    id="lastName"
-                                                                    placeholder="Enter last name"
-                                                                    onChange={formikProps.handleChange}
-                                                                    onBlur={formikProps.handleBlur}
-                                                                    value={formikProps.values.last_name}
-                                                                />
-                                                                {formikProps.touched.last_name && formikProps.errors.last_name ? (
-                                                                    <small className="text-danger">{formikProps.errors.last_name}</small>
-                                                                ) : null}
-                                                            </div>
+                        <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
+                            <div className="w-full mb-1">
+                                <div className="mb-4">
+                                    <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Create Instaructor</h1>
+                                </div>
+                            </div>
+                            <div className="sm:flex">
+                                <div className="flex items-center ml-auto space-x-2 sm:space-x-3">
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
+                                        onClick={() => navigate(-1)}
+                                    >
+                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
+                                        </svg>
+                                        Back
+                                    </button>
 
-                                                            {/* Contact No. */}
-                                                            <div className="form-group mb-4 col-md-6">
-                                                                <label htmlFor="contact_no">Contact Number</label>
-                                                                <input
-                                                                    type="text"
-                                                                    name="contact_no"
-                                                                    className="form-control"
-                                                                    id="contactNo"
-                                                                    placeholder="Enter contact number"
-                                                                    onChange={formikProps.handleChange}
-                                                                    onBlur={formikProps.handleBlur}
-                                                                    value={formikProps.values.contact_no}
-                                                                />
-                                                                {formikProps.touched.contact_no && formikProps.errors.contact_no ? (
-                                                                    <small className="text-danger">{formikProps.errors.contact_no}</small>
-                                                                ) : null}
-                                                            </div>
-
-                                                            {/* Email */}
-                                                            <div className="form-group mb-4 col-md-6">
-                                                                <label htmlFor="email">Email</label>
-                                                                <input
-                                                                    type="email"
-                                                                    name="email"
-                                                                    className="form-control"
-                                                                    id="email"
-                                                                    placeholder="Enter email"
-                                                                    onChange={formikProps.handleChange}
-                                                                    onBlur={formikProps.handleBlur}
-                                                                    value={formikProps.values.email}
-                                                                />
-                                                                {formikProps.touched.email && formikProps.errors.email ? (
-                                                                    <small className="text-danger">{formikProps.errors.email}</small>
-                                                                ) : null}
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Image Upload Section */}
-                                                    <div className="col-md-4">
-                                                        <div className="form-group">
-                                                            <label className="block text-gray-700 mb-2" htmlFor="courseImage">Upload Instructor Image</label>
-                                                            {/* Image Preview */}
-                                                            {previewImage ? (
-                                                                <div className="pr_col product-logo md:w-2/12 mb-4 md:mb-0 flex-shrink-0">
-                                                                    <div className="relative" style={{ width: '350px', height: '300px' }}>
-                                                                        <img
-                                                                            // width="300"
-                                                                            // height="300"
-                                                                            src={previewImage}
-                                                                            alt="instructor"
-                                                                            className="w-full h-full object-cover"
-                                                                            decoding="async"
-                                                                            fetchpriority="high"
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            ) : (
-                                                                <div className="pr_col product-logo md:w-2/12 mb-4 md:mb-0 flex-shrink-0">
-                                                                    <div className="relative" style={{ width: '350px', height: '300px' }}>
-                                                                        <img
-                                                                            src={EmptyImage}
-                                                                            alt="instructor default"
-                                                                            className="w-full h-full object-cover"
-                                                                            decoding="async"
-                                                                            fetchpriority="high"
-                                                                        />
-                                                                        <p className="absolute inset-0 flex items-end mb-4 justify-center text-red-500  bg-opacity-50 text-center text-sm font-semibold">
-                                                                            Size must be less than 5 MB
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                            <input
-                                                                type="file"
-                                                                name="instructor_image"
-                                                                className="form-control-file border border-gray-300 rounded-lg p-2 w-full"
-                                                                id="courseImage"
-                                                                accept="image/*"
-                                                                //value={formikProps.values.course_image}
-                                                                //onChange={formikProps.handleChange}
-                                                                onChange={(event) => {
-                                                                    formikProps.setFieldValue("instructor_image", "");
-                                                                    handleImageChange(event);
-                                                                }}
-                                                                onBlur={formikProps.handleBlur}
-                                                            />
-                                                            {formikProps.touched.instructor_image && formikProps.errors.instructor_image ? (
-                                                                <small className="text-red-600">{formikProps.errors.instructor_image}</small>
-                                                            ) : null}
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-
-                                                <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">
-                                                    <i className="fas fa-plus-circle mr-2"></i> Create Instructor
-                                                </button>
-
-                                            </form>
-                                        );
-                                    }}
-                                </Formik>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </section>
 
-            <Footer />
+                        <section className="product_wrapper front_product_section columns-1 pb-25">
+                            <div className="container">
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <div className="w-full p-6 bg-slate-500 rounded-lg shadow-md">
+                                            <Formik
+                                                initialValues={{
+                                                    first_name: '',
+                                                    last_name: '',
+                                                    contact_no: '',
+                                                    email: '',
+                                                    instructor_image: '',
+                                                    instructor_unavailable_dates: [],
+                                                }}
+                                                onSubmit={handleSubmit}
+                                                validationSchema={CreateInstructorSchema}
+                                            >
+                                                {(formikProps) => {
+                                                    formikRef.current = formikProps;
+
+                                                    return (
+                                                        <form className="form-signin" onSubmit={formikProps.handleSubmit}>
+                                                    
+                                                            <div className="row mb-4">
+                                                                {/* Main Form Fields Section */}
+                                                                <div className="col-md-8">
+                                                                    <div className="row">
+                                                                        {/* First Name */}
+                                                                        <div className="form-group mb-4 col-md-6">
+                                                                            <label htmlFor="first_name">First Name</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                name="first_name"
+                                                                                className="form-control"
+                                                                                id="firstName"
+                                                                                placeholder="Enter first name"
+                                                                                onChange={formikProps.handleChange}
+                                                                                onBlur={formikProps.handleBlur}
+                                                                                value={formikProps.values.first_name}
+                                                                            />
+                                                                            {formikProps.touched.first_name && formikProps.errors.first_name ? (
+                                                                                <small className="text-danger">{formikProps.errors.first_name}</small>
+                                                                            ) : null}
+                                                                        </div>
+
+                                                                        {/* Last Name */}
+                                                                        <div className="form-group mb-4 col-md-6">
+                                                                            <label htmlFor="last_name">Last Name</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                name="last_name"
+                                                                                className="form-control"
+                                                                                id="lastName"
+                                                                                placeholder="Enter last name"
+                                                                                onChange={formikProps.handleChange}
+                                                                                onBlur={formikProps.handleBlur}
+                                                                                value={formikProps.values.last_name}
+                                                                            />
+                                                                            {formikProps.touched.last_name && formikProps.errors.last_name ? (
+                                                                                <small className="text-danger">{formikProps.errors.last_name}</small>
+                                                                            ) : null}
+                                                                        </div>
+
+                                                                        {/* Contact No. */}
+                                                                        <div className="form-group mb-4 col-md-6">
+                                                                            <label htmlFor="contact_no">Contact Number</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                name="contact_no"
+                                                                                className="form-control"
+                                                                                id="contactNo"
+                                                                                placeholder="Enter contact number"
+                                                                                onChange={formikProps.handleChange}
+                                                                                onBlur={formikProps.handleBlur}
+                                                                                value={formikProps.values.contact_no}
+                                                                            />
+                                                                            {formikProps.touched.contact_no && formikProps.errors.contact_no ? (
+                                                                                <small className="text-danger">{formikProps.errors.contact_no}</small>
+                                                                            ) : null}
+                                                                        </div>
+
+                                                                        {/* Email */}
+                                                                        <div className="form-group mb-4 col-md-6">
+                                                                            <label htmlFor="email">Email</label>
+                                                                            <input
+                                                                                type="email"
+                                                                                name="email"
+                                                                                className="form-control"
+                                                                                id="email"
+                                                                                placeholder="Enter email"
+                                                                                onChange={formikProps.handleChange}
+                                                                                onBlur={formikProps.handleBlur}
+                                                                                value={formikProps.values.email}
+                                                                            />
+                                                                            {formikProps.touched.email && formikProps.errors.email ? (
+                                                                                <small className="text-danger">{formikProps.errors.email}</small>
+                                                                            ) : null}
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+
+                                                                {/* Image Upload Section */}
+                                                                <div className="col-md-4">
+                                                                    <div className="form-group">
+                                                                        <label className="block text-gray-700 mb-2" htmlFor="courseImage">Upload Instructor Image</label>
+                                                                        {/* Image Preview */}
+                                                                        {previewImage ? (
+                                                                            <div className="pr_col product-logo md:w-2/12 mb-4 md:mb-0 flex-shrink-0">
+                                                                                <div className="relative" style={{ width: '350px', height: '300px' }}>
+                                                                                    <img
+                                                                                        // width="300"
+                                                                                        // height="300"
+                                                                                        src={previewImage}
+                                                                                        alt="instructor"
+                                                                                        className="w-full h-full object-cover"
+                                                                                        decoding="async"
+                                                                                        fetchpriority="high"
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="pr_col product-logo md:w-2/12 mb-4 md:mb-0 flex-shrink-0">
+                                                                                <div className="relative" style={{ width: '350px', height: '300px' }}>
+                                                                                    <img
+                                                                                        src={EmptyImage}
+                                                                                        alt="instructor default"
+                                                                                        className="w-full h-full object-cover"
+                                                                                        decoding="async"
+                                                                                        fetchpriority="high"
+                                                                                    />
+                                                                                    <p className="absolute inset-0 flex items-end mb-4 justify-center text-red-500  bg-opacity-50 text-center text-sm font-semibold">
+                                                                                        Size must be less than 5 MB
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                        <input
+                                                                            type="file"
+                                                                            name="instructor_image"
+                                                                            className="form-control-file border border-gray-300 rounded-lg p-2 w-full"
+                                                                            id="courseImage"
+                                                                            accept="image/*"
+                                                                            //value={formikProps.values.course_image}
+                                                                            //onChange={formikProps.handleChange}
+                                                                            onChange={(event) => {
+                                                                                formikProps.setFieldValue("instructor_image", "");
+                                                                                handleImageChange(event);
+                                                                            }}
+                                                                            onBlur={formikProps.handleBlur}
+                                                                        />
+                                                                        {formikProps.touched.instructor_image && formikProps.errors.instructor_image ? (
+                                                                            <small className="text-red-600">{formikProps.errors.instructor_image}</small>
+                                                                        ) : null}
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">
+                                                                <i className="fas fa-plus-circle mr-2"></i> Create Instructor
+                                                            </button>
+
+                                                        </form>
+                                                    );
+                                                }}
+                                            </Formik>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                    </main>
+                    <Footer />
+                </div>
+            </div>
+
+            {/* <Footer /> */}
         </>
     );
 }
