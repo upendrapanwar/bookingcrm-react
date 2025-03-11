@@ -1273,11 +1273,19 @@ textarea.form-control {
 }
 
 .footer-info {
-    padding-top: 6px;
+    padding-bottom: 12px;
+    margin-top: 5px;
 }
 
 .footer-info ul li a {
-    font-size: 14px;
+    font-size: 18px;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 36px;
+    color: #FFF;
+}
+
+.footer-info ul li button {
+    font-size: 18px;
     font-family: 'Open Sans', sans-serif;
     line-height: 36px;
     color: #FFF;
@@ -1554,4 +1562,14 @@ img.checkoutPaymentPic {
 .rating .bi-star-fill.text-warning {
     color: #f5c518 !important;
     /* Highlight color for selected/hovered stars */
+}
+
+.new-footer-title{
+    color: #2e047c !important;
+    margin-bottom: 3dvh !important;
+}
+
+.footer-title-second{
+    color: #ffffff !important;
+    margin-bottom: 3dvh !important;
 }
