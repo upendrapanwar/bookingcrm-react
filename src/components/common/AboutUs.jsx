@@ -39,8 +39,8 @@ const AboutUs = () => {
         //scrollLoop();
 
         // Clean up the animation frame on unmount
-       // return () => {
-       //     cancelAnimationFrame(scrollLoop);
+        // return () => {
+        //     cancelAnimationFrame(scrollLoop);
         //};
     }, [setHeaderData]);
 

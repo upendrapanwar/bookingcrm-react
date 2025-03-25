@@ -1033,7 +1033,7 @@ textarea.form-control {
 
 .course_fullInfo_section ul.class_date li,
 .course_fullInfo_section .class_type ul li {
-    width: 50%;
+    width: 100%;
     margin-bottom: 10px;
 }
 

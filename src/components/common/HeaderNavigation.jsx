@@ -86,7 +86,7 @@ const HeaderNavigation = () => {
                                             <ul className="sub-menu">
                                                 <li className="li"><Link to={"/course-listing"} onClick={() => handleNavigation('/course-listing')}>CITB Courses</Link>
                                                     <ul className="sub-menu">
-                                                        <li><Link to="/course-listing" onClick={() => handleNavigation('/course-listing')}>SMSTS</Link>
+                                                        <li><Link to="/course-listing" onClick={() => handleNavigation('/category-course')}>SMSTS</Link>
                                                             <ul className="sub-menu">
                                                                 <li><Link to="/course-listing" onClick={() => handleNavigation('/course-listing')}>Online</Link>
                                                                     <ul className="sub-menu">
@@ -330,6 +330,9 @@ const HeaderNavigation = () => {
                                         </li>
                                         <li className="nav-item">
                                             <Link to={"/course-delivery-option"}>Course Delivery Options</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link to={"/blog"}>Blog</Link>
                                         </li>
                                         <li className="nav-item">
                                             <Link to={"/about-us"}>About Us</Link>

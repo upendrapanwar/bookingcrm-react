@@ -16,6 +16,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import '../src/assets/css/admin-main.css';
 
 
+
 // import './assets/fonts/font';
 import Loader from './components/common/Loader';
 import CreateCategories from './containers/admin/courses/categories/AddCategories';
@@ -34,8 +35,10 @@ import AdminRaiseTicket from './containers/admin/tickets/RaiseTicket';
 import AdminOrdersList from './containers/admin/orders/AdminOrdersList';
 import OrderMoreInformation from './containers/admin/orders/AdminOrderMoreInformation';
 import CourseDetailsInformation from './containers/admin/courses/CourseDetailsInformation';
-import CourseReviews from './components/common/courses/CourseReviews'
-
+import CourseReviews from './components/common/courses/CourseReviews';
+import CategoryCourse from './components/common/courses/Categorycourse';
+import Blog from './components/common/BlogList';
+import BlogPost from './components/common/BlogPost'; 
 
 
 const Home = lazy(() => import('./containers/Home'));
@@ -117,10 +120,13 @@ export const PublicRoutes = () => {
         <Route path='/reply-ticket/:id' element={<ReplyTicket/>} />
         {/* <Route path='/complete' element={<CompletePage/>} /> */}
         {/* <Route path='/checkout-form' element={<CheckoutForm/>} /> */}
+        <Route path='/category-course' element={<CategoryCourse />} />
+        <Route path='/blog' element={<Blog/>} />
+        <Route path="/blog/:postId" element={<BlogPost />} />
 
         
         <Route path='/order-done' element={<Order/>} />
-
+  
         <Route path='/course-listing/course-reviews' element={<CourseReviews />} />
         <Route index element={<Home />} />
       </Routes>
@@ -257,6 +263,14 @@ export const AdminRoutes = () => {
             <AdminRaiseTicket />
           </PrivateRoute>
         } />
+      </Routes>
+      {/* ============================ */}
+    <Routes>
+        <Route path="/admin/*" element={
+          <Suspense fallback={<Loader />}>
+            <AdminRoutes />
+          </Suspense>
+        }/>
       </Routes>
       
     </>

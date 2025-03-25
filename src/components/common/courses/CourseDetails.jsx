@@ -15,6 +15,8 @@ import image_smsts from '../../../assets/images/SMSTS-1024x594.jpg';
 import EmptyImage from "../../../assets/images/EmptyImage.png";
 import Icons_calendar_outline from '../../../assets/images/Icons/calendar-outline.png';
 import 'react-quill/dist/quill.snow.css';
+// import Course from "../components/course/Detailspage";
+
 
 const CourseDetails = () => {
     const location = useLocation();
@@ -148,6 +150,17 @@ const CourseDetails = () => {
                                     Back
                                 </button>
                             </div>
+
+                            <div className="col-lg-6 pb-10">
+                                <div className="section-thumbnail">
+                                    {/* <img src={course.course_image || EmptyImage} alt="" /> */}
+                                    <img
+                                        src={course.course_image || EmptyImage}
+                                        alt=""
+                                        style={{ width: '100%', height: 'auto', maxHeight: '300px', objectFit: 'cover' }}
+                                    />
+                                </div>{" "}
+                            </div>
                             <div className="col-lg-6">
                                 {/* <h3 className="pb-30">
                                     {course.course_title} | {course.start_date} | {course.course_format}
@@ -172,7 +185,7 @@ const CourseDetails = () => {
                                     } | {course.course_format}
                                 </h3>
                                 <div className="row">
-                                    <div className="col-lg-12 pb-20">
+                                    <div className="col-lg-6 pb-20">
                                         <div className="class_date_calendar">
                                             <div className="calendar_icon">
                                                 <img src={Icons_calendar_outline} alt="" />
@@ -196,7 +209,7 @@ const CourseDetails = () => {
                                             </ul>
                                         </div>
                                     </div>
-                                    <div className="col-lg-12  pb-20">
+                                    <div className="col-lg-6  pb-20">
                                         <div className="class_type">
                                             <ul>
                                                 <li>
@@ -220,10 +233,6 @@ const CourseDetails = () => {
                                                 </li>
 
                                             </ul>
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-12  pb-20">
-                                        <div className="class_type result_info">
                                             <ul>
                                                 <li>
                                                     <span>
@@ -234,6 +243,18 @@ const CourseDetails = () => {
                                             </ul>
                                         </div>
                                     </div>
+                                    {/* <div className="col-lg-6  pb-20">
+                                        <div className="class_type result_info">
+                                            <ul>
+                                                <li>
+                                                    <span>
+                                                        <img src={icons_test_results} alt="" />
+                                                    </span>{" "}
+                                                    Free Same Day Resit if Eligible
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div> */}
                                     <div className="col-lg-12 flex justify-between ">
                                         <button
                                             className="btn btn-md btn-orange ms-5 "
@@ -250,16 +271,7 @@ const CourseDetails = () => {
                                     </div>
                                 </div>{" "}
                             </div>
-                            <div className="col-lg-6 pb-10">
-                                <div className="section-thumbnail">
-                                    {/* <img src={course.course_image || EmptyImage} alt="" /> */}
-                                    <img
-                                        src={course.course_image || EmptyImage}
-                                        alt=""
-                                        style={{ width: '100%', height: 'auto', maxHeight: '300px', objectFit: 'cover' }}
-                                    />
-                                </div>{" "}
-                            </div>
+
                         </div>
                     </div>
                 </section>
@@ -271,102 +283,110 @@ const CourseDetails = () => {
                                 <div className="section-title text-center pb-40 section-title-white">
                                     <h3>More Information About The Course</h3>
                                 </div>
-                                <div className="product_accordian_wrap ">
+
+                                <div className="product_accordian_wrap">
                                     <div className="accordion" id="ProductAccordion">
 
-                                        <div>
-                                            <div className="card">
-                                                <div className="card-header">
-                                                    <h2 className="mb-0">
-                                                        <button
-                                                            className="btn btn-link btn-block text-left collapsed"
-                                                            onClick={() => toggleSection('courseInfo')}
-                                                        >
-                                                            Course Info
-                                                        </button>
-                                                    </h2>
-                                                </div>
-                                                {isOpen.courseInfo && (
-                                                    <div className="card-body text-dark">
-                                                        <div dangerouslySetInnerHTML={{ __html: course.course_information }} />
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <div className="card">
+                                                    <div className="card-header">
+                                                        <h2 className="mb-0">
+                                                            <button
+                                                                className="btn btn-link btn-block text-left collapsed"
+                                                                onClick={() => toggleSection('courseInfo')}
+                                                            >
+                                                                Course Info
+                                                            </button>
+                                                        </h2>
                                                     </div>
-                                                )}
+                                                    {isOpen.courseInfo && (
+                                                        <div className="card-body text-dark">
+                                                            <div dangerouslySetInnerHTML={{ __html: course.course_information }} />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-
-                                            <div className="card">
-                                                <div className="card-header">
-                                                    <h2 className="mb-0">
-                                                        <button
-                                                            className="btn btn-link btn-block text-left collapsed"
-                                                            onClick={() => toggleSection('additionalInfo')}
-                                                        >
-                                                            Additional Info
-                                                        </button>
-                                                    </h2>
-                                                </div>
-                                                {isOpen.additionalInfo && (
-                                                    <div className="card-body">
-                                                        <p
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: (course.additional_information || "Currently, no additional information is available for this course.").replace(/\n/g, '<br />')
-                                                            }}
-                                                        />
+                                            <div className="col-md-6">
+                                                <div className="card">
+                                                    <div className="card-header">
+                                                        <h2 className="mb-0">
+                                                            <button
+                                                                className="btn btn-link btn-block text-left collapsed"
+                                                                onClick={() => toggleSection('additionalInfo')}
+                                                            >
+                                                                Additional Info
+                                                            </button>
+                                                        </h2>
                                                     </div>
-                                                )}
+                                                    {isOpen.additionalInfo && (
+                                                        <div className="card-body">
+                                                            <p
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html: (course.additional_information || "Currently, no additional information is available for this course.").replace(/\n/g, '<br />')
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-
-                                            <div className="card">
-                                                <div className="card-header">
-                                                    <h2 className="mb-0">
-                                                        <button
-                                                            className="btn btn-link btn-block text-left collapsed"
-                                                            onClick={() => toggleSection('Completing_the_course')}
-                                                        >
-                                                            Completing the course
-                                                        </button>
-                                                    </h2>
-                                                </div>
-                                                {isOpen.Completing_the_course && (
-                                                    <div className="card-body">
-                                                        {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris imperdiet nulla quis vehicula congue. Etiam non ultrices eros. Pellentesque volutpat enim vitae purus feugiat, at dictum tortor varius. Praesent eleifend arcu vel turpis lobortis iaculis. Phasellus hendrerit vel sem nec varius. Suspendisse sed elementum massa. Suspendisse euismod nisi eu elementum venenatis. Vivamus euismod id dolor sit amet pretium. Mauris maximus bibendum lorem non commodo. Ut sed quam a urna fringilla vulputate. Aliquam non mi finibus, rhoncus sapien non, accumsan enim. Phasellus gravida neque ac neque vestibulum vestibulum non eget libero. Donec urna lorem, tempor non suscipit in, fringilla et ante. Vestibulum iaculis purus et bibendum dictum. Vestibulum gravida sem at tortor aliquet suscipit.</p> */}
-                                                        <p
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: (course.completing_the_course || "Currently, no Completing the course information is available for this course.").replace(/\n/g, '<br />')
-                                                            }}
-                                                        />
+                                        </div>
+                                        <div className="row mt-3">
+                                            <div className="col-md-6">
+                                                <div className="card">
+                                                    <div className="card-header">
+                                                        <h2 className="mb-0">
+                                                            <button
+                                                                className="btn btn-link btn-block text-left collapsed"
+                                                                onClick={() => toggleSection('Completing_the_course')}
+                                                            >
+                                                                Completing the Course
+                                                            </button>
+                                                        </h2>
                                                     </div>
-                                                )}
+                                                    {isOpen.Completing_the_course && (
+                                                        <div className="card-body">
+                                                            <p
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html: (course.completing_the_course || "Currently, no Completing the course information is available for this course.").replace(/\n/g, '<br />')
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-
-                                            <div className="card">
-                                                <div className="card-header">
-                                                    <h2 className="mb-0">
-                                                        <button
-                                                            className="btn btn-link btn-block text-left collapsed"
-                                                            onClick={() => toggleSection('Why_cst_training')}
-                                                        >
-                                                            Why use our Training
-                                                        </button>
-                                                    </h2>
-                                                </div>
-                                                {isOpen.Why_cst_training && (
-                                                    <div className="card-body">
-                                                        {/* <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris imperdiet nulla quis vehicula congue. Etiam non ultrices eros. Pellentesque volutpat enim vitae purus feugiat, at dictum tortor varius. Praesent eleifend arcu vel turpis lobortis iaculis. Phasellus hendrerit vel sem nec varius. Suspendisse sed elementum massa. Suspendisse euismod nisi eu elementum venenatis. Vivamus euismod id dolor sit amet pretium. Mauris maximus bibendum lorem non commodo. Ut sed quam a urna fringilla vulputate. Aliquam non mi finibus, rhoncus sapien non, accumsan enim. Phasellus gravida neque ac neque vestibulum vestibulum non eget libero. Donec urna lorem, tempor non suscipit in, fringilla et ante. Vestibulum iaculis purus et bibendum dictum. Vestibulum gravida sem at tortor aliquet suscipit.</p> */}
-                                                        <p
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: (course.why_use_our_training || "Currently, no  information is available for this course.").replace(/\n/g, '<br />')
-                                                            }}
-                                                        />
+                                            <div className="col-md-6">
+                                                <div className="card">
+                                                    <div className="card-header">
+                                                        <h2 className="mb-0">
+                                                            <button
+                                                                className="btn btn-link btn-block text-left collapsed"
+                                                                onClick={() => toggleSection('Why_cst_training')}
+                                                            >
+                                                                Why Use Our Training
+                                                            </button>
+                                                        </h2>
                                                     </div>
-                                                )}
+                                                    {isOpen.Why_cst_training && (
+                                                        <div className="card-body">
+                                                            <p
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html: (course.why_use_our_training || "Currently, no information is available for this course.").replace(/\n/g, '<br />')
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
+                   
                 </section>
                 <section className="front_section bg-orange needhelp_section">
                     <div className="container">

@@ -22,11 +22,11 @@ const ContactUs = () => {
     const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(0);
     const tabsRef = useRef();
-    
-    
+
+
 
     useEffect(() => {
-        console.log('currenttab=',activeTab);
+        console.log('currenttab=', activeTab);
         const tab = Number(id);
         if (!isNaN(tab)) {
             setActiveTab(tab);
@@ -36,7 +36,7 @@ const ContactUs = () => {
         setHeaderData({
             heading: 'Get In Touch Today!',
         })
-       
+
     }, [setHeaderData]);
 
     /***********************************************************************/
@@ -94,29 +94,29 @@ const ContactUs = () => {
      */
     const handleSubmit = async (values, { resetForm }) => {
         const requestData = {
-             ...values
+            ...values
         };
-        
-         axios
-             .post("user/email-exist", requestData)
-             .then((response) => {
-                 
-                 console.log("status=",response.status);
-                 if (response.status) {
+
+        axios
+            .post("user/email-exist", requestData)
+            .then((response) => {
+
+                console.log("status=", response.status);
+                if (response.status) {
                     localStorage.setItem('valid_email', values.email);
                     navigate('/ticket-list');
                     resetForm();
-                 } else {
+                } else {
                     setEmailNotFound('Email not found!');
                 }
-                 
-             })
-             .catch((error) => {
-                
+
+            })
+            .catch((error) => {
+
                 if (error.response) {
                     setEmailNotFound(error.response.data.message);
-                 }
-             });
+                }
+            });
 
     };
     /***********************************************************************/
@@ -135,8 +135,8 @@ const ContactUs = () => {
 
 
                                     <div className="">
-                                        
-                                        <Tabs aria-label="Default tabs" variant="default" key={activeTab} ref={tabsRef} activeTab={activeTab} onActiveTabChange={(tab) => {setActiveTab(Number(tab))}}>
+
+                                        <Tabs aria-label="Default tabs" variant="default" key={activeTab} ref={tabsRef} activeTab={activeTab} onActiveTabChange={(tab) => { setActiveTab(Number(tab)) }}>
                                             <Tabs.Item active={activeTab === 0 ? 'active' : ''} title="Online Contact Form" icon={HiOutlineMail}>
                                                 <div className="">
                                                     <div className="section-title text-center pb-30">
@@ -189,35 +189,35 @@ const ContactUs = () => {
                                             isSubmitting
                                         }) => (
                                             <form className="mb-6" onSubmit={handleSubmit}>
-                                                    <div>
-                                                        <div className="mb-2 block">
-                                                            <label>
-                                                                Email Address <span className="required_sign">*</span>
-                                                            </label>
-                                                        </div>
-
-                                                        <input
-                                                            type="email"
-                                                            name="email"
-                                                            className={`form-control ${touched.email && errors.email ? "is-invalid" : ""}`}
-                                                            placeholder="Enter email"
-                                                            onChange={handleChange}
-                                                            onBlur={handleBlur}
-                                                            value={values.email}
-                                                        />
-                                                        {touched.email && errors.email ? (
-                                                            <div className="text-danger">{errors.email}</div>
-                                                        ) : null}
-                                                        <div className="text-danger">{emailNotFound}</div>
+                                                <div>
+                                                    <div className="mb-2 block">
+                                                        <label>
+                                                            Email Address <span className="required_sign">*</span>
+                                                        </label>
                                                     </div>
-                                                    <div>
-                                                        <div className="w-full mt-3 flex items-center gap-2">   
-                                                            <button type="submit" className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
-                                                                Submit
-                                                            </button>
-                                                        </div>
-                                                    </div>    
-                                                
+
+                                                    <input
+                                                        type="email"
+                                                        name="email"
+                                                        className={`form-control ${touched.email && errors.email ? "is-invalid" : ""}`}
+                                                        placeholder="Enter email"
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                        value={values.email}
+                                                    />
+                                                    {touched.email && errors.email ? (
+                                                        <div className="text-danger">{errors.email}</div>
+                                                    ) : null}
+                                                    <div className="text-danger">{emailNotFound}</div>
+                                                </div>
+                                                <div>
+                                                    <div className="w-full mt-3 flex items-center gap-2">
+                                                        <button type="submit" className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800">
+                                                            Submit
+                                                        </button>
+                                                    </div>
+                                                </div>
+
                                             </form>
                                         )}
                                     </Formik>
@@ -226,6 +226,21 @@ const ContactUs = () => {
                         </Modal>
                     </div>
                 </section>
+
+                <section className="google-map-section">
+                    <div className="map-container" style={{ width: '100%', height: '400px' }}>
+                        <iframe
+                            title="Google Map"
+                            width="100%"
+                            height="380"
+                            frameBorder="0"
+                            style={{ border: 0 }}
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2481.470374523003!2d0.21264967694731273!3d51.449291617426154!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47d8b46b64e2d8f1%3A0x648e2a03b6a23b5a!2s38%20Victoria%20Rd%2C%20Dartford%20DA1%205FS%2C%20UK!5e0!3m2!1sen!2sin!4v1710251421234!5m2!1sen!2sin"
+                            allowFullScreen
+                        ></iframe>
+                    </div>
+                </section>
+
             </>
             <Footer />
 

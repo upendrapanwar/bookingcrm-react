@@ -4,6 +4,7 @@ import FooterNavigation from './FooterNavigation';
 import FooterContact from './FooterContact';
 import FooterCopyright from './FooterCopyright';
 import { useNavigate } from "react-router-dom";
+import footerImage from '../../assets/images/footer-image.png'
 
 const Footer = () => {
     const navigate = useNavigate();
@@ -28,10 +29,19 @@ const Footer = () => {
                             <FooterContact /> */}
 
                             <div id="footer-widget-area" className="row">
-                                <div className="footer-widgets-1 col-md-4 col-sm-6">
+                                <div className="footer-widgets-1 col-md-3 col-sm-6">
+                                    <aside className="widget_text widget_custom_html widget well">
+                                        <div>
+                                            <img src={footerImage} alt="Footer Logo" width="210" height="auto" />
+                                        </div>
+                                    </aside>
+                                </div>
+
+                                <div className="footer-widgets-1 col-md-3 col-sm-6">
                                     <aside className="widget_text widget_custom_html widget well">
                                         <h3 className="widget-title new-footer-title alt-font">Follow Us</h3>
                                         <div className=" ">
+
                                             <h5 className='footer-title-second'>Follow us at:</h5>
                                         </div>
                                     </aside>
@@ -61,7 +71,7 @@ const Footer = () => {
                                     </aside>
                                 </div>
 
-                                <div className="footer-widgets-2 col-md-4 col-sm-6">
+                                <div className="footer-widgets-2 col-md-3 col-sm-6">
                                     <aside className="widget_text widget_custom_html widget well">
                                         <h3 className="widget-title alt-font new-footer-title">Office</h3>
                                         <div className="">
@@ -75,7 +85,7 @@ const Footer = () => {
                                     </aside>
                                 </div>
 
-                                <div className="footer-widgets-3 col-md-4 col-sm-6">
+                                <div className="footer-widgets-3 col-md-3 col-sm-6">
                                     <aside className="widget_text widget_custom_html widget well">
                                         <h3 className="widget-title alt-font new-footer-title">Why Choose Us</h3>
                                     </aside>
