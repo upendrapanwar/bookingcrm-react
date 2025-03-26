@@ -151,7 +151,7 @@ const CourseDetails = () => {
                                 </button>
                             </div>
 
-                            <div className="col-lg-6 pb-10">
+                            <div className="col-lg-5 pb-10">
                                 <div className="section-thumbnail">
                                     {/* <img src={course.course_image || EmptyImage} alt="" /> */}
                                     <img
@@ -161,7 +161,7 @@ const CourseDetails = () => {
                                     />
                                 </div>{" "}
                             </div>
-                            <div className="col-lg-6">
+                            <div className="col-lg-5">
                                 {/* <h3 className="pb-30">
                                     {course.course_title} | {course.start_date} | {course.course_format}
                                 </h3> */}
@@ -255,7 +255,8 @@ const CourseDetails = () => {
                                             </ul>
                                         </div>
                                     </div> */}
-                                    <div className="col-lg-12 flex justify-between ">
+
+                                    {/* <div className="col-lg-12 flex justify-between ">
                                         <button
                                             className="btn btn-md btn-orange ms-5 "
                                             onClick={(e) => handleAddToCart(course, e)}
@@ -268,9 +269,37 @@ const CourseDetails = () => {
                                         >
                                             Reviews
                                         </button>
-                                    </div>
-                                </div>{" "}
+                                    </div> */}
+                                </div>
                             </div>
+                            {/* <div className="col-lg-2 d-flex flex-column justify-content-center text-center">
+                                <button
+                                    className="btn btn-md btn-orange btn-width mb-2 "
+                                    onClick={(e) => handleAddToCart(course, e)}
+                                >
+                                    Add to cart
+                                </button>
+                                <button
+                                    className="btn btn-md btn-orange btn-width mt-2"
+                                    onClick={(e) => handleReviews(course)}
+                                >
+                                    Reviews
+                                </button>
+                            </div>{" "} */}
+                            <div className="col-12 col-lg-2 d-flex flex-column align-items-center justify-content-center text-center">
+                                <button
+                                    className="btn btn-md btn-orange btn-width mb-2"
+                                    onClick={(e) => handleAddToCart(course, e)}
+                                >
+                                    Add to cart
+                                </button>
+                                <button
+                                    className="btn btn-md btn-orange btn-width mt-2"
+                                    onClick={(e) => handleReviews(course)}
+                                >
+                                    Reviews
+                                </button>
+                            </div>{" "}
 
                         </div>
                     </div>
@@ -386,7 +415,7 @@ const CourseDetails = () => {
 
                         </div>
                     </div>
-                   
+
                 </section>
                 <section className="front_section bg-orange needhelp_section">
                     <div className="container">

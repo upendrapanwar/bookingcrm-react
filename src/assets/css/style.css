@@ -1573,3 +1573,8 @@ img.checkoutPaymentPic {
     color: #ffffff !important;
     margin-bottom: 3dvh !important;
 }
+
+
+.btn-width{
+    width: 160px !important;
+}

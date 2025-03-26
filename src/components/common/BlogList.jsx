@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { blogPosts } from '../../data/bolgPost';
-import Header from '../../components/common/Header';
+import BlogHeader from '../../components/common/BlogHeader';
 import Footer from '../../components/common/Footer';
 import { useHeader } from './HeaderContext';
 
@@ -43,7 +43,7 @@ const BlogList = () => {
 
   useEffect(() => {
           setHeaderData({
-              heading: 'SMSTS Training Blog',
+              heading: '',
               // paragraph1: 'Online Monday to Friday, Day Release &amp; Weekend Courses Are Available',
               // paragraph2: 'Or View Our Classroom Courses Here - Site Management Safety Training Scheme'
           })
@@ -57,7 +57,7 @@ const BlogList = () => {
 
   return (
     <>
-      <Header />
+      <BlogHeader />
       <section className="page_section contact_form_section bgWhite product_wrapper front_product_section columns-1 pb-25">
         <Helmet>
           <title>SMSTS Training Blog | Expert Guides & Resources | fullstacksmsts.co.uk</title>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import axios from "axios";
@@ -11,6 +11,7 @@ import EmptyImage from "../../../assets/images/EmptyImage.png";
 import { useDispatch } from 'react-redux';
 import { useHeader } from '../../common/HeaderContext';
 import { addToCart } from '../../../store/reducers/cart-reducer';
+import SMST_Sertificate_logo from "../../../assets/images/flase-deal-smst-certificate.PNG";
 // import $ from "jquery";
 
 const CourseListing = (passedData) => {
@@ -30,7 +31,7 @@ const CourseListing = (passedData) => {
     const [searchType, setSearchType] = useState(null);
     const today = new Date();
     const [activeTab, setActiveTab] = useState(0);
-   // console.log('courses----11', courses)
+    // console.log('courses----11', courses)
 
     /***********************************************************************/
     /***********************************************************************/
@@ -690,7 +691,12 @@ const CourseListing = (passedData) => {
             <section className="front_section Container_wrapper pr_video_section">
                 <div className="container">
                     <div className="row">
-                        <div className="col-lg-8 offset-lg-2 pb-25">
+                        <div className="col-lg-4 pb-25">
+                            <div className="section-title text-center pb-30">
+                                <img src={SMST_Sertificate_logo} alt="Logo" />
+                            </div>
+                        </div>
+                        <div className="col-lg-8 pb-25 pt-4">
                             <div className="section-title text-center pb-30">
                                 <h2 className="pb-10">Save your time and money by choosing our professional team.</h2>
                                 <p>

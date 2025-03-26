@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet';
 // import RelatedPosts from './RelatedPosts';
 // import CommentSection from './CommentSection';
 import { blogPosts } from '../../data/bolgPost';
-import Header from '../../components/common/Header';
+import BlogHeader from '../../components/common/BlogHeader';
 import Footer from '../../components/common/Footer';
 
 const BlogPost = () => {
@@ -122,7 +122,7 @@ const BlogPost = () => {
 
     return (
         <>
-            <Header />
+            <BlogHeader />
             <section className="page_section contact_form_section bgWhite product_wrapper front_product_section columns-1 pb-25">
                 <Helmet>
                     <title>{pageTitle}</title>

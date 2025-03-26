@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
-import corpelLogoMain from '../../assets/images/corpel-logo-main.png';
+// import corpelLogoMain from '../../assets/images/corpel-logo-main.png';
 import shoping_cart from '../../assets/icons/shoppingCart-black.svg';
 import { useSelector } from 'react-redux';
-import Loader from "../../components/common/Loader";
+// import Loader from "../../components/common/Loader";
 
 const HeaderNavigation = () => {
     const cart = useSelector((state) => state.cart.cart || []);
     // const authInfo = JSON.parse(localStorage.getItem("authInfo"));
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
 
     const handleNavigation = async (path) => {
         // setLoading(true);
@@ -24,7 +24,7 @@ const HeaderNavigation = () => {
         }
 
         window.scrollTo(0, 0);
-        setLoading(false);
+        // setLoading(false);
     };
 
     // Yahan har item ki quantity ko total mein add kar rahe hain
@@ -51,7 +51,7 @@ const HeaderNavigation = () => {
                     <div className="row no-gutters">
                         <div className="col-lg-12 col-12">
                             <nav className="navbar navbar-expand-lg justify-content-between">
-                                <Link to={"#"} className="navbar-brand">
+                                {/* <Link to={"#"} className="navbar-brand">
                                     <img src={corpelLogoMain} alt="Logo" />
                                 </Link>
                                 <button className="navbar-toggler" type="button" data-toggle="collapse"
@@ -60,7 +60,7 @@ const HeaderNavigation = () => {
                                     <span className="icon-bar"></span>
                                     <span className="icon-bar"></span>
                                     <span className="icon-bar"></span>
-                                </button>
+                                </button> */}
 
                                 <div className="navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                                     <ul className="navbar-nav ml-auto">
@@ -86,7 +86,8 @@ const HeaderNavigation = () => {
                                             <ul className="sub-menu">
                                                 <li className="li"><Link to={"/course-listing"} onClick={() => handleNavigation('/course-listing')}>CITB Courses</Link>
                                                     <ul className="sub-menu">
-                                                        <li><Link to="/course-listing" onClick={() => handleNavigation('/category-course')}>SMSTS</Link>
+                                                        {/* <li><Link to="/course-listing" onClick={() => handleNavigation('/category-course')}>SMSTS</Link> */}
+                                                        <li><Link to="/course-listing" onClick={() => handleNavigation('/course-listing')}>SMSTS</Link>
                                                             <ul className="sub-menu">
                                                                 <li><Link to="/course-listing" onClick={() => handleNavigation('/course-listing')}>Online</Link>
                                                                     <ul className="sub-menu">
